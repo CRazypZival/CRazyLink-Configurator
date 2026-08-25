@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#f4f0e9">
+  <meta name="theme-color" content="#F5F5F2">
   <meta name="description" content="CRazyLink wireless MCU debugger configurator">
   <link rel="manifest" href="manifest.webmanifest">
   <link rel="stylesheet" href="tokens.css">
@@ -13,186 +13,171 @@
 <body>
   <div class="app-shell">
     <aside class="sidebar" aria-label="主导航">
-      <div class="brand-lockup">
-        <div class="brand-mark" aria-hidden="true">CL</div>
-        <div>
+      <div class="sidebar-top">
+        <div class="brand-block">
           <div class="brand-name">CRazyLink</div>
-          <div class="brand-subtitle">WIRELESS DEBUGGER</div>
+          <div class="brand-descriptor">WEB CONFIGURATOR</div>
         </div>
+        <nav class="primary-nav">
+          <button class="nav-item is-active" type="button" data-view="flash" aria-current="page">
+            <span class="active-marker" aria-hidden="true"></span><i data-lucide="download"></i><span>固件烧录</span>
+          </button>
+          <button class="nav-item" type="button" data-view="serial">
+            <i data-lucide="terminal"></i><span>串口终端</span>
+          </button>
+        </nav>
       </div>
-      <nav class="primary-nav">
-        <button class="nav-item is-active" type="button" data-view="flash" aria-current="page">
-          <i data-lucide="download"></i><span>固件烧录</span>
-        </button>
-        <button class="nav-item" type="button" data-view="serial">
-          <i data-lucide="terminal"></i><span>串口终端</span>
-        </button>
-      </nav>
-      <div class="sidebar-footer">
-        <button class="nav-item nav-item-muted" type="button" id="aboutButton">
-          <i data-lucide="circle-help"></i><span>使用说明</span>
-        </button>
-        <div class="build-label">v0.1 · Arduino firmware</div>
+      <div class="sidebar-status">
+        <div class="sidebar-device-summary">
+          <span class="sidebar-status-dot" aria-hidden="true"></span>
+          <div>
+            <strong id="deviceName">设备未连接</strong>
+            <span id="deviceSerial">USB 功能接口</span>
+          </div>
+        </div>
+        <div class="sidebar-metrics" aria-hidden="true">
+          <span id="linkMetric">未连接</span><span id="modeMetric">—</span><span id="jobMetric">无任务</span>
+        </div>
+        <div class="app-version">CRazyLink Configurator 0.1</div>
       </div>
     </aside>
 
     <header class="mobile-header">
-      <div class="brand-lockup">
-        <div class="brand-mark" aria-hidden="true">CL</div>
-        <div class="brand-name">CRazyLink</div>
+      <div class="mobile-brand">CRazyLink</div>
+      <div class="mobile-header-actions">
+        <div class="mobile-port-badge"><span class="sidebar-status-dot"></span><span id="mobilePortLabel">未连接</span></div>
+        <button class="icon-button" id="mobileConnectButton" type="button" aria-label="连接设备" title="连接设备"><i data-lucide="usb"></i></button>
       </div>
-      <button class="icon-button" id="mobileConnectButton" type="button" aria-label="连接设备" title="连接设备">
-        <i data-lucide="usb"></i>
-      </button>
     </header>
 
-    <main class="main-content">
-      <header class="topbar">
-        <div>
-          <div class="eyebrow">CRAZYLINK / WORKBENCH</div>
+    <main class="main-workspace">
+      <header class="page-header">
+        <div class="page-title-group">
           <h1 id="viewTitle">固件烧录</h1>
+          <p id="pageSubtitle">选择二进制文件、指定地址并写入设备</p>
         </div>
-        <div class="topbar-actions">
-          <div class="connection-state" id="connectionState" data-state="disconnected">
-            <span class="state-dot" aria-hidden="true"></span>
-            <span id="connectionLabel">未连接设备</span>
+        <div class="header-actions">
+          <div class="selected-port-badge" id="connectionState" data-state="disconnected">
+            <span class="state-dot" aria-hidden="true"></span><span id="connectionLabel">未连接设备</span>
           </div>
-          <button class="button button-primary button-compact" id="connectButton" type="button">
-            <i data-lucide="usb"></i><span>连接设备</span>
-          </button>
+          <button class="button button-secondary" id="connectButton" type="button"><i data-lucide="refresh-cw"></i><span>重新选择</span></button>
         </div>
       </header>
 
-      <section class="device-strip" aria-label="设备状态">
-        <div class="device-identity">
-          <div class="device-icon"><i data-lucide="cpu"></i></div>
-          <div>
-            <div class="section-kicker">当前设备</div>
-            <strong id="deviceName">等待 CRazyLink</strong>
-            <span class="muted" id="deviceSerial">连接后显示序列号</span>
-          </div>
-        </div>
-        <div class="device-metrics">
-          <div class="metric"><span>链路</span><strong id="linkMetric">离线</strong></div>
-          <div class="metric"><span>模式</span><strong id="modeMetric">—</strong></div>
-          <div class="metric"><span>任务</span><strong id="jobMetric">无</strong></div>
-        </div>
-      </section>
-
       <div class="mobile-tabs" role="tablist" aria-label="工作区">
-        <button class="mobile-tab is-active" type="button" data-view="flash" role="tab" aria-selected="true">烧录</button>
-        <button class="mobile-tab" type="button" data-view="serial" role="tab" aria-selected="false">串口</button>
+        <button class="mobile-tab is-active" type="button" data-view="flash" role="tab" aria-selected="true">固件烧录</button>
+        <button class="mobile-tab" type="button" data-view="serial" role="tab" aria-selected="false">串口终端</button>
       </div>
 
       <section class="view is-active" id="flashView" data-view-panel="flash">
-        <div class="section-heading">
-          <div>
-            <div class="eyebrow">TARGET PROGRAMMER</div>
-            <h2>把固件送到远端目标</h2>
-            <p>选择最多三个 BIN，合并后通过 SWD 写入 STM32F1 目标。</p>
-          </div>
-          <div class="target-badge"><i data-lucide="shield-check"></i><span>SWD · 1 MHz</span></div>
-        </div>
-
-        <div class="workspace-grid">
-          <div class="workspace-column">
-            <section class="panel upload-panel">
-              <div class="panel-header">
-                <div><h3>固件文件</h3><p>第一个文件默认从 <code>0x08000000</code> 开始。</p></div>
+        <div class="firmware-content">
+          <div class="files-workspace">
+            <div class="list-header">
+              <div>
+                <h2>固件清单</h2>
+                <p>最多添加 3 个 .bin 文件，每个文件需指定起始地址</p>
+              </div>
+              <div class="list-header-actions">
                 <span class="count-badge" id="fileCount">0 / 3</span>
+                <button class="icon-button icon-button-small" id="clearFilesButton" type="button" title="清空固件清单" aria-label="清空固件清单"><i data-lucide="trash-2"></i></button>
               </div>
-              <label class="drop-zone" id="dropZone" for="firmwareInput">
-                <input id="firmwareInput" type="file" accept=".bin,application/octet-stream" multiple>
-                <span class="drop-icon"><i data-lucide="file-up"></i></span>
-                <strong>拖入 BIN 文件</strong>
-                <span>或点击选择文件</span>
-              </label>
-              <div class="file-list" id="fileList" aria-live="polite">
-                <div class="empty-state" id="fileEmpty"><i data-lucide="file-box"></i><span>尚未添加固件</span></div>
+            </div>
+            <div class="file-list" id="fileList" aria-live="polite">
+              <div class="empty-state" id="fileEmpty">尚未添加固件</div>
+            </div>
+            <label class="add-firmware" id="dropZone" for="firmwareInput">
+              <input id="firmwareInput" type="file" accept=".bin,application/octet-stream" multiple>
+              <i data-lucide="plus"></i><span>添加固件</span>
+            </label>
+            <div class="merge-summary" aria-live="polite">
+              <div><i data-lucide="circle-check"></i><span id="mergeMessage">等待添加固件</span></div>
+              <strong id="mergeSize">—</strong>
+            </div>
+            <div class="ready-checklist">
+              <h3>烧录前检查</h3>
+              <div class="check-items">
+                <span><i data-lucide="check"></i>地址有效</span>
+                <span><i data-lucide="check"></i>设备在线</span>
+                <span><i data-lucide="check"></i>供电稳定</span>
               </div>
-              <div class="form-row address-row">
-                <label for="targetSelect">目标型号</label>
-                <select id="targetSelect">
-                  <option value="stm32f103c8">STM32F103C8T6 · 64 KB</option>
-                </select>
-              </div>
-            </section>
-
-            <section class="panel settings-panel">
-              <div class="panel-header"><div><h3>烧录设置</h3><p>设置会随任务一起发送到 RX。</p></div></div>
-              <div class="settings-grid">
-                <label class="field-label" for="eraseSelect">擦除方式
-                  <select id="eraseSelect"><option value="sector">按范围擦除</option><option value="chip">整片擦除</option><option value="none">不擦除</option></select>
-                </label>
-                <label class="field-label" for="speedSelect">SWD 速率
-                  <select id="speedSelect"><option value="1000">1 MHz</option><option value="500">500 kHz</option><option value="2000">2 MHz</option></select>
-                </label>
-              </div>
-              <div class="check-row">
-                <label class="check-control"><input id="verifyCheck" type="checkbox" checked><span class="checkmark"><i data-lucide="check"></i></span><span>写入后校验</span></label>
-                <label class="check-control"><input id="resetCheck" type="checkbox" checked><span class="checkmark"><i data-lucide="check"></i></span><span>完成后复位</span></label>
-              </div>
-              <label class="field-label note-field" for="jobNote">任务备注
-                <textarea id="jobNote" rows="2" maxlength="30" placeholder="例如：release-2026-08-25"></textarea>
-              </label>
-            </section>
-
-            <div class="action-row">
-              <button class="button button-primary" id="flashButton" type="button" disabled><i data-lucide="play"></i><span>开始烧录</span></button>
-              <button class="button button-quiet" id="clearFilesButton" type="button" disabled><i data-lucide="trash-2"></i><span>清空文件</span></button>
             </div>
           </div>
 
-          <aside class="workspace-column status-column">
-            <section class="panel status-panel" aria-live="polite">
-              <div class="panel-header"><div><h3>任务状态</h3><p id="flashStatusText">等待固件文件</p></div><span class="status-chip" id="flashStatusChip" data-state="idle">待机</span></div>
-              <div class="progress-wrap">
-                <div class="progress-meta"><span id="progressLabel">0%</span><span id="progressBytes">0 B</span></div>
-                <div class="progress-track"><span id="progressBar" style="--progress:0"></span></div>
-              </div>
-              <div class="status-log" id="flashLog"><div class="log-line"><span class="log-time">--:--:--</span><span>准备连接设备。</span></div></div>
-            </section>
-            <section class="panel quick-panel">
-              <div class="panel-header"><div><h3>设备模式</h3><p>离线模式允许 RX 独立保存一个任务。</p></div></div>
-              <div class="mode-switch" role="group" aria-label="设备模式">
-                <button class="mode-option is-active" type="button" data-mode="0"><i data-lucide="radio"></i><span>在线</span></button>
-                <button class="mode-option" type="button" data-mode="1"><i data-lucide="hard-drive"></i><span>离线</span></button>
-              </div>
-              <button class="button button-outline full-width" id="refreshDeviceButton" type="button"><i data-lucide="refresh-cw"></i><span>刷新设备状态</span></button>
-            </section>
+          <aside class="flash-settings-panel">
+            <div class="settings-header">
+              <h2>烧录设置</h2>
+              <button class="icon-button icon-button-small" id="refreshDeviceButton" type="button" title="刷新设备状态" aria-label="刷新设备状态"><i data-lucide="refresh-cw"></i></button>
+            </div>
+            <label class="field-label" for="eraseSelect">擦除方式
+              <select id="eraseSelect"><option value="sector">按范围擦除</option><option value="chip">整片擦除</option><option value="none">不擦除</option></select>
+            </label>
+            <label class="field-label" for="speedSelect">传输速率
+              <select id="speedSelect"><option value="1000">1 MHz</option><option value="500">500 kHz</option><option value="2000">2 MHz</option></select>
+            </label>
+            <label class="field-label target-field" for="targetSelect">目标型号
+              <select id="targetSelect"><option value="stm32f103c8">STM32F103C8T6 · 64 KB</option></select>
+            </label>
+            <div class="switch-group">
+              <label class="switch-row"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+              <label class="switch-row"><span><strong>完成后复位</strong><small>烧录成功后重启目标板</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+            </div>
+            <div class="task-summary">
+              <h3>本次任务</h3>
+              <div><span>文件</span><strong id="taskFileSummary">0 个</strong></div>
+              <div><span>地址范围</span><strong id="taskAddressSummary">—</strong></div>
+              <div><span>合并大小</span><strong id="taskSizeSummary">—</strong></div>
+            </div>
+            <label class="task-note" for="jobNote">任务备注<textarea id="jobNote" rows="2" maxlength="30" placeholder="可选"></textarea></label>
+            <button class="button button-primary start-flash" id="flashButton" type="button" disabled><i data-lucide="play"></i><span>开始烧录</span></button>
+            <button class="button button-secondary export-button" type="button" disabled><i data-lucide="download"></i><span>导出合并 BIN</span></button>
+            <div class="mode-switch" role="group" aria-label="设备模式">
+              <button class="mode-option is-active" type="button" data-mode="0">在线</button>
+              <button class="mode-option" type="button" data-mode="1">离线</button>
+            </div>
           </aside>
         </div>
+        <div class="status-line">
+          <div><i data-lucide="circle-check"></i><span id="flashStatusText">设备可用，等待烧录</span><span class="status-progress" id="progressLabel">0%</span></div>
+          <span class="browser-requirement">Web Serial · Chromium 89+</span>
+        </div>
+        <div class="sr-only" aria-live="polite"><span id="flashStatusChip">待机</span><span id="progressBytes">0 B</span><span id="progressBar"></span><div id="flashLog"><div class="log-line"><span class="log-time">--:--:--</span><span>准备连接设备。</span></div></div></div>
       </section>
 
       <section class="view" id="serialView" data-view-panel="serial">
-        <div class="section-heading">
-          <div><div class="eyebrow">TARGET CONSOLE</div><h2>远端串口终端</h2><p>参数只在打开串口后同步到 RX，避免默认配置干扰目标信号。</p></div>
-          <div class="target-badge target-badge-neutral"><i data-lucide="cable"></i><span>GPIO6 / GPIO7</span></div>
-        </div>
-        <section class="panel serial-config-panel">
-          <div class="serial-config-grid">
+        <div class="serial-content">
+          <section class="serial-config-bar">
+            <div class="serial-config-title"><strong>连接参数</strong><span id="terminalStatus">端口未打开</span></div>
             <label class="field-label" for="baudSelect">波特率<select id="baudSelect"><option>1200</option><option>9600</option><option>19200</option><option>38400</option><option selected>115200</option><option>230400</option><option>460800</option><option>921600</option><option>100000</option></select></label>
             <label class="field-label" for="dataBitsSelect">数据位<select id="dataBitsSelect"><option>5</option><option>6</option><option>7</option><option selected>8</option></select></label>
-            <label class="field-label" for="paritySelect">校验<select id="paritySelect"><option value="none">None</option><option value="odd">Odd</option><option value="even">Even</option></select></label>
             <label class="field-label" for="stopBitsSelect">停止位<select id="stopBitsSelect"><option value="1">1</option><option value="1.5">1.5</option><option value="2">2</option></select></label>
+            <label class="field-label" for="paritySelect">校验位<select id="paritySelect"><option value="none">无</option><option value="odd">奇</option><option value="even">偶</option></select></label>
+            <label class="field-label flow-field" for="flowControlSelect">流控<select id="flowControlSelect" disabled><option>无</option></select></label>
+            <div class="listening-state"><i data-lucide="radio"></i><span>持续监听</span></div>
             <button class="button button-primary serial-open-button" id="serialOpenButton" type="button" disabled><i data-lucide="radio-tower"></i><span>打开串口</span></button>
-          </div>
-        </section>
-        <div class="terminal-layout">
-          <section class="panel terminal-panel">
-            <div class="terminal-toolbar"><div class="panel-header"><div><h3>接收窗口</h3><p id="terminalStatus">串口已关闭</p></div></div><div class="toolbar-actions"><label class="toggle-control"><input id="hexDisplayCheck" type="checkbox"><span class="toggle-track"><span></span></span><span>HEX</span></label><button class="icon-button icon-button-small" id="clearTerminalButton" type="button" title="清空接收窗口" aria-label="清空接收窗口"><i data-lucide="eraser"></i></button></div></div>
-            <pre class="terminal-output" id="terminalOutput" aria-live="polite"><span class="terminal-placeholder">等待目标数据…</span></pre>
-            <div class="terminal-compose"><label class="sr-only" for="terminalInput">发送内容</label><textarea id="terminalInput" rows="2" placeholder="输入要发送到目标的内容"></textarea><div class="compose-actions"><label class="toggle-control"><input id="hexSendCheck" type="checkbox"><span class="toggle-track"><span></span></span><span>HEX 发送</span></label><button class="button button-primary" id="serialSendButton" type="button" disabled><i data-lucide="send"></i><span>发送</span></button></div></div>
           </section>
-          <aside class="panel terminal-help"><div class="panel-header"><div><h3>链路信息</h3><p>接收缓冲区由 RX 管理。</p></div></div><dl class="info-list"><div><dt>接口</dt><dd>USB CDC ACM</dd></div><div><dt>目标端</dt><dd>STM32 PA9 / PA10</dd></div><div><dt>缓冲区</dt><dd>64 KB</dd></div><div><dt>状态</dt><dd id="terminalLinkState">未连接</dd></div></dl><div class="serial-tip"><i data-lucide="info"></i><span>串口监视器打开后才会启动 RX UART。关闭窗口会停止目标端 UART。</span></div></aside>
+          <section class="terminal-panel">
+            <div class="terminal-toolbar">
+              <div class="terminal-toolbar-left"><strong>接收日志</strong><span id="terminalLinkState">USB CDC · 等待连接</span></div>
+              <div class="terminal-toolbar-right"><label class="terminal-toggle"><input id="hexDisplayCheck" type="checkbox"><span>HEX</span></label><button class="terminal-icon-button" id="clearTerminalButton" type="button" title="清空接收日志" aria-label="清空接收日志"><i data-lucide="trash-2"></i></button></div>
+            </div>
+            <pre class="terminal-output" id="terminalOutput" aria-live="polite"><span class="terminal-placeholder">等待目标数据…</span></pre>
+            <div class="serial-composer">
+              <div class="format-control"><label><input id="hexSendCheck" type="checkbox"><span>HEX</span></label><span class="format-ascii">ASCII</span></div>
+              <label class="terminal-input-wrap" for="terminalInput"><span class="sr-only">发送内容</span><textarea id="terminalInput" rows="1" placeholder="输入发送内容…"></textarea></label>
+              <select class="line-ending-select" aria-label="行尾"><option>CRLF</option><option>LF</option><option>CR</option></select>
+              <button class="button button-primary send-button" id="serialSendButton" type="button" disabled><i data-lucide="send"></i><span>发送</span></button>
+            </div>
+          </section>
+        </div>
+        <div class="status-line serial-status-line">
+          <div><i data-lucide="radio"></i><span>正在监听</span><span class="runtime-label">持续时间 00:00:00</span></div>
+          <span class="browser-requirement">接收 0 帧 · 发送 0 帧 · 错误 0</span>
         </div>
       </section>
-
-      <footer class="app-footer"><span>CRazyLink · CMSIS-DAP v2 + UART bridge</span><span>WebUSB requires Chrome or Edge</span></footer>
     </main>
   </div>
   <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
-  <dialog class="help-dialog" id="helpDialog"><button class="dialog-close icon-button icon-button-small" id="closeHelpButton" type="button" aria-label="关闭"><i data-lucide="x"></i></button><div class="eyebrow">QUICK START</div><h2>三步开始</h2><ol><li>通过 FTDI 给 TX/RX 烧录固件，给 RX 接上 SWD 和目标 UART。</li><li>使用 Chrome 或 Edge 打开本页面，点击连接设备。</li><li>选择固件、确认参数，开始烧录或打开串口。</li></ol><p class="muted">TX 的原生 USB 用于功能接口；UART0 只用于开发烧录和日志。</p></dialog>
+  <dialog class="help-dialog" id="helpDialog"><button class="dialog-close icon-button icon-button-small" id="closeHelpButton" type="button" aria-label="关闭"><i data-lucide="x"></i></button><h2>使用说明</h2><ol><li>将 TX 原生 USB 接入电脑并点击“重新选择”。</li><li>选择 BIN 文件，确认地址后开始烧录。</li><li>切换到串口终端，设置参数后打开串口。</li></ol></dialog>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="js/protocol.js"></script>
   <script src="js/firmware.js"></script>

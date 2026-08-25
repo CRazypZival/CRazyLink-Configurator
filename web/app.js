@@ -1,4 +1,4 @@
-/* Hallmark · pre-emit critique: P5 H5 E4 S5 R4 V4 */
+/* Pencil source: configurator/UI/configurator.pen · interaction layer */
 (function () {
   "use strict";
 
@@ -53,6 +53,8 @@
     const element = $("#connectionState");
     element.dataset.state = stateName;
     $("#connectionLabel").textContent = label;
+    const mobilePort = $("#mobilePortLabel");
+    if (mobilePort) mobilePort.textContent = stateName === "connected" ? "已连接" : "未连接";
   }
 
   function setView(view) {
@@ -68,16 +70,18 @@
     });
     $$("[data-view-panel]").forEach((panel) => panel.classList.toggle("is-active", panel.dataset.viewPanel === view));
     $("#viewTitle").textContent = view === "flash" ? "固件烧录" : "串口终端";
+    const subtitle = $("#pageSubtitle");
+    if (subtitle) subtitle.textContent = view === "flash" ? "选择二进制文件、指定地址并写入设备" : "持续读取、过滤并发送串口数据";
   }
 
   function updateDeviceInfo(info) {
     state.info = info || null;
     if (!info) {
-      $("#deviceName").textContent = "等待 CRazyLink";
-      $("#deviceSerial").textContent = "连接后显示序列号";
-      $("#linkMetric").textContent = "离线";
+      $("#deviceName").textContent = "设备未连接";
+      $("#deviceSerial").textContent = "USB 功能接口";
+      $("#linkMetric").textContent = "未连接";
       $("#modeMetric").textContent = "—";
-      $("#jobMetric").textContent = "无";
+      $("#jobMetric").textContent = "无任务";
       $("#terminalLinkState").textContent = "未连接";
       return;
     }
@@ -88,6 +92,8 @@
     $("#modeMetric").textContent = info.mode === 1 ? "离线" : "在线";
     $("#jobMetric").textContent = info.jobStored ? api.formatBytes(info.jobSize || 0) : "无";
     $("#terminalLinkState").textContent = info.peerConnected ? "TX ↔ RX" : (info.mode === 1 ? "RX 本地" : "等待 RX");
+    const mobilePort = $("#mobilePortLabel");
+    if (mobilePort) mobilePort.textContent = "已连接";
     $$(".mode-option").forEach((button) => button.classList.toggle("is-active", Number(button.dataset.mode) === info.mode));
   }
 
@@ -104,6 +110,21 @@
     iconRefresh();
   }
 
+  function updateFirmwareSummary() {
+    const bytes = state.files.reduce((total, file) => total + file.data.length, 0);
+    const first = state.files[0];
+    const last = state.files[state.files.length - 1];
+    const end = last ? last.address + last.data.length : 0;
+    const size = state.files.length ? api.formatBytes(bytes) : "—";
+    $("#mergeMessage").textContent = state.files.length
+      ? `${state.files.length} 个文件将按地址合并，地址范围无冲突`
+      : "等待添加固件";
+    $("#mergeSize").textContent = size;
+    $("#taskFileSummary").textContent = `${state.files.length} 个`;
+    $("#taskAddressSummary").textContent = first ? `${api.formatAddress(first.address)} – ${api.formatAddress(end)}` : "—";
+    $("#taskSizeSummary").textContent = size;
+  }
+
   function renderFiles() {
     const list = $("#fileList");
     list.replaceChildren();
@@ -111,8 +132,9 @@
     if (state.files.length === 0) {
       const empty = document.createElement("div");
       empty.className = "empty-state";
-      empty.innerHTML = '<i data-lucide="file-box"></i><span>尚未添加固件</span>';
+      empty.textContent = "尚未添加固件";
       list.append(empty);
+      updateFirmwareSummary();
       iconRefresh();
       updateButtons();
       return;
@@ -120,7 +142,7 @@
     state.files.forEach((file, index) => {
       const item = document.createElement("div");
       item.className = "file-item";
-      item.innerHTML = `<div class="file-item-name"></div><label class="file-address-label"><span class="sr-only">${file.name} 地址</span><input class="file-address" data-index="${index}" value="${api.formatAddress(file.address)}" inputmode="text"></label><span class="file-item-meta">${api.formatBytes(file.data.length)}</span><button class="file-remove" data-index="${index}" type="button" aria-label="移除 ${file.name}" title="移除文件"><i data-lucide="x"></i></button>`;
+      item.innerHTML = `<div class="file-icon-box"><i data-lucide="file-code-2"></i></div><div class="file-item-info"><div class="file-item-name"></div><div class="file-item-meta"><span class="file-kind">BIN</span><span>·</span><span>${api.formatBytes(file.data.length)}</span></div></div><label class="file-address-label"><span class="file-address-caption">起始地址</span><input class="file-address" data-index="${index}" value="${api.formatAddress(file.address)}" inputmode="text"></label><button class="file-remove" data-index="${index}" type="button" aria-label="移除 ${file.name}" title="移除文件"><i data-lucide="x"></i></button>`;
       item.querySelector(".file-item-name").textContent = file.name;
       list.append(item);
     });
@@ -137,6 +159,7 @@
       state.files.splice(Number(button.dataset.index), 1);
       renderFiles();
     }));
+    updateFirmwareSummary();
     iconRefresh();
     updateButtons();
   }
@@ -352,7 +375,8 @@
     $("#serialSendButton").addEventListener("click", sendSerial);
     $("#terminalInput").addEventListener("keydown", (event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") sendSerial(); });
     $("#clearTerminalButton").addEventListener("click", () => { $("#terminalOutput").replaceChildren(Object.assign(document.createElement("span"), { className: "terminal-placeholder", textContent: "等待目标数据…" })); state.terminalBytes = 0; });
-    $("#aboutButton").addEventListener("click", () => $("#helpDialog").showModal());
+    const aboutButton = $("#aboutButton");
+    if (aboutButton) aboutButton.addEventListener("click", () => $("#helpDialog").showModal());
     $("#closeHelpButton").addEventListener("click", () => $("#helpDialog").close());
     $("#helpDialog").addEventListener("click", (event) => { if (event.target === $("#helpDialog")) $("#helpDialog").close(); });
   }

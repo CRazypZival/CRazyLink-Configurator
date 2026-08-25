@@ -26,23 +26,41 @@
 
   function findBulkInterface(device) {
     if (!device.configuration) return null;
+    const candidates = [];
     for (const item of device.configuration.interfaces) {
       for (const alternate of item.alternates) {
         const endpoints = alternate.endpoints || [];
         const input = endpoints.find((endpoint) => endpoint.direction === "in" && endpoint.type === "bulk");
         const output = endpoints.find((endpoint) => endpoint.direction === "out" && endpoint.type === "bulk");
-        if (alternate.interfaceClass === 0xff && input && output &&
-            /CMSIS-DAP v2/i.test(alternate.interfaceName || "")) {
-          return {
+        if (Number(alternate.interfaceClass) === 0xff && input && output) {
+          candidates.push({
             interfaceNumber: item.interfaceNumber,
             alternateSetting: alternate.alternateSetting,
             inputEndpoint: input.endpointNumber,
             outputEndpoint: output.endpointNumber,
-          };
+            interfaceName: alternate.interfaceName || "",
+          });
         }
       }
     }
-    return null;
+    if (!candidates.length) return null;
+    return candidates.find((candidate) => /cmsis[- ]?dap/i.test(candidate.interfaceName)) ||
+      (candidates.length === 1 ? candidates[0] : null);
+  }
+
+  function describeBulkInterfaces(device) {
+    if (!device.configuration) return "设备没有活动 USB 配置";
+    const interfaces = [];
+    for (const item of device.configuration.interfaces) {
+      for (const alternate of item.alternates) {
+        const endpoints = alternate.endpoints || [];
+        const bulk = endpoints.filter((endpoint) => endpoint.type === "bulk");
+        if (bulk.length) {
+          interfaces.push(`#${item.interfaceNumber}/${alternate.alternateSetting} class=0x${Number(alternate.interfaceClass).toString(16)} name=${alternate.interfaceName || "(空)"} bulk=${bulk.map((endpoint) => `${endpoint.direction}:${endpoint.endpointNumber}`).join(",")}`);
+        }
+      }
+    }
+    return interfaces.length ? interfaces.join("; ") : "未发现 Bulk 端点";
   }
 
   function decodeError(packet) {
@@ -71,7 +89,9 @@
       if (!this.device.opened) await this.device.open();
       if (!this.device.configuration) await this.device.selectConfiguration(1);
       this.interface = findBulkInterface(this.device);
-      if (!this.interface) throw new Error("未找到 CRazyLink CMSIS-DAP v2 Bulk 接口");
+      if (!this.interface) {
+        throw new Error(`未找到 CRazyLink CMSIS-DAP v2 Bulk 接口（${describeBulkInterfaces(this.device)}）`);
+      }
       await this.device.claimInterface(this.interface.interfaceNumber);
       if (this.interface.alternateSetting) {
         await this.device.selectAlternateInterface(
@@ -319,5 +339,5 @@
     }
   }
 
-  return { CrazylinkUsbDevice, CrazylinkUsbManager, DeviceRole, DeviceMode, FlashState };
+  return { CrazylinkUsbDevice, CrazylinkUsbManager, DeviceRole, DeviceMode, FlashState, findBulkInterface, describeBulkInterfaces };
 });
