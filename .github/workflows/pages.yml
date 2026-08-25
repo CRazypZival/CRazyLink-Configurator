@@ -2,7 +2,7 @@ name: Deploy CRazyLink Configurator
 
 on:
   push:
-    branches: [master]
+    branches: [main]
     paths:
       - "web/**"
       - ".github/workflows/pages.yml"
