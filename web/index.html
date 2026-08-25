@@ -54,7 +54,7 @@
       <header class="page-header">
         <div class="page-title-group">
           <h1 id="viewTitle">固件烧录</h1>
-          <p id="pageSubtitle">选择二进制文件、指定地址并写入设备</p>
+          <p id="pageSubtitle">选择 BIN、HEX 或 ELF 文件并写入设备</p>
         </div>
         <div class="header-actions">
           <div class="selected-port-badge" id="connectionState" data-state="disconnected">
@@ -75,7 +75,7 @@
             <div class="list-header">
               <div>
                 <h2>固件清单</h2>
-                <p>最多添加 3 个 .bin 文件，每个文件需指定起始地址</p>
+                <p>最多添加 3 个 BIN、HEX 或 ELF 文件，地址从文件内容读取</p>
               </div>
               <div class="list-header-actions">
                 <span class="count-badge" id="fileCount">0 / 3</span>
@@ -86,7 +86,7 @@
               <div class="empty-state" id="fileEmpty">尚未添加固件</div>
             </div>
             <label class="add-firmware" id="dropZone" for="firmwareInput">
-              <input id="firmwareInput" type="file" accept=".bin,application/octet-stream" multiple>
+              <input id="firmwareInput" type="file" accept=".bin,.hex,.ihx,.elf,.axf,application/octet-stream,application/x-elf" multiple>
               <i data-lucide="plus"></i><span>添加固件</span>
             </label>
             <div class="merge-summary" aria-live="polite">

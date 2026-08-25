@@ -78,6 +78,7 @@ svg { width: 18px; height: 18px; stroke-width: 1.8; }
 .file-address-label { display: grid; gap: 4px; min-width: 0; }
 .file-address-caption { color: var(--color-muted); font-size: 10px; font-weight: 600; }
 .file-address { width: 100%; height: 38px; padding: 0 12px; border: 1px solid var(--color-rule); border-radius: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-mono); font-size: 11px; }
+.file-address-value { display: flex; align-items: center; min-width: 0; height: 38px; overflow: hidden; color: var(--color-ink); font-family: var(--font-mono); font-size: 11px; white-space: nowrap; text-overflow: ellipsis; }
 .file-address:focus-visible, select:focus-visible, textarea:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 1px; }
 .file-remove { display: grid; place-items: center; width: 36px; height: 36px; padding: 0; border: 0; background: transparent; color: var(--color-muted); }
 .file-remove:hover { color: var(--color-accent); background: var(--color-accent-soft); }
@@ -239,6 +240,7 @@ textarea { padding: 8px 12px; resize: vertical; }
   .file-item-meta { font-size: 10px; }
   .file-address-label { grid-column: 1 / -1; grid-row: 2; display: flex; align-items: center; justify-content: space-between; height: 36px; padding: 0 8px; border: 1px solid var(--color-rule); background: var(--color-paper); }
   .file-address { width: auto; height: 32px; padding: 0; border: 0; text-align: right; }
+  .file-address-value { height: 32px; max-width: 72%; font-size: 10px; }
   .file-remove { grid-column: 3; grid-row: 1; width: 40px; height: 40px; }
   .add-firmware { height: 44px; font-size: 11px; }
   .merge-summary { min-height: 44px; padding: 0 12px; font-size: 10px; }

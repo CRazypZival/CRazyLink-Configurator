@@ -71,7 +71,7 @@
     $$("[data-view-panel]").forEach((panel) => panel.classList.toggle("is-active", panel.dataset.viewPanel === view));
     $("#viewTitle").textContent = view === "flash" ? "固件烧录" : "串口终端";
     const subtitle = $("#pageSubtitle");
-    if (subtitle) subtitle.textContent = view === "flash" ? "选择二进制文件、指定地址并写入设备" : "持续读取、过滤并发送串口数据";
+    if (subtitle) subtitle.textContent = view === "flash" ? "选择 BIN、HEX 或 ELF 文件并写入设备" : "持续读取、过滤并发送串口数据";
   }
 
   function updateDeviceInfo(info) {
@@ -111,17 +111,26 @@
   }
 
   function updateFirmwareSummary() {
-    const bytes = state.files.reduce((total, file) => total + file.data.length, 0);
-    const first = state.files[0];
-    const last = state.files[state.files.length - 1];
-    const end = last ? last.address + last.data.length : 0;
-    const size = state.files.length ? api.formatBytes(bytes) : "—";
-    $("#mergeMessage").textContent = state.files.length
-      ? `${state.files.length} 个文件将按地址合并，地址范围无冲突`
-      : "等待添加固件";
+    if (!state.files.length) {
+      $("#mergeMessage").textContent = "等待添加固件";
+      $("#mergeSize").textContent = "—";
+      $("#taskFileSummary").textContent = "0 个";
+      $("#taskAddressSummary").textContent = "—";
+      $("#taskSizeSummary").textContent = "—";
+      return;
+    }
+    let summary;
+    try {
+      summary = api.summarizeFirmware(state.files);
+      $("#mergeMessage").textContent = `${state.files.length} 个文件将按地址合并，地址范围无冲突`;
+      $("#taskAddressSummary").textContent = `${api.formatAddress(summary.base)} – ${api.formatAddress(summary.end)}`;
+    } catch (error) {
+      $("#mergeMessage").textContent = error.message || "固件地址存在冲突";
+      $("#taskAddressSummary").textContent = "地址冲突";
+    }
+    const size = api.formatBytes(summary ? summary.bytes : 0);
     $("#mergeSize").textContent = size;
     $("#taskFileSummary").textContent = `${state.files.length} 个`;
-    $("#taskAddressSummary").textContent = first ? `${api.formatAddress(first.address)} – ${api.formatAddress(end)}` : "—";
     $("#taskSizeSummary").textContent = size;
   }
 
@@ -142,7 +151,13 @@
     state.files.forEach((file, index) => {
       const item = document.createElement("div");
       item.className = "file-item";
-      item.innerHTML = `<div class="file-icon-box"><i data-lucide="file-code-2"></i></div><div class="file-item-info"><div class="file-item-name"></div><div class="file-item-meta"><span class="file-kind">BIN</span><span>·</span><span>${api.formatBytes(file.data.length)}</span></div></div><label class="file-address-label"><span class="file-address-caption">起始地址</span><input class="file-address" data-index="${index}" value="${api.formatAddress(file.address)}" inputmode="text"></label><button class="file-remove" data-index="${index}" type="button" aria-label="移除 ${file.name}" title="移除文件"><i data-lucide="x"></i></button>`;
+      const kind = file.kind || "BIN";
+      const size = api.formatBytes(api.firmwareSize(file));
+      const range = api.formatFirmwareRange(file);
+      const addressControl = kind === "BIN"
+        ? `<label class="file-address-label"><span class="file-address-caption">起始地址</span><input class="file-address" data-index="${index}" value="${api.formatAddress(file.segments[0].address)}" inputmode="text"></label>`
+        : `<div class="file-address-label"><span class="file-address-caption">地址范围</span><span class="file-address-value" title="${range}">${range}</span></div>`;
+      item.innerHTML = `<div class="file-icon-box"><i data-lucide="file-code-2"></i></div><div class="file-item-info"><div class="file-item-name"></div><div class="file-item-meta"><span class="file-kind">${kind}</span><span>·</span><span>${size}</span></div></div>${addressControl}<button class="file-remove" data-index="${index}" type="button" aria-label="移除 ${file.name}" title="移除文件"><i data-lucide="x"></i></button>`;
       item.querySelector(".file-item-name").textContent = file.name;
       list.append(item);
     });
@@ -168,21 +183,27 @@
     const files = Array.from(fileList || []);
     if (!files.length) return;
     if (state.files.length + files.length > 3) {
-      toast("最多只能添加三个 BIN 文件", "error");
+      toast("最多只能添加三个固件文件", "error");
       return;
     }
+    let added = 0;
     for (const file of files) {
-      if (!file.name.toLowerCase().endsWith(".bin")) {
-        toast(`${file.name} 不是 BIN 文件`, "error");
-        continue;
+      try {
+        const parsed = api.parseFirmwareFile(file.name, new Uint8Array(await file.arrayBuffer()));
+        if (parsed.kind === "BIN") {
+          const previous = state.files[state.files.length - 1];
+          const address = previous ? api.summarizeFirmware([previous]).end : 0x08000000;
+          parsed.segments[0].address = address;
+        }
+        api.summarizeFirmware([parsed]);
+        state.files.push(parsed);
+        added += 1;
+      } catch (error) {
+        toast(error.message || `${file.name} 解析失败`, "error");
       }
-      const data = new Uint8Array(await file.arrayBuffer());
-      const previous = state.files[state.files.length - 1];
-      const address = previous ? previous.address + previous.data.length : 0x08000000;
-      state.files.push({ name: file.name, data, address });
     }
     renderFiles();
-    logFlash(`已添加 ${files.length} 个固件文件。`);
+    if (added) logFlash(`已添加 ${added} 个固件文件。`);
   }
 
   function selectedTarget() {
