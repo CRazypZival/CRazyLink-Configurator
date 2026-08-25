@@ -1,0 +1,9 @@
+{
+  "name": "crazylink-configurator",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "test": "node --test tests/*.test.js",
+    "build:single": "node scripts/build-single-file.mjs"
+  }
+}
