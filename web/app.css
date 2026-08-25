@@ -50,7 +50,7 @@ svg { width: 18px; height: 18px; stroke-width: 1.8; }
 .button:active { transform: translateY(1px); }
 .button:disabled { opacity: .45; }
 .button-primary { background: var(--color-accent); color: var(--color-accent-ink); }
-.button-primary:hover { background: #A9331D; }
+.button-primary:hover { background: var(--color-accent); }
 .button-secondary { border-color: var(--color-rule); background: transparent; color: var(--color-ink); }
 .button-secondary:hover { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-accent); }
 .icon-button { display: inline-grid; place-items: center; width: 40px; height: 40px; padding: 0; border: 1px solid var(--color-rule); border-radius: var(--radius-sm); background: transparent; color: var(--color-muted); }
@@ -162,10 +162,10 @@ textarea { padding: 8px 12px; resize: vertical; }
 .runtime-label { margin-left: 8px; color: var(--color-muted); font-family: var(--font-mono); font-size: 10px; }
 
 .toast-region { position: fixed; right: 20px; bottom: 20px; z-index: 5; display: grid; gap: 8px; width: min(360px, calc(100vw - 40px)); }
-.toast { padding: 12px 16px; border: 1px solid var(--color-rule); background: var(--color-surface); box-shadow: 0 8px 24px rgba(27, 28, 26, .12); color: var(--color-ink); font-size: 12px; }
+.toast { padding: 12px 16px; border: 1px solid var(--color-rule); background: var(--color-surface); color: var(--color-ink); font-size: 12px; }
 .toast[data-kind="error"] { border-color: var(--color-accent); color: var(--color-accent); }
 .help-dialog { width: min(420px, calc(100vw - 32px)); padding: 24px; border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-ink); }
-.help-dialog::backdrop { background: rgba(27, 28, 26, .35); }
+.help-dialog::backdrop { background: var(--color-ink); opacity: .35; }
 .help-dialog h2 { margin-bottom: 16px; }
 .help-dialog ol { display: grid; gap: 8px; padding-left: 20px; color: var(--color-muted); font-size: 13px; }
 .dialog-close { float: right; }
