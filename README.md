@@ -15,6 +15,4 @@ open dist/index.html
 
 ## GitHub Pages
 
-推送 `main` 分支后，GitHub Actions 会构建并发布 `web/dist`。在仓库设置中选择 `Settings -> Pages -> Source: GitHub Actions`，部署完成后即可通过 Pages 地址使用。
-
-WebUSB 需要用户在浏览器中点击“连接设备”并授权。网页不能访问远程电脑上的 USB；每位用户都需要将自己的 CRazyLink TX 接到自己的电脑。
+https://crazypzival.github.io/CRazyLink-Configurator/
