@@ -186,7 +186,8 @@ textarea { padding: 8px 12px; resize: vertical; }
   .page-header { min-height: 72px; padding: 0 24px; }
   h1 { font-size: 20px; }
   .page-title-group p { font-size: 11px; }
-  .firmware-content { grid-template-columns: minmax(0, 1fr); gap: 20px; padding: 20px; }
+  .firmware-content { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 20px; padding: 20px; }
+  .files-workspace, .flash-settings-panel { align-self: start; }
   .flash-settings-panel { grid-template-columns: repeat(3, minmax(0, 1fr)); align-items: end; gap: 12px; padding: 16px; }
   .settings-header, .switch-group, .task-summary, .start-flash, .export-button, .mode-switch { grid-column: 1 / -1; }
   .settings-header { grid-column: 1 / -1; }
