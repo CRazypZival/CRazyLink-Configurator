@@ -154,6 +154,41 @@
                           "fontWeight": "500"
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "We2mc",
+                      "name": "Primary Navigation / Upgrade",
+                      "width": "fill_container",
+                      "height": 44,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        15
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "rNvvz",
+                          "name": "Primary Navigation / Upgrade Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "upload",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        },
+                        {
+                          "type": "text",
+                          "id": "WuX55",
+                          "name": "Primary Navigation / Upgrade Label",
+                          "fill": "$color-muted-2",
+                          "content": "固件升级",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -271,16 +306,6 @@
                       "fontFamily": "$font-body",
                       "fontSize": 24,
                       "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "HjXsS",
-                      "name": "Firmware Subtitle",
-                      "fill": "$color-muted",
-                      "content": "选择二进制文件、指定地址并写入设备",
-                      "fontFamily": "$font-body",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -413,20 +438,10 @@
                               "id": "mtRz0",
                               "name": "Firmware List Title",
                               "fill": "$color-ink",
-                              "content": "固件清单",
+                              "content": "选择固件",
                               "fontFamily": "$font-body",
                               "fontSize": 18,
                               "fontWeight": "700"
-                            },
-                            {
-                              "type": "text",
-                              "id": "N8J32",
-                              "name": "Firmware List Helper",
-                              "fill": "$color-muted",
-                              "content": "最多添加 3 个 .bin 文件，每个文件需指定起始地址",
-                              "fontFamily": "$font-body",
-                              "fontSize": 12,
-                              "fontWeight": "normal"
                             }
                           ]
                         },
@@ -1729,6 +1744,41 @@
                           "fontWeight": "600"
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "y82lXk",
+                      "name": "Serial Primary Navigation / Upgrade",
+                      "width": "fill_container",
+                      "height": 44,
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        15
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "gK3p6",
+                          "name": "Serial Primary Navigation / Upgrade Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "upload",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        },
+                        {
+                          "type": "text",
+                          "id": "BVcbR",
+                          "name": "Serial Primary Navigation / Upgrade Label",
+                          "fill": "$color-muted-2",
+                          "content": "固件升级",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -1846,16 +1896,6 @@
                       "fontFamily": "$font-body",
                       "fontSize": 24,
                       "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "V67Jjc",
-                      "name": "Serial Page Subtitle",
-                      "fill": "$color-muted",
-                      "content": "持续读取、过滤并发送串口数据",
-                      "fontFamily": "$font-body",
-                      "fontSize": 13,
-                      "fontWeight": "normal"
                     }
                   ]
                 },
@@ -3783,6 +3823,28 @@
                           "fill": "$color-muted-2"
                         }
                       ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TicQR",
+                      "name": "Tablet Firmware Navigation / Upgrade",
+                      "width": 44,
+                      "height": 44,
+                      "cornerRadius": "$radius-md",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "up9pP",
+                          "name": "Tablet Firmware Navigation / Upgrade Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "upload",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        }
+                      ]
                     }
                   ]
                 }
@@ -4854,6 +4916,28 @@
                           "icon": "terminal",
                           "library": "lucide",
                           "fill": "$color-surface"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "E80bp",
+                      "name": "Tablet Serial Navigation / Upgrade",
+                      "width": 44,
+                      "height": 44,
+                      "cornerRadius": "$radius-md",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "w4Amk",
+                          "name": "Tablet Serial Navigation / Upgrade Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "upload",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
                         }
                       ]
                     }
@@ -6617,6 +6701,27 @@
                   "fontWeight": "600"
                 }
               ]
+            },
+            {
+              "type": "frame",
+              "id": "dISqu",
+              "name": "Mobile Firmware Tabs / Upgrade",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "UKg82",
+                  "name": "Mobile Firmware Tabs / Upgrade Label",
+                  "fill": "$color-muted",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
             }
           ]
         },
@@ -7434,6 +7539,27 @@
                   "fill": "$color-accent",
                   "width": 48,
                   "height": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "ViBFf",
+              "name": "Mobile Serial Tabs / Upgrade",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "JcG4C",
+                  "name": "Mobile Serial Tabs / Upgrade Label",
+                  "fill": "$color-muted",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
                 }
               ]
             }
@@ -8625,6 +8751,27 @@
                   "fontWeight": "600"
                 }
               ]
+            },
+            {
+              "type": "frame",
+              "id": "TdSIf",
+              "name": "Mobile Firmware Tabs / Upgrade",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "YpYsZ",
+                  "name": "Mobile Firmware Tabs / Upgrade Label",
+                  "fill": "$color-muted",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
             }
           ]
         },
@@ -9442,6 +9589,27 @@
                   "fill": "$color-accent",
                   "width": 48,
                   "height": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Ebj8l",
+              "name": "Mobile Serial Tabs / Upgrade",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "R5o5D",
+                  "name": "Mobile Serial Tabs / Upgrade Label",
+                  "fill": "$color-muted",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
                 }
               ]
             }
@@ -10633,6 +10801,27 @@
                   "fontWeight": "600"
                 }
               ]
+            },
+            {
+              "type": "frame",
+              "id": "QKHJw",
+              "name": "Mobile Firmware Tabs / Upgrade",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vEcdW",
+                  "name": "Mobile Firmware Tabs / Upgrade Label",
+                  "fill": "$color-muted",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
             }
           ]
         },
@@ -11450,6 +11639,27 @@
                   "fill": "$color-accent",
                   "width": 48,
                   "height": 2
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Hr4kU",
+              "name": "Mobile Serial Tabs / Upgrade",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "FRtTc",
+                  "name": "Mobile Serial Tabs / Upgrade Label",
+                  "fill": "$color-muted",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
                 }
               ]
             }
@@ -12459,6 +12669,4212 @@
           ]
         }
       ]
+    },
+    {
+      "type": "frame",
+      "id": "mQdtM",
+      "x": 3120,
+      "y": 0,
+      "name": "Upgrade / Desktop 1440",
+      "context": "Responsive family · firmware upgrade · auto device detection · desktop ≥960 · Hallmark Workbench Coral · critique P5 H5 E5 S5 R5 V5",
+      "clip": true,
+      "width": 1440,
+      "height": 960,
+      "fill": "$color-paper",
+      "children": [
+        {
+          "type": "frame",
+          "id": "XSTSu",
+          "name": "Upgrade Desktop Sidebar",
+          "width": 232,
+          "height": "fill_container",
+          "fill": "$color-ink",
+          "layout": "vertical",
+          "padding": [
+            28,
+            20,
+            20,
+            20
+          ],
+          "justifyContent": "space_between",
+          "children": [
+            {
+              "type": "frame",
+              "id": "t2qCdi",
+              "name": "Upgrade Desktop Sidebar Top",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 32,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "hmroV",
+                  "name": "Upgrade Desktop Brand",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "YEKq8",
+                      "name": "Upgrade Desktop Brand Name",
+                      "fill": "$color-surface",
+                      "content": "CRazyLink",
+                      "fontFamily": "$font-wordmark",
+                      "fontSize": 23,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "H9aPzk",
+                      "name": "Upgrade Desktop Brand Descriptor",
+                      "fill": "$color-muted-2",
+                      "content": "WEB CONFIGURATOR",
+                      "fontFamily": "$font-mono",
+                      "fontSize": 10,
+                      "fontWeight": "500",
+                      "letterSpacing": 1.2
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pbiDU",
+                  "name": "Upgrade Desktop Navigation",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 6,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "pjflz",
+                      "name": "Upgrade Nav Firmware",
+                      "width": "fill_container",
+                      "height": 44,
+                      "cornerRadius": "$radius-md",
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        15
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Gu66V",
+                          "name": "Upgrade Nav Firmware Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "file-up",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        },
+                        {
+                          "type": "text",
+                          "id": "p5ejM",
+                          "name": "Upgrade Nav Firmware Label",
+                          "fill": "$color-muted-2",
+                          "content": "固件烧录",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "tvJZB",
+                      "name": "Upgrade Nav Serial",
+                      "width": "fill_container",
+                      "height": 44,
+                      "cornerRadius": "$radius-md",
+                      "gap": 12,
+                      "padding": [
+                        10,
+                        15
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "H2xEwm",
+                          "name": "Upgrade Nav Serial Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "terminal",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        },
+                        {
+                          "type": "text",
+                          "id": "lUbd6",
+                          "name": "Upgrade Nav Serial Label",
+                          "fill": "$color-muted-2",
+                          "content": "串口终端",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "500"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "N18whA",
+                      "name": "Upgrade Nav Active",
+                      "width": "fill_container",
+                      "height": 44,
+                      "fill": "$color-ink-2",
+                      "cornerRadius": "$radius-md",
+                      "gap": 10,
+                      "padding": [
+                        10,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 2,
+                          "id": "V8Tl5J",
+                          "name": "Upgrade Nav Active Active Marker",
+                          "fill": "$color-accent",
+                          "width": 3,
+                          "height": 20
+                        },
+                        {
+                          "type": "icon",
+                          "id": "Q8cv0",
+                          "name": "Upgrade Nav Active Icon",
+                          "width": 18,
+                          "height": 18,
+                          "icon": "upload",
+                          "library": "lucide",
+                          "fill": "$color-surface"
+                        },
+                        {
+                          "type": "text",
+                          "id": "PUFTo",
+                          "name": "Upgrade Nav Active Label",
+                          "fill": "$color-surface",
+                          "content": "固件升级",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "g8FkI",
+              "name": "Upgrade Desktop Sidebar Status",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 10,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "yI9an",
+                  "name": "Upgrade Desktop Device Status",
+                  "width": "fill_container",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "teost",
+                      "name": "Upgrade Desktop Device Dot",
+                      "fill": "$color-success",
+                      "width": 8,
+                      "height": 8
+                    },
+                    {
+                      "type": "frame",
+                      "id": "Fdmtq",
+                      "name": "Upgrade Desktop Device Text",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "AQYl7",
+                          "name": "Upgrade Desktop Device State",
+                          "fill": "$color-surface",
+                          "content": "设备已连接",
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "zbYxL",
+                          "name": "Upgrade Desktop Device Port",
+                          "fill": "$color-muted-2",
+                          "content": "USB Serial · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "C7nVN",
+                  "name": "Upgrade Desktop App Version",
+                  "fill": "$color-muted-2",
+                  "content": "CRazyLink Configurator 0.1",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "N7on1",
+          "name": "Upgrade Desktop Main",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "$color-paper",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "mEd4K",
+              "name": "Upgrade Desktop Header",
+              "width": "fill_container",
+              "height": 88,
+              "stroke": "$color-rule",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "padding": [
+                0,
+                40
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "cN1rS",
+                  "name": "Upgrade Desktop Header Text",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "KKNOU",
+                      "name": "Upgrade Desktop Title",
+                      "fill": "$color-ink",
+                      "content": "固件升级",
+                      "fontFamily": "$font-body",
+                      "fontSize": 24,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "u7etkS",
+                      "name": "Upgrade Desktop Subtitle",
+                      "fill": "$color-muted",
+                      "content": "连接后自动识别设备类型",
+                      "fontFamily": "$font-body",
+                      "fontSize": 13,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Qm3DU",
+                  "name": "Upgrade Desktop Header Actions",
+                  "gap": 10,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "usdSa",
+                      "name": "Upgrade Release Source",
+                      "height": 38,
+                      "fill": "$color-surface",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-rule",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "k5gB1",
+                          "name": "Upgrade Release Source Icon",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "github",
+                          "library": "lucide",
+                          "fill": "$color-ink"
+                        },
+                        {
+                          "type": "text",
+                          "id": "swmbT",
+                          "name": "Upgrade Release Source Label",
+                          "fill": "$color-ink",
+                          "content": "GitHub Releases",
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "c132Mu",
+                      "name": "Upgrade Refresh Releases",
+                      "width": 38,
+                      "height": 38,
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-rule",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "mejGa",
+                          "name": "Upgrade Refresh Releases Icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "refresh-cw",
+                          "library": "lucide",
+                          "fill": "$color-muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "zx2To",
+              "name": "Upgrade Desktop Content",
+              "width": "fill_container",
+              "height": "fill_container",
+              "gap": 32,
+              "padding": [
+                28,
+                40,
+                24,
+                40
+              ],
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "e9koD",
+                  "name": "Upgrade Workflow",
+                  "width": "fill_container",
+                  "height": "fill_container",
+                  "layout": "vertical",
+                  "gap": 24,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "pKaiA",
+                      "name": "Upgrade Device Detection Header",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "mjNsh",
+                          "name": "Upgrade Device Detection Title",
+                          "fill": "$color-ink",
+                          "content": "设备类型自动识别",
+                          "fontFamily": "$font-body",
+                          "fontSize": 18,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "mmFf6",
+                          "name": "Upgrade Device Detection Hint",
+                          "fill": "$color-muted",
+                          "content": "连接串口后自动判断 CRazyLink 或 ESP32-S3",
+                          "fontFamily": "$font-body",
+                          "fontSize": 12,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "sMXQJ",
+                      "name": "Upgrade Configuration",
+                      "width": "fill_container",
+                      "fill": "$color-surface",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-rule",
+                      "strokeWidth": 1,
+                      "layout": "vertical",
+                      "gap": 20,
+                      "padding": 20,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "zCON2",
+                          "name": "Upgrade Configuration Header",
+                          "width": "fill_container",
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "uBNn4",
+                              "name": "Upgrade Configuration Title",
+                              "fill": "$color-ink",
+                              "content": "升级配置",
+                              "fontFamily": "$font-body",
+                              "fontSize": 16,
+                              "fontWeight": "700"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "RPRZI",
+                              "name": "Upgrade Device Detection Status",
+                              "height": 28,
+                              "fill": "$color-surface-2",
+                              "cornerRadius": 14,
+                              "gap": 8,
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "so4d0",
+                                  "name": "Upgrade Device Detection Icon",
+                                  "width": 13,
+                                  "height": 13,
+                                  "icon": "cpu",
+                                  "library": "lucide",
+                                  "fill": "$color-muted"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "aulb5",
+                                  "name": "Upgrade Device Detection Label",
+                                  "fill": "$color-muted",
+                                  "content": "自动识别设备类型",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "650"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "t8NKo",
+                          "name": "Upgrade Primary Fields",
+                          "width": "fill_container",
+                          "gap": 12,
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "bFFgo",
+                              "name": "Upgrade Serial Device",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 6,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "NsxpW",
+                                  "name": "Upgrade Serial Device Label",
+                                  "fill": "$color-muted",
+                                  "content": "升级串口设备",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "UImvI",
+                                  "name": "Upgrade Serial Device Field",
+                                  "width": "fill_container",
+                                  "height": 44,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "padding": [
+                                    0,
+                                    12
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "bHfNz",
+                                      "name": "Upgrade Serial Device Value",
+                                      "fill": "$color-ink",
+                                      "content": "USB Serial · COM4",
+                                      "fontFamily": "$font-mono",
+                                      "fontSize": 12,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "icon",
+                                      "id": "MmJdn",
+                                      "name": "Upgrade Serial Device Chevron",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "chevron-down",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "HplwU",
+                              "name": "Upgrade Release Tag",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 6,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "BlOfI",
+                                  "name": "Upgrade Release Tag Label",
+                                  "fill": "$color-muted",
+                                  "content": "发布 TAG",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "HW4RA",
+                                  "name": "Upgrade Release Tag Field",
+                                  "width": "fill_container",
+                                  "height": 44,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "padding": [
+                                    0,
+                                    12
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "l4AVTA",
+                                      "name": "Upgrade Release Tag Value",
+                                      "fill": "$color-muted",
+                                      "content": "选择发布 TAG",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 12,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "icon",
+                                      "id": "eQXai",
+                                      "name": "Upgrade Release Tag Chevron",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "chevron-down",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "YtjW9",
+                          "name": "Upgrade Target Mapping",
+                          "width": "fill_container",
+                          "stroke": "$color-rule",
+                          "strokeWidth": {
+                            "top": 1
+                          },
+                          "layout": "vertical",
+                          "gap": 12,
+                          "padding": [
+                            20,
+                            0,
+                            0,
+                            0
+                          ],
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "PqnPY",
+                              "name": "Upgrade Target Mapping Header",
+                              "width": "fill_container",
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Qml4r",
+                                  "name": "Upgrade Target Mapping Title",
+                                  "fill": "$color-ink",
+                                  "content": "TX / RX 目标映射",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 13,
+                                  "fontWeight": "700"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "QId3O",
+                                  "name": "Upgrade Target Mapping Hint",
+                                  "fill": "$color-muted",
+                                  "content": "展开设置目标设备、端口与通道",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "N79yer",
+                              "name": "Upgrade Target Mapping Rows",
+                              "width": "fill_container",
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "X6qBRF",
+                                  "name": "Upgrade TX Target",
+                                  "width": "fill_container",
+                                  "height": 52,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "gap": 12,
+                                  "padding": [
+                                    0,
+                                    12
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "sTWDv",
+                                      "name": "Upgrade TX Target Channel Badge",
+                                      "width": 36,
+                                      "height": 28,
+                                      "fill": "$color-accent-soft",
+                                      "cornerRadius": "$radius-sm",
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "i02jP",
+                                          "name": "Upgrade TX Target Channel",
+                                          "fill": "$color-accent",
+                                          "content": "TX",
+                                          "fontFamily": "$font-mono",
+                                          "fontSize": 10,
+                                          "fontWeight": "700"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "YH4EB",
+                                      "name": "Upgrade TX Target Copy",
+                                      "width": "fill_container",
+                                      "layout": "vertical",
+                                      "gap": 3,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "xqUhx",
+                                          "name": "Upgrade TX Target Title",
+                                          "fill": "$color-ink",
+                                          "content": "发送目标",
+                                          "fontFamily": "$font-body",
+                                          "fontSize": 11,
+                                          "fontWeight": "650"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "BjUww",
+                                          "name": "Upgrade TX Target Device",
+                                          "fill": "$color-muted",
+                                          "content": "同升级设备 · USB Serial · COM4",
+                                          "fontFamily": "$font-mono",
+                                          "fontSize": 10,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "icon",
+                                      "id": "PJ7Np",
+                                      "name": "Upgrade TX Target Chevron",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "chevron-right",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "mtPt7",
+                                  "name": "Upgrade RX Target",
+                                  "width": "fill_container",
+                                  "height": 52,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "gap": 12,
+                                  "padding": [
+                                    0,
+                                    12
+                                  ],
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "vAbLM",
+                                      "name": "Upgrade RX Target Channel Badge",
+                                      "width": 36,
+                                      "height": 28,
+                                      "fill": "$color-success-soft",
+                                      "cornerRadius": "$radius-sm",
+                                      "justifyContent": "center",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "TO4vn",
+                                          "name": "Upgrade RX Target Channel",
+                                          "fill": "$color-success",
+                                          "content": "RX",
+                                          "fontFamily": "$font-mono",
+                                          "fontSize": 10,
+                                          "fontWeight": "700"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "Nm9zg",
+                                      "name": "Upgrade RX Target Copy",
+                                      "width": "fill_container",
+                                      "layout": "vertical",
+                                      "gap": 3,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "pA2Hr",
+                                          "name": "Upgrade RX Target Title",
+                                          "fill": "$color-ink",
+                                          "content": "接收目标",
+                                          "fontFamily": "$font-body",
+                                          "fontSize": 11,
+                                          "fontWeight": "650"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "GVxmi",
+                                          "name": "Upgrade RX Target Device",
+                                          "fill": "$color-muted",
+                                          "content": "同升级设备 · USB Serial · COM4",
+                                          "fontFamily": "$font-mono",
+                                          "fontSize": 10,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "icon",
+                                      "id": "VM42V",
+                                      "name": "Upgrade RX Target Chevron",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "chevron-right",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "fBTrS",
+                          "name": "Upgrade Advanced Disclosure",
+                          "width": "fill_container",
+                          "height": 44,
+                          "justifyContent": "space_between",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "H9RzSk",
+                              "name": "Upgrade Advanced Label",
+                              "width": "fill_container",
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "icon",
+                                  "id": "JmNHh",
+                                  "name": "Upgrade Advanced Icon",
+                                  "width": 15,
+                                  "height": 15,
+                                  "icon": "settings-2",
+                                  "library": "lucide",
+                                  "fill": "$color-muted"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "jvg2A",
+                                  "name": "Upgrade Advanced Text",
+                                  "fill": "$color-muted",
+                                  "content": "高级选项",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "650"
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "cWMD9",
+                                  "name": "Upgrade Advanced Reserved",
+                                  "fill": "$color-muted-2",
+                                  "content": "擦除策略 · 写入校验 · 完成后重启",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "normal"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "icon",
+                              "id": "a9qVP",
+                              "name": "Upgrade Advanced Chevron",
+                              "width": 15,
+                              "height": 15,
+                              "icon": "chevron-right",
+                              "library": "lucide",
+                              "fill": "$color-muted"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BEz33",
+                      "name": "Upgrade Desktop Flash Action",
+                      "width": "fill_container",
+                      "height": 68,
+                      "fill": "$color-surface",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-rule",
+                      "strokeWidth": 1,
+                      "gap": 16,
+                      "padding": [
+                        12,
+                        16
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "RBrFg",
+                          "name": "Upgrade Desktop Flash Helper",
+                          "fill": "$color-muted",
+                          "content": "选择发布 TAG 后可开始刷写",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "F3qcF",
+                          "name": "Upgrade Desktop Flashing Disabled",
+                          "width": 164,
+                          "height": 42,
+                          "fill": "$color-surface-2",
+                          "cornerRadius": "$radius-sm",
+                          "gap": 8,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "t5WrH5",
+                              "name": "Upgrade Desktop Flashing Icon",
+                              "width": 16,
+                              "height": 16,
+                              "icon": "upload",
+                              "library": "lucide",
+                              "fill": "$color-muted-2"
+                            },
+                            {
+                              "type": "text",
+                              "id": "O491jp",
+                              "name": "Upgrade Desktop Flashing Label",
+                              "fill": "$color-muted-2",
+                              "content": "FLASHING",
+                              "fontFamily": "$font-mono",
+                              "fontSize": 12,
+                              "fontWeight": "700"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "wy1ip",
+              "name": "Upgrade Desktop Status",
+              "width": "fill_container",
+              "height": 40,
+              "fill": "$color-surface",
+              "stroke": "$color-rule",
+              "strokeWidth": {
+                "top": 1
+              },
+              "padding": [
+                0,
+                40
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "k94QYs",
+                  "name": "Upgrade Desktop Status Left",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "ellipse",
+                      "id": "z5OjCA",
+                      "name": "Upgrade Desktop Status Dot",
+                      "fill": "$color-success",
+                      "width": 7,
+                      "height": 7
+                    },
+                    {
+                      "type": "text",
+                      "id": "XGn9e",
+                      "name": "Upgrade Desktop Status Text",
+                      "fill": "$color-success",
+                      "content": "发布列表已同步，设备可用",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    }
+                  ]
+                },
+                {
+                  "type": "text",
+                  "id": "CsP2U",
+                  "name": "Upgrade Desktop Status Source",
+                  "fill": "$color-muted",
+                  "content": "github.com/CR072/CRazyLink · Releases",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "rr7Cf",
+      "x": 1776,
+      "y": 1080,
+      "name": "Upgrade / Tablet 768",
+      "context": "Responsive family · firmware upgrade · auto device detection · tablet 640–959 · icon rail 72 · Hallmark critique P5 H5 E5 S5 R5 V5",
+      "clip": true,
+      "width": 768,
+      "height": 1024,
+      "fill": "$color-paper",
+      "children": [
+        {
+          "type": "frame",
+          "id": "v6uSdN",
+          "name": "Upgrade Tablet Icon Rail",
+          "width": 72,
+          "height": "fill_container",
+          "fill": "$color-ink",
+          "layout": "vertical",
+          "padding": [
+            20,
+            12
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "q14K7",
+              "name": "Upgrade Tablet Rail Top",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 28,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "Uullq",
+                  "name": "Upgrade Tablet Brand",
+                  "width": 40,
+                  "height": 40,
+                  "fill": "$color-ink-2",
+                  "cornerRadius": "$radius-md",
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "ve3Lf",
+                      "name": "Upgrade Tablet Brand Text",
+                      "fill": "$color-surface",
+                      "content": "CR",
+                      "fontFamily": "$font-wordmark",
+                      "fontSize": 15,
+                      "fontWeight": "700"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "EwPAB",
+                  "name": "Upgrade Tablet Navigation",
+                  "width": "fill_container",
+                  "layout": "vertical",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sE4fB",
+                      "name": "Upgrade Tablet Firmware Nav",
+                      "width": 44,
+                      "height": 44,
+                      "cornerRadius": "$radius-md",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "O3hIM",
+                          "name": "Upgrade Tablet Firmware Nav Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "file-up",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "k1PjU",
+                      "name": "Upgrade Tablet Serial Nav",
+                      "width": 44,
+                      "height": 44,
+                      "cornerRadius": "$radius-md",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "XLgjb",
+                          "name": "Upgrade Tablet Serial Nav Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "terminal",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "dxxpu",
+                      "name": "Upgrade Tablet Active Nav",
+                      "width": 44,
+                      "height": 44,
+                      "fill": "$color-ink-2",
+                      "cornerRadius": "$radius-md",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "rectangle",
+                          "cornerRadius": 2,
+                          "id": "l9P2vJ",
+                          "layoutPosition": "absolute",
+                          "x": 0,
+                          "y": 12,
+                          "name": "Upgrade Tablet Active Nav Active Bar",
+                          "fill": "$color-accent",
+                          "width": 3,
+                          "height": 20
+                        },
+                        {
+                          "type": "icon",
+                          "id": "O5goa",
+                          "name": "Upgrade Tablet Active Nav Icon",
+                          "width": 19,
+                          "height": 19,
+                          "icon": "upload",
+                          "library": "lucide",
+                          "fill": "$color-surface"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HImBs",
+              "name": "Upgrade Tablet Rail Bottom",
+              "layout": "vertical",
+              "gap": 12,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "ellipse",
+                  "id": "iOnKb",
+                  "name": "Upgrade Tablet Device Dot",
+                  "fill": "$color-success",
+                  "width": 8,
+                  "height": 8
+                },
+                {
+                  "type": "icon",
+                  "id": "AOTRe",
+                  "name": "Upgrade Tablet Settings",
+                  "width": 18,
+                  "height": 18,
+                  "icon": "settings",
+                  "library": "lucide",
+                  "fill": "$color-muted-2"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "DCT1z",
+          "name": "Upgrade Tablet Main",
+          "width": "fill_container",
+          "height": "fill_container",
+          "fill": "$color-paper",
+          "layout": "vertical",
+          "children": [
+            {
+              "type": "frame",
+              "id": "p8XzH",
+              "name": "Upgrade Tablet Header",
+              "width": "fill_container",
+              "height": 72,
+              "stroke": "$color-rule",
+              "strokeWidth": {
+                "bottom": 1
+              },
+              "padding": [
+                0,
+                24
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "HRDc0",
+                  "name": "Upgrade Tablet Header Text",
+                  "layout": "vertical",
+                  "gap": 4,
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "VI1Qh",
+                      "name": "Upgrade Tablet Title",
+                      "fill": "$color-ink",
+                      "content": "固件升级",
+                      "fontFamily": "$font-body",
+                      "fontSize": 20,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "L7bAk",
+                      "name": "Upgrade Tablet Subtitle",
+                      "fill": "$color-muted",
+                      "content": "连接后自动识别设备类型",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "xfY4e",
+                  "name": "Upgrade Tablet Header Actions",
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ZmVyX",
+                      "name": "Upgrade Tablet Source",
+                      "height": 36,
+                      "fill": "$color-surface",
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-rule",
+                      "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Rwmul",
+                          "name": "Upgrade Tablet Source Icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "github",
+                          "library": "lucide",
+                          "fill": "$color-ink"
+                        },
+                        {
+                          "type": "text",
+                          "id": "aHlAR",
+                          "name": "Upgrade Tablet Source Label",
+                          "fill": "$color-ink",
+                          "content": "Releases",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "PI46Z",
+                      "name": "Upgrade Tablet Refresh",
+                      "width": 36,
+                      "height": 36,
+                      "cornerRadius": "$radius-md",
+                      "stroke": "$color-rule",
+                      "strokeWidth": 1,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "n0YPN1",
+                          "name": "Upgrade Tablet Refresh Icon",
+                          "width": 14,
+                          "height": 14,
+                          "icon": "refresh-cw",
+                          "library": "lucide",
+                          "fill": "$color-muted"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "t2YX98",
+              "name": "Upgrade Tablet Content",
+              "width": "fill_container",
+              "height": "fill_container",
+              "layout": "vertical",
+              "gap": 16,
+              "padding": 24,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "W8HXwG",
+                  "name": "Upgrade Tablet Detection Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "end",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "sQwCO",
+                      "name": "Upgrade Tablet Detection Copy",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "TO01e",
+                          "name": "Upgrade Tablet Detection Title",
+                          "fill": "$color-ink",
+                          "content": "设备类型自动识别",
+                          "fontFamily": "$font-body",
+                          "fontSize": 17,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Ozk8x",
+                          "name": "Upgrade Tablet Detection Hint",
+                          "fill": "$color-muted",
+                          "content": "连接串口后自动判断升级流程",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "h5KwO",
+                      "name": "Upgrade Tablet Source Note",
+                      "fill": "$color-muted",
+                      "content": "GitHub Releases",
+                      "fontFamily": "$font-mono",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "tzWqY",
+                  "name": "Upgrade Tablet Configuration",
+                  "width": "fill_container",
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "layout": "vertical",
+                  "gap": 16,
+                  "padding": 16,
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "lHJ4Q",
+                      "name": "Upgrade Tablet Configuration Header",
+                      "width": "fill_container",
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "i0gZ4N",
+                          "name": "Upgrade Tablet Configuration Title",
+                          "fill": "$color-ink",
+                          "content": "升级配置",
+                          "fontFamily": "$font-body",
+                          "fontSize": 14,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "frame",
+                          "id": "XcsHw",
+                          "name": "Upgrade Tablet Device Detection Status",
+                          "height": 26,
+                          "fill": "$color-surface-2",
+                          "cornerRadius": 13,
+                          "padding": [
+                            0,
+                            8
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "cQZFm",
+                              "name": "Upgrade Tablet Device Detection Label",
+                              "fill": "$color-muted",
+                              "content": "自动识别设备类型",
+                              "fontFamily": "$font-body",
+                              "fontSize": 10,
+                              "fontWeight": "650"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "K3dBm",
+                      "name": "Upgrade Tablet Primary Fields",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "M7YBhA",
+                          "name": "Upgrade Tablet Device",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "I5jqA",
+                              "name": "Upgrade Tablet Device Label",
+                              "fill": "$color-muted",
+                              "content": "升级串口",
+                              "fontFamily": "$font-body",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "v7pxiS",
+                              "name": "Upgrade Tablet Device Field",
+                              "width": "fill_container",
+                              "height": 40,
+                              "fill": "$color-paper",
+                              "cornerRadius": "$radius-sm",
+                              "stroke": "$color-rule",
+                              "strokeWidth": 1,
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "n7xHBH",
+                                  "name": "Upgrade Tablet Device Value",
+                                  "fill": "$color-ink",
+                                  "content": "USB Serial · COM4",
+                                  "fontFamily": "$font-mono",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "icon",
+                                  "id": "dBGUu",
+                                  "name": "Upgrade Tablet Device Chevron",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "chevron-down",
+                                  "library": "lucide",
+                                  "fill": "$color-muted"
+                                }
+                              ]
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "Y4NTAF",
+                          "name": "Upgrade Tablet Tag",
+                          "width": "fill_container",
+                          "layout": "vertical",
+                          "gap": 4,
+                          "children": [
+                            {
+                              "type": "text",
+                              "id": "R6t8P2",
+                              "name": "Upgrade Tablet Tag Label",
+                              "fill": "$color-muted",
+                              "content": "发布 TAG",
+                              "fontFamily": "$font-body",
+                              "fontSize": 10,
+                              "fontWeight": "600"
+                            },
+                            {
+                              "type": "frame",
+                              "id": "CyRZW",
+                              "name": "Upgrade Tablet Tag Field",
+                              "width": "fill_container",
+                              "height": 40,
+                              "fill": "$color-paper",
+                              "cornerRadius": "$radius-sm",
+                              "stroke": "$color-rule",
+                              "strokeWidth": 1,
+                              "padding": [
+                                0,
+                                10
+                              ],
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "tFIuR",
+                                  "name": "Upgrade Tablet Tag Value",
+                                  "fill": "$color-muted",
+                                  "content": "选择发布 TAG",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "icon",
+                                  "id": "u04mR6",
+                                  "name": "Upgrade Tablet Tag Chevron",
+                                  "width": 14,
+                                  "height": 14,
+                                  "icon": "chevron-down",
+                                  "library": "lucide",
+                                  "fill": "$color-muted"
+                                }
+                              ]
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BuPA6",
+                      "name": "Upgrade Tablet Mapping Header",
+                      "width": "fill_container",
+                      "stroke": "$color-rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "padding": [
+                        12,
+                        0,
+                        0,
+                        0
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "yHqkg",
+                          "name": "Upgrade Tablet Mapping Title",
+                          "fill": "$color-ink",
+                          "content": "TX / RX 目标映射",
+                          "fontFamily": "$font-body",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        },
+                        {
+                          "type": "text",
+                          "id": "rhvDK",
+                          "name": "Upgrade Tablet Mapping Hint",
+                          "fill": "$color-muted",
+                          "content": "展开设置目标设备、端口与通道",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "uM7tD",
+                      "name": "Upgrade Tablet Mapping Rows",
+                      "width": "fill_container",
+                      "gap": 12,
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "QWuLb",
+                          "name": "Upgrade Tablet TX",
+                          "width": "fill_container",
+                          "height": 48,
+                          "fill": "$color-paper",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$color-rule",
+                          "strokeWidth": 1,
+                          "gap": 10,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "l9mY0",
+                              "name": "Upgrade Tablet TX Badge",
+                              "width": 32,
+                              "height": 26,
+                              "fill": "$color-accent-soft",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "iXozL",
+                                  "name": "Upgrade Tablet TX Channel",
+                                  "fill": "$color-accent",
+                                  "content": "TX",
+                                  "fontFamily": "$font-mono",
+                                  "fontSize": 10,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "ZeOt8",
+                              "name": "Upgrade Tablet TX Device",
+                              "fill": "$color-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "同升级设备 · COM4",
+                              "fontFamily": "$font-mono",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "DCssw",
+                              "name": "Upgrade Tablet TX Chevron",
+                              "width": 13,
+                              "height": 13,
+                              "icon": "chevron-right",
+                              "library": "lucide",
+                              "fill": "$color-muted"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "frame",
+                          "id": "CXyLn",
+                          "name": "Upgrade Tablet RX",
+                          "width": "fill_container",
+                          "height": 48,
+                          "fill": "$color-paper",
+                          "cornerRadius": "$radius-sm",
+                          "stroke": "$color-rule",
+                          "strokeWidth": 1,
+                          "gap": 10,
+                          "padding": [
+                            0,
+                            10
+                          ],
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "KPbrZ",
+                              "name": "Upgrade Tablet RX Badge",
+                              "width": 32,
+                              "height": 26,
+                              "fill": "$color-success-soft",
+                              "cornerRadius": "$radius-sm",
+                              "justifyContent": "center",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "FPS1J",
+                                  "name": "Upgrade Tablet RX Channel",
+                                  "fill": "$color-success",
+                                  "content": "RX",
+                                  "fontFamily": "$font-mono",
+                                  "fontSize": 10,
+                                  "fontWeight": "700"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "text",
+                              "id": "NHCDx",
+                              "name": "Upgrade Tablet RX Device",
+                              "fill": "$color-muted",
+                              "textGrowth": "fixed-width",
+                              "width": "fill_container",
+                              "content": "同升级设备 · COM4",
+                              "fontFamily": "$font-mono",
+                              "fontSize": 10,
+                              "fontWeight": "normal"
+                            },
+                            {
+                              "type": "icon",
+                              "id": "wMfRT",
+                              "name": "Upgrade Tablet RX Chevron",
+                              "width": 13,
+                              "height": 13,
+                              "icon": "chevron-right",
+                              "library": "lucide",
+                              "fill": "$color-muted"
+                            }
+                          ]
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "BI8VO",
+                      "name": "Upgrade Tablet Advanced Disclosure",
+                      "width": "fill_container",
+                      "height": 42,
+                      "stroke": "$color-rule",
+                      "strokeWidth": {
+                        "top": 1
+                      },
+                      "padding": [
+                        12,
+                        0,
+                        0,
+                        0
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "a8JtD",
+                          "name": "Upgrade Tablet Advanced Label",
+                          "gap": 8,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "ft40x",
+                              "name": "Upgrade Tablet Advanced Icon",
+                              "width": 15,
+                              "height": 15,
+                              "icon": "settings-2",
+                              "library": "lucide",
+                              "fill": "$color-muted"
+                            },
+                            {
+                              "type": "text",
+                              "id": "v8OMl7",
+                              "name": "Upgrade Tablet Advanced Text",
+                              "fill": "$color-muted",
+                              "content": "高级选项",
+                              "fontFamily": "$font-body",
+                              "fontSize": 10,
+                              "fontWeight": "650"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "xPGe5",
+                          "name": "Upgrade Tablet Advanced Reserved",
+                          "fill": "$color-muted-2",
+                          "content": "擦除策略 · 写入校验 · 完成后重启",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        },
+                        {
+                          "type": "icon",
+                          "id": "i2aUiI",
+                          "name": "Upgrade Tablet Advanced Chevron",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "chevron-right",
+                          "library": "lucide",
+                          "fill": "$color-muted"
+                        }
+                      ]
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "pZya3",
+                  "name": "Upgrade Tablet Workflow Spacer",
+                  "width": "fill_container",
+                  "height": "fill_container"
+                },
+                {
+                  "type": "frame",
+                  "id": "mwaTP",
+                  "name": "Upgrade Tablet Flash Action",
+                  "width": "fill_container",
+                  "height": 54,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 12,
+                  "padding": [
+                    0,
+                    16
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "WNL5X",
+                      "name": "Upgrade Tablet Flash Helper",
+                      "fill": "$color-muted",
+                      "content": "选择发布 TAG 后可开始刷写",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "frame",
+                      "id": "OdT0p",
+                      "name": "Upgrade Tablet Flashing Disabled",
+                      "width": 164,
+                      "height": 42,
+                      "fill": "$color-surface-2",
+                      "cornerRadius": "$radius-sm",
+                      "gap": 8,
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "xR0Pl",
+                          "name": "Upgrade Tablet Flashing Icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "upload",
+                          "library": "lucide",
+                          "fill": "$color-muted-2"
+                        },
+                        {
+                          "type": "text",
+                          "id": "VXjwc",
+                          "name": "Upgrade Tablet Flashing Label",
+                          "fill": "$color-muted-2",
+                          "content": "FLASHING",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 11,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "lxNCp",
+              "name": "Upgrade Tablet Status",
+              "width": "fill_container",
+              "height": 36,
+              "fill": "$color-surface",
+              "stroke": "$color-rule",
+              "strokeWidth": {
+                "top": 1
+              },
+              "padding": [
+                0,
+                24
+              ],
+              "justifyContent": "space_between",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "uYWuv",
+                  "name": "Upgrade Tablet Status Text",
+                  "fill": "$color-success",
+                  "content": "● 发布列表已同步，设备可用",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "text",
+                  "id": "k0I5R8",
+                  "name": "Upgrade Tablet Status Source",
+                  "fill": "$color-muted",
+                  "content": "GitHub Releases",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "TLF8D",
+      "x": 0,
+      "y": 3264,
+      "name": "Upgrade / Mobile 320",
+      "context": "Responsive family · firmware upgrade · auto device detection · mobile 320 · top tabs · adaptive stacked controls · Hallmark critique P5 H5 E5 S5 R5 V5",
+      "clip": true,
+      "width": 320,
+      "height": 920,
+      "fill": "$color-paper",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "rxZ10",
+          "name": "Upgrade Mobile Top Bar",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "$color-paper",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "ctBmi",
+              "name": "Upgrade Mobile Brand",
+              "fill": "$color-ink",
+              "content": "CRazyLink",
+              "fontFamily": "$font-wordmark",
+              "fontSize": 17,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "Puroq",
+              "name": "Upgrade Mobile Top Actions",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "sqJ3m",
+                  "name": "Upgrade Mobile Source",
+                  "height": 40,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "K4WBss",
+                      "name": "Upgrade Mobile Source Icon",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "github",
+                      "library": "lucide",
+                      "fill": "$color-ink"
+                    },
+                    {
+                      "type": "text",
+                      "id": "x5sRnS",
+                      "name": "Upgrade Mobile Source Label",
+                      "fill": "$color-ink",
+                      "content": "Releases",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "650"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "jZ3Eg",
+                  "name": "Upgrade Mobile Menu",
+                  "width": 40,
+                  "height": 40,
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "upi77",
+                      "name": "Upgrade Mobile Menu Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "ellipsis",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "BJAM1",
+          "name": "Upgrade Mobile Tabs",
+          "width": "fill_container",
+          "height": 48,
+          "fill": "$color-surface",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "J9N5HS",
+              "name": "Upgrade Mobile Firmware Tab",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "Q4XDd8",
+                  "name": "Upgrade Mobile Firmware Tab Label",
+                  "fill": "$color-muted",
+                  "content": "固件烧录",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "UN3Bd",
+              "name": "Upgrade Mobile Serial Tab",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VHope",
+                  "name": "Upgrade Mobile Serial Tab Label",
+                  "fill": "$color-muted",
+                  "content": "串口终端",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "n7OAJC",
+              "name": "Upgrade Mobile Active Tab",
+              "width": "fill_container",
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "v3b6y",
+                  "name": "Upgrade Mobile Active Tab Label",
+                  "fill": "$color-ink",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 1,
+                  "id": "S8uRm",
+                  "name": "Upgrade Mobile Active Tab Active Line",
+                  "fill": "$color-accent",
+                  "width": 44,
+                  "height": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "Pzq0F",
+          "name": "Upgrade Mobile Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            16,
+            16,
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "SXsWN",
+              "name": "Upgrade Mobile Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "dusVl",
+                  "name": "Upgrade Mobile Title",
+                  "fill": "$color-ink",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "G1yedx",
+                  "name": "Upgrade Mobile Subtitle",
+                  "fill": "$color-muted",
+                  "content": "连接后自动识别设备类型",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "eMHHS",
+              "name": "Upgrade Mobile Selectors",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "ogcJ6",
+                  "name": "Upgrade Mobile Device",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "b8vMXN",
+                      "name": "Upgrade Mobile Device Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "rUR3Q",
+                          "name": "Upgrade Mobile Device Label",
+                          "fill": "$color-muted",
+                          "content": "升级串口设备",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "qQNC9",
+                          "name": "Upgrade Mobile Device Value",
+                          "fill": "$color-ink",
+                          "content": "USB Serial · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "PuFpO",
+                      "name": "Upgrade Mobile Device Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "fAF7I",
+                  "name": "Upgrade Mobile Tag",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "ctzwk",
+                      "name": "Upgrade Mobile Tag Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "n7v4Q",
+                          "name": "Upgrade Mobile Tag Label",
+                          "fill": "$color-muted",
+                          "content": "发布 TAG",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Y0W8L",
+                          "name": "Upgrade Mobile Tag Value",
+                          "fill": "$color-warning",
+                          "content": "尚未选择",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "WmZeh",
+                      "name": "Upgrade Mobile Tag Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "d8BMNA",
+              "name": "Upgrade Mobile Mapping",
+              "width": "fill_container",
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "vbHPU",
+                  "name": "Upgrade Mobile Mapping Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "bOY4Q",
+                      "name": "Upgrade Mobile Mapping Title",
+                      "fill": "$color-ink",
+                      "content": "TX / RX 目标映射",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "C6JIA",
+                      "name": "Upgrade Mobile Mapping Hint",
+                      "fill": "$color-muted",
+                      "content": "展开设置目标设备、端口与通道",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ogA8Z",
+                  "name": "Upgrade Mobile TX",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "Q2HLZ",
+                      "name": "Upgrade Mobile TX Badge",
+                      "width": 32,
+                      "height": 26,
+                      "fill": "$color-accent-soft",
+                      "cornerRadius": "$radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "COeUz",
+                          "name": "Upgrade Mobile TX Channel",
+                          "fill": "$color-accent",
+                          "content": "TX",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "j925V",
+                      "name": "Upgrade Mobile TX Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "hiR1R",
+                          "name": "Upgrade Mobile TX Role",
+                          "fill": "$color-ink",
+                          "content": "发送目标",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        },
+                        {
+                          "type": "text",
+                          "id": "ao0XG",
+                          "name": "Upgrade Mobile TX Device",
+                          "fill": "$color-muted",
+                          "content": "同升级设备 · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "ykFFR",
+                      "name": "Upgrade Mobile TX Chevron",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "O8D6km",
+                  "name": "Upgrade Mobile RX",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kpPhj",
+                      "name": "Upgrade Mobile RX Badge",
+                      "width": 32,
+                      "height": 26,
+                      "fill": "$color-success-soft",
+                      "cornerRadius": "$radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "UDgN3",
+                          "name": "Upgrade Mobile RX Channel",
+                          "fill": "$color-success",
+                          "content": "RX",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "S15Dc",
+                      "name": "Upgrade Mobile RX Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "M4IORj",
+                          "name": "Upgrade Mobile RX Role",
+                          "fill": "$color-ink",
+                          "content": "接收目标",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        },
+                        {
+                          "type": "text",
+                          "id": "QmuKx",
+                          "name": "Upgrade Mobile RX Device",
+                          "fill": "$color-muted",
+                          "content": "同升级设备 · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "xVzCz",
+                      "name": "Upgrade Mobile RX Chevron",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "J9ofqd",
+                  "name": "Upgrade Mobile Advanced Disclosure",
+                  "width": "fill_container",
+                  "height": 40,
+                  "stroke": "$color-rule",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "padding": [
+                    10,
+                    0,
+                    0,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "jsMk3",
+                      "name": "Upgrade Mobile Advanced Label",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Xvquf",
+                          "name": "Upgrade Mobile Advanced Icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "settings-2",
+                          "library": "lucide",
+                          "fill": "$color-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "wCPiH",
+                          "name": "Upgrade Mobile Advanced Text",
+                          "fill": "$color-muted",
+                          "content": "高级选项",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "SNM29",
+                      "name": "Upgrade Mobile Advanced Reserved",
+                      "fill": "$color-muted-2",
+                      "content": "擦除 · 校验 · 重启",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "a2Kn6",
+                      "name": "Upgrade Mobile Advanced Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "uu3V6",
+              "name": "Upgrade Mobile Flexible Space",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "E9jGF",
+              "name": "Upgrade Mobile Flashing Disabled",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface-2",
+              "cornerRadius": "$radius-md",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "i7wGrD",
+                  "name": "Upgrade Mobile Flashing Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "upload",
+                  "library": "lucide",
+                  "fill": "$color-muted-2"
+                },
+                {
+                  "type": "text",
+                  "id": "Sjxz2",
+                  "name": "Upgrade Mobile Flashing Label",
+                  "fill": "$color-muted-2",
+                  "content": "FLASHING",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "H0cwCL",
+          "name": "Upgrade Mobile Status",
+          "width": "fill_container",
+          "height": 36,
+          "fill": "$color-surface",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "top": 1
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "Chvuk",
+              "name": "Upgrade Mobile Status Text",
+              "fill": "$color-success",
+              "content": "● 设备可用",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "Y0vEE",
+              "name": "Upgrade Mobile Status Source",
+              "fill": "$color-muted",
+              "content": "GitHub Releases",
+              "fontFamily": "$font-mono",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "AkTdX",
+      "x": 400,
+      "y": 3264,
+      "name": "Upgrade / Mobile 375",
+      "context": "Responsive family · firmware upgrade · auto device detection · mobile 375 · top tabs · adaptive stacked controls · Hallmark critique P5 H5 E5 R5 V5",
+      "clip": true,
+      "width": 375,
+      "height": 920,
+      "fill": "$color-paper",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "o3DOf",
+          "name": "Upgrade Mobile Top Bar",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "$color-paper",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "x4dGu",
+              "name": "Upgrade Mobile Brand",
+              "fill": "$color-ink",
+              "content": "CRazyLink",
+              "fontFamily": "$font-wordmark",
+              "fontSize": 17,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "SvwV2",
+              "name": "Upgrade Mobile Top Actions",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "JUHpu",
+                  "name": "Upgrade Mobile Source",
+                  "height": 40,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "WVZUR",
+                      "name": "Upgrade Mobile Source Icon",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "github",
+                      "library": "lucide",
+                      "fill": "$color-ink"
+                    },
+                    {
+                      "type": "text",
+                      "id": "o1mHks",
+                      "name": "Upgrade Mobile Source Label",
+                      "fill": "$color-ink",
+                      "content": "Releases",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "650"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "y8kiws",
+                  "name": "Upgrade Mobile Menu",
+                  "width": 40,
+                  "height": 40,
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "Y2vMQE",
+                      "name": "Upgrade Mobile Menu Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "ellipsis",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "NXIQk",
+          "name": "Upgrade Mobile Tabs",
+          "width": "fill_container",
+          "height": 48,
+          "fill": "$color-surface",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "xYj9j",
+              "name": "Upgrade Mobile Firmware Tab",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "bRVj3",
+                  "name": "Upgrade Mobile Firmware Tab Label",
+                  "fill": "$color-muted",
+                  "content": "固件烧录",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "k55l2",
+              "name": "Upgrade Mobile Serial Tab",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "d5J5A",
+                  "name": "Upgrade Mobile Serial Tab Label",
+                  "fill": "$color-muted",
+                  "content": "串口终端",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "t9m6k",
+              "name": "Upgrade Mobile Active Tab",
+              "width": "fill_container",
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "G9c4LL",
+                  "name": "Upgrade Mobile Active Tab Label",
+                  "fill": "$color-ink",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 1,
+                  "id": "g05WK",
+                  "name": "Upgrade Mobile Active Tab Active Line",
+                  "fill": "$color-accent",
+                  "width": 44,
+                  "height": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "RNlGB",
+          "name": "Upgrade Mobile Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            16,
+            16,
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "i7sb7Z",
+              "name": "Upgrade Mobile Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "beHrT",
+                  "name": "Upgrade Mobile Title",
+                  "fill": "$color-ink",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "DcWrm",
+                  "name": "Upgrade Mobile Subtitle",
+                  "fill": "$color-muted",
+                  "content": "连接后自动识别设备类型",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "oTdju",
+              "name": "Upgrade Mobile Selectors",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "CMKkf",
+                  "name": "Upgrade Mobile Device",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "cCQCd",
+                      "name": "Upgrade Mobile Device Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "F0rJT",
+                          "name": "Upgrade Mobile Device Label",
+                          "fill": "$color-muted",
+                          "content": "升级串口设备",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "AH44d",
+                          "name": "Upgrade Mobile Device Value",
+                          "fill": "$color-ink",
+                          "content": "USB Serial · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "cxyb9",
+                      "name": "Upgrade Mobile Device Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "f9nC8Y",
+                  "name": "Upgrade Mobile Tag",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "umoy4",
+                      "name": "Upgrade Mobile Tag Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "pJmJu",
+                          "name": "Upgrade Mobile Tag Label",
+                          "fill": "$color-muted",
+                          "content": "发布 TAG",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "m2PXWV",
+                          "name": "Upgrade Mobile Tag Value",
+                          "fill": "$color-warning",
+                          "content": "尚未选择",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "LKNkr",
+                      "name": "Upgrade Mobile Tag Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "JoWA9",
+              "name": "Upgrade Mobile Mapping",
+              "width": "fill_container",
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "mdI89",
+                  "name": "Upgrade Mobile Mapping Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "fdN1g",
+                      "name": "Upgrade Mobile Mapping Title",
+                      "fill": "$color-ink",
+                      "content": "TX / RX 目标映射",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "Jps9g",
+                      "name": "Upgrade Mobile Mapping Hint",
+                      "fill": "$color-muted",
+                      "content": "展开设置目标设备、端口与通道",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "Yw7Ed",
+                  "name": "Upgrade Mobile TX",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "QC2jX",
+                      "name": "Upgrade Mobile TX Badge",
+                      "width": 32,
+                      "height": 26,
+                      "fill": "$color-accent-soft",
+                      "cornerRadius": "$radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "S6t7Vi",
+                          "name": "Upgrade Mobile TX Channel",
+                          "fill": "$color-accent",
+                          "content": "TX",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "et2Vs",
+                      "name": "Upgrade Mobile TX Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "NhF2T",
+                          "name": "Upgrade Mobile TX Role",
+                          "fill": "$color-ink",
+                          "content": "发送目标",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        },
+                        {
+                          "type": "text",
+                          "id": "aSWAV",
+                          "name": "Upgrade Mobile TX Device",
+                          "fill": "$color-muted",
+                          "content": "同升级设备 · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Z5l0WI",
+                      "name": "Upgrade Mobile TX Chevron",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "r3DfJ",
+                  "name": "Upgrade Mobile RX",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "fJK5G",
+                      "name": "Upgrade Mobile RX Badge",
+                      "width": 32,
+                      "height": 26,
+                      "fill": "$color-success-soft",
+                      "cornerRadius": "$radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "FM6HR",
+                          "name": "Upgrade Mobile RX Channel",
+                          "fill": "$color-success",
+                          "content": "RX",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "K5DIQ",
+                      "name": "Upgrade Mobile RX Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "O2zj1",
+                          "name": "Upgrade Mobile RX Role",
+                          "fill": "$color-ink",
+                          "content": "接收目标",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        },
+                        {
+                          "type": "text",
+                          "id": "X0ZJRp",
+                          "name": "Upgrade Mobile RX Device",
+                          "fill": "$color-muted",
+                          "content": "同升级设备 · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "iLYkx",
+                      "name": "Upgrade Mobile RX Chevron",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "s8pwi1",
+                  "name": "Upgrade Mobile Advanced Disclosure",
+                  "width": "fill_container",
+                  "height": 40,
+                  "stroke": "$color-rule",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "padding": [
+                    10,
+                    0,
+                    0,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FovDI",
+                      "name": "Upgrade Mobile Advanced Label",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "XYreL",
+                          "name": "Upgrade Mobile Advanced Icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "settings-2",
+                          "library": "lucide",
+                          "fill": "$color-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "fvF1S",
+                          "name": "Upgrade Mobile Advanced Text",
+                          "fill": "$color-muted",
+                          "content": "高级选项",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "TgWMZ",
+                      "name": "Upgrade Mobile Advanced Reserved",
+                      "fill": "$color-muted-2",
+                      "content": "擦除 · 校验 · 重启",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "vHGiB",
+                      "name": "Upgrade Mobile Advanced Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "KR0R1",
+              "name": "Upgrade Mobile Flexible Space",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "Z9GqTh",
+              "name": "Upgrade Mobile Flashing Disabled",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface-2",
+              "cornerRadius": "$radius-md",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "MdDh3",
+                  "name": "Upgrade Mobile Flashing Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "upload",
+                  "library": "lucide",
+                  "fill": "$color-muted-2"
+                },
+                {
+                  "type": "text",
+                  "id": "xD7id",
+                  "name": "Upgrade Mobile Flashing Label",
+                  "fill": "$color-muted-2",
+                  "content": "FLASHING",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "lMnzX",
+          "name": "Upgrade Mobile Status",
+          "width": "fill_container",
+          "height": 36,
+          "fill": "$color-surface",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "top": 1
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "w8zfwA",
+              "name": "Upgrade Mobile Status Text",
+              "fill": "$color-success",
+              "content": "● 设备可用",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "pnRek",
+              "name": "Upgrade Mobile Status Source",
+              "fill": "$color-muted",
+              "content": "GitHub Releases",
+              "fontFamily": "$font-mono",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "pcWMN",
+      "x": 855,
+      "y": 3264,
+      "name": "Upgrade / Mobile 414",
+      "context": "Responsive family · firmware upgrade · auto device detection · mobile 414 · top tabs · adaptive stacked controls · Hallmark critique P5 H5 E5 R5 V5",
+      "clip": true,
+      "width": 414,
+      "height": 920,
+      "fill": "$color-paper",
+      "layout": "vertical",
+      "children": [
+        {
+          "type": "frame",
+          "id": "CTeiC",
+          "name": "Upgrade Mobile Top Bar",
+          "width": "fill_container",
+          "height": 56,
+          "fill": "$color-paper",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "qUc4n",
+              "name": "Upgrade Mobile Brand",
+              "fill": "$color-ink",
+              "content": "CRazyLink",
+              "fontFamily": "$font-wordmark",
+              "fontSize": 17,
+              "fontWeight": "700"
+            },
+            {
+              "type": "frame",
+              "id": "wscgN",
+              "name": "Upgrade Mobile Top Actions",
+              "gap": 8,
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "WYDIe",
+                  "name": "Upgrade Mobile Source",
+                  "height": 40,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 8,
+                  "padding": [
+                    0,
+                    10
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "esUWN",
+                      "name": "Upgrade Mobile Source Icon",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "github",
+                      "library": "lucide",
+                      "fill": "$color-ink"
+                    },
+                    {
+                      "type": "text",
+                      "id": "E5WiN",
+                      "name": "Upgrade Mobile Source Label",
+                      "fill": "$color-ink",
+                      "content": "Releases",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "650"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "IwkSK",
+                  "name": "Upgrade Mobile Menu",
+                  "width": 40,
+                  "height": 40,
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "justifyContent": "center",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "icon",
+                      "id": "TaWy8",
+                      "name": "Upgrade Mobile Menu Icon",
+                      "width": 16,
+                      "height": 16,
+                      "icon": "ellipsis",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "B2yNmu",
+          "name": "Upgrade Mobile Tabs",
+          "width": "fill_container",
+          "height": 48,
+          "fill": "$color-surface",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "bottom": 1
+          },
+          "padding": [
+            0,
+            8
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "XzzXX",
+              "name": "Upgrade Mobile Firmware Tab",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "YJqvq",
+                  "name": "Upgrade Mobile Firmware Tab Label",
+                  "fill": "$color-muted",
+                  "content": "固件烧录",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "EHgJL",
+              "name": "Upgrade Mobile Serial Tab",
+              "width": "fill_container",
+              "height": 48,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XaGfY",
+                  "name": "Upgrade Mobile Serial Tab Label",
+                  "fill": "$color-muted",
+                  "content": "串口终端",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "600"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jpC3b",
+              "name": "Upgrade Mobile Active Tab",
+              "width": "fill_container",
+              "height": 48,
+              "layout": "vertical",
+              "gap": 4,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VBIKp",
+                  "name": "Upgrade Mobile Active Tab Label",
+                  "fill": "$color-ink",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "rectangle",
+                  "cornerRadius": 1,
+                  "id": "lNv3K",
+                  "name": "Upgrade Mobile Active Tab Active Line",
+                  "fill": "$color-accent",
+                  "width": 44,
+                  "height": 2
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "pnlR8",
+          "name": "Upgrade Mobile Content",
+          "width": "fill_container",
+          "height": "fill_container",
+          "layout": "vertical",
+          "gap": 12,
+          "padding": [
+            16,
+            16,
+            12,
+            16
+          ],
+          "children": [
+            {
+              "type": "frame",
+              "id": "iVWRq",
+              "name": "Upgrade Mobile Header",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "aw7lX",
+                  "name": "Upgrade Mobile Title",
+                  "fill": "$color-ink",
+                  "content": "固件升级",
+                  "fontFamily": "$font-body",
+                  "fontSize": 18,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "etqLa",
+                  "name": "Upgrade Mobile Subtitle",
+                  "fill": "$color-muted",
+                  "content": "连接后自动识别设备类型",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "h5JNw",
+              "name": "Upgrade Mobile Selectors",
+              "width": "fill_container",
+              "layout": "vertical",
+              "gap": 8,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "O5TltO",
+                  "name": "Upgrade Mobile Device",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "kUREL",
+                      "name": "Upgrade Mobile Device Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lE7g9",
+                          "name": "Upgrade Mobile Device Label",
+                          "fill": "$color-muted",
+                          "content": "升级串口设备",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "YYZ4U",
+                          "name": "Upgrade Mobile Device Value",
+                          "fill": "$color-ink",
+                          "content": "USB Serial · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "l14YuW",
+                      "name": "Upgrade Mobile Device Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "ZP9Iv",
+                  "name": "Upgrade Mobile Tag",
+                  "width": "fill_container",
+                  "height": 52,
+                  "fill": "$color-surface",
+                  "cornerRadius": "$radius-md",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "FZwDB",
+                      "name": "Upgrade Mobile Tag Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 4,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "IDJS1",
+                          "name": "Upgrade Mobile Tag Label",
+                          "fill": "$color-muted",
+                          "content": "发布 TAG",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "600"
+                        },
+                        {
+                          "type": "text",
+                          "id": "bXKLn",
+                          "name": "Upgrade Mobile Tag Value",
+                          "fill": "$color-warning",
+                          "content": "尚未选择",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "WJS8w",
+                      "name": "Upgrade Mobile Tag Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "UPq0P",
+              "name": "Upgrade Mobile Mapping",
+              "width": "fill_container",
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-md",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "layout": "vertical",
+              "gap": 8,
+              "padding": 12,
+              "children": [
+                {
+                  "type": "frame",
+                  "id": "T3YHeC",
+                  "name": "Upgrade Mobile Mapping Header",
+                  "width": "fill_container",
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "SF8vG",
+                      "name": "Upgrade Mobile Mapping Title",
+                      "fill": "$color-ink",
+                      "content": "TX / RX 目标映射",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "700"
+                    },
+                    {
+                      "type": "text",
+                      "id": "oUv4X",
+                      "name": "Upgrade Mobile Mapping Hint",
+                      "fill": "$color-muted",
+                      "content": "展开设置目标设备、端口与通道",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "q4Hqg",
+                  "name": "Upgrade Mobile TX",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "nnkMv",
+                      "name": "Upgrade Mobile TX Badge",
+                      "width": 32,
+                      "height": 26,
+                      "fill": "$color-accent-soft",
+                      "cornerRadius": "$radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "HJMzZ",
+                          "name": "Upgrade Mobile TX Channel",
+                          "fill": "$color-accent",
+                          "content": "TX",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "fhn44",
+                      "name": "Upgrade Mobile TX Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "XtkQU",
+                          "name": "Upgrade Mobile TX Role",
+                          "fill": "$color-ink",
+                          "content": "发送目标",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        },
+                        {
+                          "type": "text",
+                          "id": "jxXnk",
+                          "name": "Upgrade Mobile TX Device",
+                          "fill": "$color-muted",
+                          "content": "同升级设备 · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "LYWwF",
+                      "name": "Upgrade Mobile TX Chevron",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "GIhN4",
+                  "name": "Upgrade Mobile RX",
+                  "width": "fill_container",
+                  "height": 44,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "gap": 10,
+                  "padding": [
+                    0,
+                    8
+                  ],
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "o5Yt2",
+                      "name": "Upgrade Mobile RX Badge",
+                      "width": 32,
+                      "height": 26,
+                      "fill": "$color-success-soft",
+                      "cornerRadius": "$radius-sm",
+                      "justifyContent": "center",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "JqzaF",
+                          "name": "Upgrade Mobile RX Channel",
+                          "fill": "$color-success",
+                          "content": "RX",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "700"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "TrXkI",
+                      "name": "Upgrade Mobile RX Copy",
+                      "width": "fill_container",
+                      "layout": "vertical",
+                      "gap": 2,
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "lCYHT",
+                          "name": "Upgrade Mobile RX Role",
+                          "fill": "$color-ink",
+                          "content": "接收目标",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Y2yhH",
+                          "name": "Upgrade Mobile RX Device",
+                          "fill": "$color-muted",
+                          "content": "同升级设备 · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 10,
+                          "fontWeight": "normal"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "icon",
+                      "id": "YXw5Q",
+                      "name": "Upgrade Mobile RX Chevron",
+                      "width": 14,
+                      "height": 14,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                },
+                {
+                  "type": "frame",
+                  "id": "V92Ss0",
+                  "name": "Upgrade Mobile Advanced Disclosure",
+                  "width": "fill_container",
+                  "height": 40,
+                  "stroke": "$color-rule",
+                  "strokeWidth": {
+                    "top": 1
+                  },
+                  "padding": [
+                    10,
+                    0,
+                    0,
+                    0
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "PvBQE",
+                      "name": "Upgrade Mobile Advanced Label",
+                      "gap": 8,
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "icon",
+                          "id": "Vwr9f",
+                          "name": "Upgrade Mobile Advanced Icon",
+                          "width": 15,
+                          "height": 15,
+                          "icon": "settings-2",
+                          "library": "lucide",
+                          "fill": "$color-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "E5Xw2",
+                          "name": "Upgrade Mobile Advanced Text",
+                          "fill": "$color-muted",
+                          "content": "高级选项",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "text",
+                      "id": "o5zOT",
+                      "name": "Upgrade Mobile Advanced Reserved",
+                      "fill": "$color-muted-2",
+                      "content": "擦除 · 校验 · 重启",
+                      "fontFamily": "$font-body",
+                      "fontSize": 10,
+                      "fontWeight": "normal"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "CxZ3K",
+                      "name": "Upgrade Mobile Advanced Chevron",
+                      "width": 15,
+                      "height": 15,
+                      "icon": "chevron-right",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Hd0LA",
+              "name": "Upgrade Mobile Flexible Space",
+              "width": "fill_container",
+              "height": "fill_container"
+            },
+            {
+              "type": "frame",
+              "id": "pjeR7",
+              "name": "Upgrade Mobile Flashing Disabled",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface-2",
+              "cornerRadius": "$radius-md",
+              "gap": 8,
+              "justifyContent": "center",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "qCuSS",
+                  "name": "Upgrade Mobile Flashing Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "upload",
+                  "library": "lucide",
+                  "fill": "$color-muted-2"
+                },
+                {
+                  "type": "text",
+                  "id": "dYApX",
+                  "name": "Upgrade Mobile Flashing Label",
+                  "fill": "$color-muted-2",
+                  "content": "FLASHING",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 11,
+                  "fontWeight": "700"
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "frame",
+          "id": "AD8zn",
+          "name": "Upgrade Mobile Status",
+          "width": "fill_container",
+          "height": 36,
+          "fill": "$color-surface",
+          "stroke": "$color-rule",
+          "strokeWidth": {
+            "top": 1
+          },
+          "padding": [
+            0,
+            16
+          ],
+          "justifyContent": "space_between",
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "text",
+              "id": "cw767",
+              "name": "Upgrade Mobile Status Text",
+              "fill": "$color-success",
+              "content": "● 设备可用",
+              "fontFamily": "$font-body",
+              "fontSize": 10,
+              "fontWeight": "600"
+            },
+            {
+              "type": "text",
+              "id": "FkRgh",
+              "name": "Upgrade Mobile Status Source",
+              "fill": "$color-muted",
+              "content": "GitHub Releases",
+              "fontFamily": "$font-mono",
+              "fontSize": 10,
+              "fontWeight": "normal"
+            }
+          ]
+        }
+      ]
     }
   ],
   "variables": {
@@ -12512,7 +16928,7 @@
     },
     "color-warning": {
       "type": "color",
-      "value": "#B66A14"
+      "value": "#9A570F"
     },
     "color-terminal": {
       "type": "color",
