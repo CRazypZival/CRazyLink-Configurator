@@ -32,6 +32,7 @@
     OTA_COMMIT: 15,
     REBOOT: 16,
     FLASH_CANCEL: 17,
+    LOCAL_DEVICE_INFO: 18,
   });
 
   const PacketFlag = Object.freeze({

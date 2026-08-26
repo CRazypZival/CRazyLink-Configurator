@@ -2,7 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 global.CRazyLink = require("../js/protocol.js");
-const { findBulkInterface, describeBulkInterfaces } = require("../js/webusb.js");
+const { CrazylinkUsbDevice, findBulkInterface, describeBulkInterfaces } = require("../js/webusb.js");
 
 function endpoint(direction, endpointNumber) {
   return { direction, type: "bulk", endpointNumber };
@@ -52,4 +52,23 @@ test("does not select a CDC bulk interface", () => {
     alternateSetting: 0,
     endpoints: [endpoint("out", 3), endpoint("in", 0x84)],
   }])), /TinyUSB CDC/);
+});
+
+test("decodes local role, version, flash size, and OTA support", async () => {
+  const connection = new CrazylinkUsbDevice({
+    serialNumber: "ABC123",
+    productName: "CRazyLink_TX CMSIS-DAP",
+  });
+  connection.request = async (opcode) => {
+    assert.equal(opcode, global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO);
+    return { data: Uint8Array.of(1, 1, 1, 0, 8, 1) };
+  };
+  assert.deepEqual(await connection.getLocalDeviceInfo(), {
+    role: 1,
+    firmwareVersion: "1.1.0",
+    flashSize: 8 * 1024 * 1024,
+    otaSupported: true,
+    serialNumber: "ABC123",
+    productName: "CRazyLink_TX CMSIS-DAP",
+  });
 });

@@ -185,6 +185,19 @@
       };
     }
 
+    async getLocalDeviceInfo() {
+      const packet = await this.request(protocol.WebOpcode.LOCAL_DEVICE_INFO);
+      if (packet.data.length < 6) throw new Error("本机设备信息响应不完整");
+      return {
+        role: packet.data[0],
+        firmwareVersion: `${packet.data[1]}.${packet.data[2]}.${packet.data[3]}`,
+        flashSize: packet.data[4] * 1024 * 1024,
+        otaSupported: Boolean(packet.data[5] & 1),
+        serialNumber: this.serialNumber,
+        productName: this.device.productName || "CRazyLink CMSIS-DAP",
+      };
+    }
+
     async setMode(mode) {
       await this.request(protocol.WebOpcode.SET_MODE, { data: Uint8Array.of(mode) });
       this.info = await this.getDeviceInfo();

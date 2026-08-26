@@ -5,5 +5,12 @@
   "scripts": {
     "test": "node --test tests/*.test.js",
     "build:single": "node scripts/build-single-file.mjs"
+  },
+  "dependencies": {
+    "esptool-js": "0.6.1",
+    "spark-md5": "3.0.2"
+  },
+  "devDependencies": {
+    "esbuild": "0.28.2"
   }
 }

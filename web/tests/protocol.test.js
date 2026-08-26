@@ -32,3 +32,7 @@ test("WebUSB packet rejects corruption and excess data", () => {
     /47 bytes/,
   );
 });
+
+test("protocol exposes the local device information opcode", () => {
+  assert.equal(protocol.WebOpcode.LOCAL_DEVICE_INFO, 18);
+});
