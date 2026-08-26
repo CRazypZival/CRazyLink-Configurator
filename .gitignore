@@ -1,4 +1,4 @@
 web/dist/
 node_modules/
+web/vendor/
 .DS_Store
-

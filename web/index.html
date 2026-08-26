@@ -20,10 +20,13 @@
         </div>
         <nav class="primary-nav">
           <button class="nav-item is-active" type="button" data-view="flash" aria-current="page">
-            <span class="active-marker" aria-hidden="true"></span><i data-lucide="download"></i><span>固件烧录</span>
+            <i data-lucide="file-up"></i><span>固件烧录</span>
           </button>
           <button class="nav-item" type="button" data-view="serial">
             <i data-lucide="terminal"></i><span>串口终端</span>
+          </button>
+          <button class="nav-item" type="button" data-view="upgrade">
+            <i data-lucide="upload"></i><span>固件升级</span>
           </button>
         </nav>
       </div>
@@ -45,8 +48,14 @@
     <header class="mobile-header">
       <div class="mobile-brand">CRazyLink</div>
       <div class="mobile-header-actions">
-        <div class="mobile-port-badge"><span class="sidebar-status-dot"></span><span id="mobilePortLabel">未连接</span></div>
-        <button class="icon-button" id="mobileConnectButton" type="button" aria-label="连接设备" title="连接设备"><i data-lucide="usb"></i></button>
+        <div class="standard-mobile-actions">
+          <div class="mobile-port-badge"><span class="sidebar-status-dot"></span><span id="mobilePortLabel">未连接</span></div>
+          <button class="icon-button" id="mobileConnectButton" type="button" aria-label="连接设备" title="连接设备"><i data-lucide="usb"></i></button>
+        </div>
+        <div class="upgrade-mobile-actions" hidden>
+          <button class="upgrade-source-button" id="mobileReleaseSourceButton" type="button"><i data-lucide="github"></i><span>Releases</span></button>
+          <button class="icon-button" id="mobileUpgradeMenuButton" type="button" aria-label="刷新发布列表" title="刷新发布列表"><i data-lucide="ellipsis"></i></button>
+        </div>
       </div>
     </header>
 
@@ -56,17 +65,22 @@
           <h1 id="viewTitle">固件烧录</h1>
           <p id="pageSubtitle">选择 BIN、HEX 或 ELF 文件并写入设备</p>
         </div>
-        <div class="header-actions">
+        <div class="header-actions standard-header-actions" id="standardHeaderActions">
           <div class="selected-port-badge" id="connectionState" data-state="disconnected">
             <span class="state-dot" aria-hidden="true"></span><span id="connectionLabel">未连接设备</span>
           </div>
           <button class="button button-secondary" id="connectButton" type="button"><i data-lucide="refresh-cw"></i><span>重新选择</span></button>
+        </div>
+        <div class="header-actions upgrade-header-actions" id="upgradeHeaderActions" hidden>
+          <button class="upgrade-source-button" id="releaseSourceButton" type="button"><i data-lucide="github"></i><span>GitHub Releases</span></button>
+          <button class="icon-button upgrade-refresh-button" id="refreshReleasesButton" type="button" aria-label="刷新发布列表" title="刷新发布列表"><i data-lucide="refresh-cw"></i></button>
         </div>
       </header>
 
       <div class="mobile-tabs" role="tablist" aria-label="工作区">
         <button class="mobile-tab is-active" type="button" data-view="flash" role="tab" aria-selected="true">固件烧录</button>
         <button class="mobile-tab" type="button" data-view="serial" role="tab" aria-selected="false">串口终端</button>
+        <button class="mobile-tab" type="button" data-view="upgrade" role="tab" aria-selected="false">固件升级</button>
       </div>
 
       <section class="view is-active" id="flashView" data-view-panel="flash">
@@ -174,14 +188,104 @@
           <span class="browser-requirement">接收 0 帧 · 发送 0 帧 · 错误 0</span>
         </div>
       </section>
+
+      <section class="view upgrade-view" id="upgradeView" data-view-panel="upgrade">
+        <div class="upgrade-content">
+          <div class="upgrade-workflow">
+            <div class="upgrade-mobile-heading">
+              <h2>固件升级</h2>
+              <p>连接后自动识别设备类型</p>
+            </div>
+            <div class="upgrade-detection-header">
+              <div>
+                <h2>设备类型自动识别</h2>
+                <p><span class="upgrade-desktop-copy">连接串口后自动判断 CRazyLink 或 ESP32-S3</span><span class="upgrade-tablet-copy">连接串口后自动判断升级流程</span></p>
+              </div>
+              <span class="upgrade-source-note">GitHub Releases</span>
+            </div>
+
+            <section class="upgrade-config-card" aria-labelledby="upgradeConfigTitle">
+              <div class="upgrade-config-header">
+                <h3 id="upgradeConfigTitle">升级配置</h3>
+                <div class="upgrade-detection-pill"><i data-lucide="cpu"></i><span id="upgradeDetectionLabel">自动识别设备类型</span></div>
+              </div>
+
+              <div class="upgrade-primary-fields">
+                <div class="upgrade-field upgrade-device-field">
+                  <span class="upgrade-field-label">升级串口设备</span>
+                  <button class="upgrade-field-control" id="upgradeDeviceButton" type="button">
+                    <span id="upgradeDeviceValue">选择升级串口设备</span><i data-lucide="chevron-down"></i>
+                  </button>
+                </div>
+                <label class="upgrade-field upgrade-release-field" for="upgradeReleaseSelect">
+                  <span class="upgrade-field-label">发布 TAG</span>
+                  <span class="upgrade-field-control upgrade-select-wrap">
+                    <select id="upgradeReleaseSelect" aria-label="发布 TAG"><option value="">选择发布 TAG</option></select>
+                    <i data-lucide="chevron-down"></i>
+                  </span>
+                </label>
+              </div>
+
+              <div class="upgrade-mapping">
+                <div class="upgrade-mapping-header">
+                  <h3>TX / RX 目标映射</h3>
+                  <span>展开设置目标设备、端口与通道</span>
+                </div>
+                <div class="upgrade-target-rows">
+                  <button class="upgrade-target" type="button" data-upgrade-role="TX" aria-pressed="false">
+                    <span class="upgrade-role-badge role-tx">TX</span>
+                    <span class="upgrade-target-copy"><strong>发送目标</strong><small id="upgradeTxDevice">同升级设备</small></span>
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                  <button class="upgrade-target" type="button" data-upgrade-role="RX" aria-pressed="false">
+                    <span class="upgrade-role-badge role-rx">RX</span>
+                    <span class="upgrade-target-copy"><strong>接收目标</strong><small id="upgradeRxDevice">同升级设备</small></span>
+                    <i data-lucide="chevron-right"></i>
+                  </button>
+                </div>
+              </div>
+
+              <button class="upgrade-advanced-disclosure" id="upgradeAdvancedButton" type="button" aria-expanded="false" aria-controls="upgradeAdvancedPanel">
+                <span><i data-lucide="settings-2"></i><strong>高级选项</strong></span>
+                <small>擦除策略 · 写入校验 · 完成后重启</small>
+                <i data-lucide="chevron-right"></i>
+              </button>
+              <div class="upgrade-advanced-panel" id="upgradeAdvancedPanel" hidden>
+                <label>擦除策略<select id="upgradeEraseSelect"><option value="range">按写入范围擦除</option><option value="chip">整片擦除</option></select></label>
+                <label>烧录速率<select id="upgradeBaudSelect"><option value="115200">115200</option><option value="460800" selected>460800</option><option value="921600">921600</option></select></label>
+                <label class="upgrade-check"><input id="upgradeVerifyCheck" type="checkbox" checked><span>写入后校验</span></label>
+                <label class="upgrade-check"><input id="upgradeResetCheck" type="checkbox" checked><span>完成后重启</span></label>
+              </div>
+            </section>
+
+            <div class="upgrade-workflow-spacer"></div>
+            <div class="upgrade-flash-action">
+              <span id="upgradeFlashHelper">选择发布 TAG 后可开始刷写</span>
+              <button class="upgrade-flashing-button" id="upgradeFlashButton" type="button" disabled><i data-lucide="upload"></i><span>FLASHING</span></button>
+            </div>
+          </div>
+        </div>
+        <div class="upgrade-status-line">
+          <div><span class="upgrade-status-dot" aria-hidden="true"></span><span id="upgradeStatusText">正在同步发布列表</span><span id="upgradeProgressLabel"></span></div>
+          <span id="upgradeStatusSource"><span class="upgrade-desktop-copy">github.com/CR072/CRazyLink · Releases</span><span class="upgrade-short-copy">GitHub Releases</span></span>
+        </div>
+      </section>
     </main>
   </div>
   <div class="toast-region" id="toastRegion" aria-live="polite" aria-atomic="true"></div>
   <dialog class="help-dialog" id="helpDialog"><button class="dialog-close icon-button icon-button-small" id="closeHelpButton" type="button" aria-label="关闭"><i data-lucide="x"></i></button><h2>使用说明</h2><ol><li>将 TX 原生 USB 接入电脑并点击“重新选择”。</li><li>选择 BIN 文件，确认地址后开始烧录。</li><li>切换到串口终端，设置参数后打开串口。</li></ol></dialog>
+  <dialog class="upgrade-device-dialog" id="upgradeDeviceDialog">
+    <div class="upgrade-dialog-header"><h2>选择升级接口</h2><button class="icon-button icon-button-small" id="closeUpgradeDeviceDialog" type="button" aria-label="关闭"><i data-lucide="x"></i></button></div>
+    <button class="upgrade-device-choice" id="upgradeUsbChoice" type="button"><i data-lucide="usb"></i><span><strong>CRazyLink USB</strong><small>升级已有 TX/RX，自动识别本机角色</small></span><i data-lucide="chevron-right"></i></button>
+    <button class="upgrade-device-choice" id="upgradeSerialChoice" type="button"><i data-lucide="cable"></i><span><strong>UART0 / USB Download Mode</strong><small>完整烧录 ESP32-S3 开发板或空片</small></span><i data-lucide="chevron-right"></i></button>
+  </dialog>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
   <script src="js/protocol.js"></script>
   <script src="js/firmware.js"></script>
   <script src="js/webusb.js"></script>
+  <script src="js/release.js"></script>
+  <script src="vendor/esptool-global.js"></script>
+  <script src="js/esptool.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

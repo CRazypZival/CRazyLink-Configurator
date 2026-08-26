@@ -15,6 +15,18 @@
     serialOpen: false,
     pollTimer: null,
     terminalBytes: 0,
+    upgrade: {
+      releases: [],
+      release: null,
+      transport: null,
+      usbDevice: null,
+      serialPort: null,
+      localInfo: null,
+      role: null,
+      deviceLabel: "",
+      loadingReleases: false,
+      flashing: false,
+    },
   };
 
   const $ = (selector) => document.querySelector(selector);
@@ -69,9 +81,22 @@
       }
     });
     $$("[data-view-panel]").forEach((panel) => panel.classList.toggle("is-active", panel.dataset.viewPanel === view));
-    $("#viewTitle").textContent = view === "flash" ? "固件烧录" : "串口终端";
+    const copy = {
+      flash: { title: "固件烧录", subtitle: "" },
+      serial: { title: "串口终端", subtitle: "" },
+      upgrade: { title: "固件升级", subtitle: "连接后自动识别设备类型" },
+    }[view];
+    $("#viewTitle").textContent = copy.title;
     const subtitle = $("#pageSubtitle");
-    if (subtitle) subtitle.textContent = view === "flash" ? "选择 BIN、HEX 或 ELF 文件并写入设备" : "持续读取、过滤并发送串口数据";
+    if (subtitle) {
+      subtitle.textContent = copy.subtitle;
+      subtitle.hidden = !copy.subtitle;
+    }
+    $("#standardHeaderActions").hidden = view === "upgrade";
+    $("#upgradeHeaderActions").hidden = view !== "upgrade";
+    $(".standard-mobile-actions").hidden = view === "upgrade";
+    $(".upgrade-mobile-actions").hidden = view !== "upgrade";
+    if (view === "upgrade" && state.upgrade.releases.length === 0 && !state.upgrade.loadingReleases) loadFirmwareReleases();
   }
 
   function updateDeviceInfo(info) {
@@ -107,6 +132,13 @@
     $("#serialSendButton").disabled = !connected || !state.serialOpen;
     $("#serialOpenButton").querySelector("span").textContent = state.serialOpen ? "关闭串口" : "打开串口";
     $("#serialOpenButton").querySelector("svg")?.setAttribute("data-lucide", state.serialOpen ? "radio" : "radio-tower");
+    const upgradeReady = Boolean(
+      state.upgrade.transport && state.upgrade.release && state.upgrade.role && !state.upgrade.flashing,
+    );
+    $("#upgradeFlashButton").disabled = !upgradeReady;
+    $("#upgradeDeviceButton").disabled = state.upgrade.flashing;
+    $("#upgradeReleaseSelect").disabled = state.upgrade.flashing || state.upgrade.loadingReleases;
+    $("#refreshReleasesButton").disabled = state.upgrade.loadingReleases || state.upgrade.flashing;
     iconRefresh();
   }
 
@@ -232,7 +264,8 @@
       const manager = app.manager;
       const device = await manager.requestDevice();
       state.device = device;
-      updateDeviceInfo(await device.getDeviceInfo());
+      updateDeviceInfo(device.info || await device.getDeviceInfo());
+      await adoptUpgradeUsbDevice(device);
       setConnection("connected", "设备已连接");
       logFlash("已连接 CRazyLink 功能接口。", "success");
       toast("设备连接成功", "success");
@@ -254,6 +287,14 @@
     state.device = null;
     state.info = null;
     state.serialOpen = false;
+    if (state.upgrade.transport === "usb") {
+      state.upgrade.transport = null;
+      state.upgrade.usbDevice = null;
+      state.upgrade.localInfo = null;
+      state.upgrade.role = null;
+      state.upgrade.deviceLabel = "";
+      updateUpgradeUi();
+    }
     updateDeviceInfo(null);
     setConnection("disconnected", "未连接设备");
     updateButtons();
@@ -380,6 +421,216 @@
     catch (error) { toast(error.message, "error"); }
   }
 
+  function upgradeRoleCode(role) {
+    return role === "RX" ? api.DeviceRole.RX : api.DeviceRole.TX;
+  }
+
+  function upgradeRoleName(code) {
+    return code === api.DeviceRole.RX ? "RX" : "TX";
+  }
+
+  function shortUpgradeDeviceLabel() {
+    const label = state.upgrade.deviceLabel || "同升级设备";
+    return label.replace(/^CRazyLink_[A-Z]+ CMSIS-DAP\s*·\s*/i, "");
+  }
+
+  function setUpgradeStatus(text, kind, progress) {
+    const line = $(".upgrade-status-line");
+    line.dataset.state = kind || "idle";
+    $("#upgradeStatusText").textContent = window.innerWidth <= 640 && text === "发布列表已同步，设备可用" ? "设备可用" : text;
+    $("#upgradeProgressLabel").textContent = Number.isFinite(progress) ? `${Math.round(progress)}%` : "";
+  }
+
+  function updateUpgradeUi() {
+    const upgrade = state.upgrade;
+    $("#upgradeDeviceValue").textContent = upgrade.deviceLabel || "选择升级串口设备";
+    $(".upgrade-select-wrap").classList.toggle("has-value", Boolean(upgrade.release));
+    const portLabel = shortUpgradeDeviceLabel();
+    const localRole = upgrade.localInfo ? upgradeRoleName(upgrade.localInfo.role) : null;
+    const txUnavailable = upgrade.transport === "usb" && localRole === "RX";
+    const txText = !upgrade.transport
+      ? "同升级设备"
+      : txUnavailable
+        ? "当前 RX 接口无法更新 TX"
+        : localRole === "TX" || upgrade.transport === "serial"
+          ? `同升级设备 · ${portLabel}`
+          : portLabel;
+    const rxText = !upgrade.transport
+      ? "同升级设备"
+      : localRole === "TX"
+        ? `经 TX 无线链路 · ${portLabel}`
+        : `同升级设备 · ${portLabel}`;
+    $("#upgradeTxDevice").textContent = txText;
+    $("#upgradeRxDevice").textContent = rxText;
+    $$('[data-upgrade-role]').forEach((button) => {
+      const selected = button.dataset.upgradeRole === upgrade.role;
+      button.classList.toggle("is-selected", selected);
+      button.setAttribute("aria-pressed", String(selected));
+      button.disabled = button.dataset.upgradeRole === "TX" && txUnavailable;
+    });
+
+    if (upgrade.transport === "usb" && upgrade.localInfo) {
+      $("#upgradeDetectionLabel").textContent = `CRazyLink ${localRole} · v${upgrade.localInfo.firmwareVersion}`;
+    } else if (upgrade.transport === "serial") {
+      $("#upgradeDetectionLabel").textContent = "ESP32-S3 Download Mode";
+    } else {
+      $("#upgradeDetectionLabel").textContent = "自动识别设备类型";
+    }
+
+    let helper = "选择发布 TAG 后可开始刷写";
+    if (upgrade.release && !upgrade.transport) helper = "连接升级设备后可开始刷写";
+    else if (upgrade.release && upgrade.transport && !upgrade.role) helper = "选择 TX 或 RX 目标";
+    else if (upgrade.release && upgrade.transport && upgrade.role) helper = `${upgrade.release.tag} · ${upgrade.role} 已就绪`;
+    $("#upgradeFlashHelper").textContent = helper;
+    updateButtons();
+  }
+
+  async function loadFirmwareReleases(notify) {
+    if (!api.listFirmwareReleases || state.upgrade.loadingReleases) return;
+    state.upgrade.loadingReleases = true;
+    setUpgradeStatus("正在同步发布列表", "busy");
+    updateButtons();
+    try {
+      const selectedTag = state.upgrade.release?.tag || "";
+      state.upgrade.releases = await api.listFirmwareReleases();
+      const select = $("#upgradeReleaseSelect");
+      select.replaceChildren(new Option("选择发布 TAG", ""));
+      for (const release of state.upgrade.releases) {
+        const suffix = release.prerelease ? " · prerelease" : "";
+        select.append(new Option(`${release.tag}${suffix}`, release.tag));
+      }
+      const matched = state.upgrade.releases.find((release) => release.tag === selectedTag) || null;
+      state.upgrade.release = matched;
+      select.value = matched?.tag || "";
+      if (state.upgrade.releases.length) {
+        setUpgradeStatus("发布列表已同步，设备可用", "success");
+        if (notify) toast("发布列表已刷新", "success");
+      } else {
+        setUpgradeStatus("未找到可用的 CRazyLink 固件发布", "warning");
+      }
+    } catch (error) {
+      state.upgrade.releases = [];
+      state.upgrade.release = null;
+      $("#upgradeReleaseSelect").replaceChildren(new Option("发布列表加载失败", ""));
+      setUpgradeStatus(error.message || "发布列表加载失败", "error");
+      if (notify) toast(error.message || "发布列表加载失败", "error");
+    } finally {
+      state.upgrade.loadingReleases = false;
+      updateUpgradeUi();
+    }
+  }
+
+  async function adoptUpgradeUsbDevice(connection) {
+    const localInfo = connection.localInfo || await connection.getLocalDeviceInfo();
+    if (!localInfo.otaSupported) throw new Error("当前 CRazyLink 固件不支持 USB OTA，请先通过 UART0 完整烧录");
+    state.upgrade.transport = "usb";
+    state.upgrade.usbDevice = connection;
+    state.upgrade.serialPort = null;
+    state.upgrade.localInfo = localInfo;
+    state.upgrade.role = upgradeRoleName(localInfo.role);
+    state.upgrade.deviceLabel = `${localInfo.productName} · ${localInfo.serialNumber}`;
+    state.device = connection;
+    updateDeviceInfo(connection.info);
+    setConnection("connected", "设备已连接");
+    setUpgradeStatus(`已识别 CRazyLink ${state.upgrade.role}`, "success");
+    updateUpgradeUi();
+  }
+
+  async function selectUpgradeUsb() {
+    $("#upgradeDeviceDialog").close();
+    try {
+      setUpgradeStatus("等待 CRazyLink USB 授权", "busy");
+      const connection = state.device || await app.manager.requestDevice();
+      await adoptUpgradeUsbDevice(connection);
+      toast("CRazyLink USB 已连接", "success");
+    } catch (error) {
+      setUpgradeStatus(error.message || "CRazyLink USB 连接失败", "error");
+      toast(error.message || "CRazyLink USB 连接失败", "error");
+    }
+  }
+
+  async function selectUpgradeSerial() {
+    $("#upgradeDeviceDialog").close();
+    try {
+      setUpgradeStatus("等待串口设备授权", "busy");
+      const port = await app.espFlasher.requestPort();
+      state.upgrade.transport = "serial";
+      state.upgrade.serialPort = port;
+      state.upgrade.usbDevice = null;
+      state.upgrade.localInfo = null;
+      state.upgrade.role = null;
+      state.upgrade.deviceLabel = api.describeSerialPort(port);
+      $("#deviceName").textContent = "ESP32-S3 升级设备";
+      $("#deviceSerial").textContent = state.upgrade.deviceLabel;
+      setUpgradeStatus("串口已选择，等待识别 Download Mode", "success");
+      updateUpgradeUi();
+    } catch (error) {
+      setUpgradeStatus(error.message || "串口设备选择失败", "error");
+      toast(error.message || "串口设备选择失败", "error");
+    }
+  }
+
+  function selectUpgradeRole(event) {
+    if (event.currentTarget.disabled || state.upgrade.flashing) return;
+    state.upgrade.role = event.currentTarget.dataset.upgradeRole;
+    updateUpgradeUi();
+  }
+
+  function selectUpgradeRelease(event) {
+    state.upgrade.release = state.upgrade.releases.find((release) => release.tag === event.target.value) || null;
+    updateUpgradeUi();
+  }
+
+  async function flashUpgrade() {
+    const upgrade = state.upgrade;
+    if (!upgrade.transport || !upgrade.release || !upgrade.role || upgrade.flashing) return;
+    upgrade.flashing = true;
+    updateButtons();
+    try {
+      setUpgradeStatus(`正在下载并校验 ${upgrade.release.tag}`, "busy", 0);
+      const opened = await api.downloadReleasePackage(upgrade.release, upgrade.role);
+      if (upgrade.localInfo && opened.manifest.flashSize > upgrade.localInfo.flashSize) {
+        throw new Error(`固件需要 ${api.formatBytes(opened.manifest.flashSize)} Flash，当前设备容量不足`);
+      }
+      if (upgrade.transport === "usb") {
+        const localRole = upgradeRoleName(upgrade.localInfo.role);
+        if (localRole === "RX" && upgrade.role === "TX") throw new Error("RX 原生 USB 不能更新 TX，请连接 TX 或使用 TX UART0");
+        if (localRole === "TX" && upgrade.role === "RX" && !state.info?.peerConnected) {
+          throw new Error("TX 尚未连接 RX，无法通过无线链路更新 RX");
+        }
+        const application = opened.segments.find((segment) => segment.kind === "application") ||
+          opened.segments.find((segment) => segment.address === 0x10000);
+        if (!application) throw new Error("CRL 固件包缺少 application 分段");
+        await upgrade.usbDevice.uploadOta(application.data, upgradeRoleCode(upgrade.role), (progress) => {
+          setUpgradeStatus(`正在通过 CRazyLink USB 更新 ${upgrade.role}`, "busy", progress);
+        });
+      } else {
+        await app.espFlasher.flash(upgrade.serialPort, opened, {
+          baudRate: Number($("#upgradeBaudSelect").value),
+          eraseAll: $("#upgradeEraseSelect").value === "chip",
+          verify: $("#upgradeVerifyCheck").checked,
+          reset: $("#upgradeResetCheck").checked,
+          onProgress: (progress) => setUpgradeStatus(`正在完整烧录 ESP32-S3 ${upgrade.role}`, "busy", progress),
+        });
+      }
+      setUpgradeStatus(`${upgrade.role} 固件升级完成`, "success", 100);
+      toast(`${upgrade.role} 固件升级完成`, "success");
+    } catch (error) {
+      setUpgradeStatus(error.message || "固件升级失败", "error");
+      toast(error.message || "固件升级失败", "error");
+    } finally {
+      upgrade.flashing = false;
+      updateUpgradeUi();
+    }
+  }
+
+  function toggleUpgradeAdvanced() {
+    const panel = $("#upgradeAdvancedPanel");
+    const expanded = panel.hidden;
+    panel.hidden = !expanded;
+    $("#upgradeAdvancedButton").setAttribute("aria-expanded", String(expanded));
+  }
+
   function bind() {
     $$("[data-view]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.view)));
     $("#connectButton").addEventListener("click", connectDevice);
@@ -400,33 +651,63 @@
     if (aboutButton) aboutButton.addEventListener("click", () => $("#helpDialog").showModal());
     $("#closeHelpButton").addEventListener("click", () => $("#helpDialog").close());
     $("#helpDialog").addEventListener("click", (event) => { if (event.target === $("#helpDialog")) $("#helpDialog").close(); });
+    $("#upgradeDeviceButton").addEventListener("click", () => $("#upgradeDeviceDialog").showModal());
+    $("#closeUpgradeDeviceDialog").addEventListener("click", () => $("#upgradeDeviceDialog").close());
+    $("#upgradeDeviceDialog").addEventListener("click", (event) => { if (event.target === $("#upgradeDeviceDialog")) $("#upgradeDeviceDialog").close(); });
+    $("#upgradeUsbChoice").addEventListener("click", selectUpgradeUsb);
+    $("#upgradeSerialChoice").addEventListener("click", selectUpgradeSerial);
+    $("#upgradeReleaseSelect").addEventListener("change", selectUpgradeRelease);
+    $$('[data-upgrade-role]').forEach((button) => button.addEventListener("click", selectUpgradeRole));
+    $("#upgradeAdvancedButton").addEventListener("click", toggleUpgradeAdvanced);
+    $("#upgradeFlashButton").addEventListener("click", flashUpgrade);
+    $("#refreshReleasesButton").addEventListener("click", () => loadFirmwareReleases(true));
+    $("#mobileUpgradeMenuButton").addEventListener("click", () => loadFirmwareReleases(true));
+    [$("#releaseSourceButton"), $("#mobileReleaseSourceButton")].forEach((button) => button.addEventListener("click", () => {
+      window.open("https://github.com/CRazypZival/CRazyLink-Configurator/releases", "_blank", "noopener,noreferrer");
+    }));
   }
 
   const app = {
     manager: api.CrazylinkUsbManager ? new api.CrazylinkUsbManager() : null,
+    espFlasher: api.EspSerialFlasher ? new api.EspSerialFlasher() : null,
   };
 
   async function boot() {
     bind();
+    const requestedView = new URLSearchParams(window.location.search).get("view");
+    if (["flash", "serial", "upgrade"].includes(requestedView)) setView(requestedView);
     renderFiles();
     updateButtons();
+    updateUpgradeUi();
     iconRefresh();
     if (!app.manager || !app.manager.supported) {
       setConnection("error", "浏览器不支持 WebUSB");
-      return;
+    } else {
+      app.manager.addEventListener("disconnected", () => {
+        if (state.upgrade.usbDevice) {
+          state.upgrade.transport = null;
+          state.upgrade.usbDevice = null;
+          state.upgrade.localInfo = null;
+          state.upgrade.role = null;
+          state.upgrade.deviceLabel = "";
+          setUpgradeStatus("CRazyLink USB 已断开", "warning");
+          updateUpgradeUi();
+        }
+        if (state.device) disconnectDevice();
+      });
+      try {
+        const authorized = await app.manager.connectAuthorized();
+        if (authorized) {
+          state.device = authorized;
+          updateDeviceInfo(authorized.info || await authorized.getDeviceInfo());
+          setConnection("connected", "设备已连接");
+          await adoptUpgradeUsbDevice(authorized);
+          updateButtons();
+        }
+      } catch (error) { setConnection("error", "设备授权已失效"); }
     }
-    app.manager.addEventListener("disconnected", () => { if (state.device) disconnectDevice(); });
-    try {
-      const authorized = await app.manager.connectAuthorized();
-      if (authorized) {
-        state.device = authorized;
-        updateDeviceInfo(await authorized.getDeviceInfo());
-        setConnection("connected", "设备已连接");
-        updateButtons();
-      }
-    } catch (error) { setConnection("error", "设备授权已失效"); }
   }
 
-  window.CRazyLinkApp = { state, connectDevice, disconnectDevice, flashFirmware, refreshDevice };
+  window.CRazyLinkApp = { state, connectDevice, disconnectDevice, flashFirmware, refreshDevice, flashUpgrade, loadFirmwareReleases };
   boot();
 }());

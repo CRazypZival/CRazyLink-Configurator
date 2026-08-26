@@ -11,6 +11,7 @@ const css = await read("app.css");
 const protocol = await read("js/protocol.js");
 const firmware = await read("js/firmware.js");
 const webusb = await read("js/webusb.js");
+const release = await read("js/release.js");
 const esptool = await read("js/esptool.js");
 const app = await read("app.js");
 
@@ -44,6 +45,7 @@ const inline = html
   .replace(/\s*<script src="js\/protocol\.js"><\/script>/, () => `<script>${protocol}</script>`)
   .replace(/\s*<script src="js\/firmware\.js"><\/script>/, () => `<script>${firmware}</script>`)
   .replace(/\s*<script src="js\/webusb\.js"><\/script>/, () => `<script>${webusb}</script>`)
+  .replace(/\s*<script src="js\/release\.js"><\/script>/, () => `<script>${release}</script>`)
   .replace(/\s*<script src="vendor\/esptool-global\.js"><\/script>/, () => `<script>${esptoolVendor}</script>`)
   .replace(/\s*<script src="js\/esptool\.js"><\/script>/, () => `<script>${esptool}</script>`)
   .replace(/\s*<script src="app\.js"><\/script>/, () => `<script>${app}</script>`);

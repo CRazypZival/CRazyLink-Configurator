@@ -79,6 +79,7 @@
       this.sequence = 1;
       this.queue = Promise.resolve();
       this.info = null;
+      this.localInfo = null;
     }
 
     get serialNumber() {
@@ -99,7 +100,29 @@
           this.interface.alternateSetting,
         );
       }
-      this.info = await this.getDeviceInfo();
+      this.localInfo = await this.getLocalDeviceInfo();
+      try {
+        this.info = await this.getDeviceInfo();
+      } catch (_) {
+        this.info = {
+          role: this.localInfo.role,
+          mode: this.localInfo.role === DeviceRole.RX ? DeviceMode.OFFLINE : DeviceMode.ONLINE,
+          capabilities: 0,
+          peerConnected: false,
+          jobStored: false,
+          automatic: false,
+          flashing: false,
+          protocolVersion: 1,
+          firmwareVersion: this.localInfo.firmwareVersion,
+          jobSize: 0,
+          jobCrc: 0,
+          jobBase: 0,
+          targetId: 0,
+          progress: 0,
+          flashState: FlashState.IDLE,
+          serialNumber: this.serialNumber,
+        };
+      }
       this.dispatchEvent(new CustomEvent("connected", { detail: this.info }));
       return this.info;
     }
@@ -111,6 +134,7 @@
       if (this.device.opened) await this.device.close();
       this.interface = null;
       this.info = null;
+      this.localInfo = null;
       this.dispatchEvent(new Event("disconnected"));
     }
 

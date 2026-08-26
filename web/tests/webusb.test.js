@@ -72,3 +72,24 @@ test("decodes local role, version, flash size, and OTA support", async () => {
     productName: "CRazyLink_TX CMSIS-DAP",
   });
 });
+
+test("connect remains available for local TX OTA when RX is offline", async () => {
+  const usbDevice = device([{
+    interfaceClass: 0xff,
+    interfaceName: "CMSIS-DAP v2",
+    alternateSetting: 0,
+    endpoints: [endpoint("out", 1), endpoint("in", 0x81)],
+  }]);
+  Object.assign(usbDevice, {
+    opened: true,
+    serialNumber: "TX123",
+    claimInterface: async () => {},
+  });
+  const connection = new CrazylinkUsbDevice(usbDevice);
+  connection.getLocalDeviceInfo = async () => ({ role: 1, firmwareVersion: "1.1.0", flashSize: 8 * 1024 * 1024, otaSupported: true });
+  connection.getDeviceInfo = async () => { throw new Error("RX offline"); };
+  const info = await connection.connect();
+  assert.equal(info.role, 1);
+  assert.equal(info.peerConnected, false);
+  assert.equal(info.firmwareVersion, "1.1.0");
+});

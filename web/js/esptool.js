@@ -89,10 +89,12 @@
           flashSize: "keep",
           eraseAll: Boolean(settings.eraseAll),
           compress: settings.compress !== false,
-          calculateMD5Hash: this.library.md5,
+          calculateMD5Hash: settings.verify === false ? undefined : this.library.md5,
           reportProgress: (fileIndex, written, total) => {
             if (!settings.onProgress) return;
-            const current = total > 0 ? Math.min(written, total) : 0;
+            const current = total > 0
+              ? segments[fileIndex].data.length * (Math.min(written, total) / total)
+              : 0;
             settings.onProgress(Math.round(((completedBefore[fileIndex] + current) / totalBytes) * 100));
           },
         });
