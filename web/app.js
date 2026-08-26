@@ -421,16 +421,12 @@
     catch (error) { toast(error.message, "error"); }
   }
 
-  function upgradeRoleCode(role) {
-    return role === "RX" ? api.DeviceRole.RX : api.DeviceRole.TX;
-  }
-
   function upgradeRoleName(code) {
     return code === api.DeviceRole.RX ? "RX" : "TX";
   }
 
   function shortUpgradeDeviceLabel() {
-    const label = state.upgrade.deviceLabel || "同升级设备";
+    const label = state.upgrade.deviceLabel || "当前设备";
     return label.replace(/^CRazyLink_[A-Z]+ CMSIS-DAP\s*·\s*/i, "");
   }
 
@@ -443,30 +439,27 @@
 
   function updateUpgradeUi() {
     const upgrade = state.upgrade;
-    $("#upgradeDeviceValue").textContent = upgrade.deviceLabel || "选择升级串口设备";
+    $("#upgradeDeviceValue").textContent = upgrade.deviceLabel || "选择升级接口";
     $(".upgrade-select-wrap").classList.toggle("has-value", Boolean(upgrade.release));
     const portLabel = shortUpgradeDeviceLabel();
     const localRole = upgrade.localInfo ? upgradeRoleName(upgrade.localInfo.role) : null;
-    const txUnavailable = upgrade.transport === "usb" && localRole === "RX";
-    const txText = !upgrade.transport
-      ? "同升级设备"
-      : txUnavailable
-        ? "当前 RX 接口无法更新 TX"
-        : localRole === "TX" || upgrade.transport === "serial"
-          ? `同升级设备 · ${portLabel}`
-          : portLabel;
-    const rxText = !upgrade.transport
-      ? "同升级设备"
-      : localRole === "TX"
-        ? `经 TX 无线链路 · ${portLabel}`
-        : `同升级设备 · ${portLabel}`;
+    const targetText = (role) => {
+      if (!upgrade.transport) return "选择升级接口后确定";
+      if (upgrade.transport === "serial") return `烧录到当前设备 · ${portLabel}`;
+      return role === localRole
+        ? `当前连接设备 · ${portLabel}`
+        : `请单独连接 CRazyLink ${role} USB`;
+    };
+    const txText = targetText("TX");
+    const rxText = targetText("RX");
     $("#upgradeTxDevice").textContent = txText;
     $("#upgradeRxDevice").textContent = rxText;
     $$('[data-upgrade-role]').forEach((button) => {
       const selected = button.dataset.upgradeRole === upgrade.role;
       button.classList.toggle("is-selected", selected);
       button.setAttribute("aria-pressed", String(selected));
-      button.disabled = button.dataset.upgradeRole === "TX" && txUnavailable;
+      button.disabled = upgrade.flashing || !upgrade.transport ||
+        (upgrade.transport === "usb" && button.dataset.upgradeRole !== localRole);
     });
 
     if (upgrade.transport === "usb" && upgrade.localInfo) {
@@ -479,7 +472,7 @@
 
     let helper = "选择发布 TAG 后可开始刷写";
     if (upgrade.release && !upgrade.transport) helper = "连接升级设备后可开始刷写";
-    else if (upgrade.release && upgrade.transport && !upgrade.role) helper = "选择 TX 或 RX 目标";
+    else if (upgrade.release && upgrade.transport === "serial" && !upgrade.role) helper = "选择 TX 或 RX 固件型号";
     else if (upgrade.release && upgrade.transport && upgrade.role) helper = `${upgrade.release.tag} · ${upgrade.role} 已就绪`;
     $("#upgradeFlashHelper").textContent = helper;
     updateButtons();
@@ -571,7 +564,7 @@
   }
 
   function selectUpgradeRole(event) {
-    if (event.currentTarget.disabled || state.upgrade.flashing) return;
+    if (event.currentTarget.disabled || state.upgrade.flashing || state.upgrade.transport !== "serial") return;
     state.upgrade.role = event.currentTarget.dataset.upgradeRole;
     updateUpgradeUi();
   }
@@ -594,14 +587,11 @@
       }
       if (upgrade.transport === "usb") {
         const localRole = upgradeRoleName(upgrade.localInfo.role);
-        if (localRole === "RX" && upgrade.role === "TX") throw new Error("RX 原生 USB 不能更新 TX，请连接 TX 或使用 TX UART0");
-        if (localRole === "TX" && upgrade.role === "RX" && !state.info?.peerConnected) {
-          throw new Error("TX 尚未连接 RX，无法通过无线链路更新 RX");
-        }
+        if (localRole !== upgrade.role) throw new Error(`当前连接的是 CRazyLink ${localRole}，只能更新本机固件`);
         const application = opened.segments.find((segment) => segment.kind === "application") ||
           opened.segments.find((segment) => segment.address === 0x10000);
         if (!application) throw new Error("CRL 固件包缺少 application 分段");
-        await upgrade.usbDevice.uploadOta(application.data, upgradeRoleCode(upgrade.role), (progress) => {
+        await upgrade.usbDevice.uploadOta(application.data, (progress) => {
           setUpgradeStatus(`正在通过 CRazyLink USB 更新 ${upgrade.role}`, "busy", progress);
         });
       } else {

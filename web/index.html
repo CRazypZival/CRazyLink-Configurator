@@ -199,7 +199,7 @@
             <div class="upgrade-detection-header">
               <div>
                 <h2>设备类型自动识别</h2>
-                <p><span class="upgrade-desktop-copy">连接串口后自动判断 CRazyLink 或 ESP32-S3</span><span class="upgrade-tablet-copy">连接串口后自动判断升级流程</span></p>
+                <p><span class="upgrade-desktop-copy">连接 USB 或 UART0 后自动选择升级流程</span><span class="upgrade-tablet-copy">连接接口后自动选择升级流程</span></p>
               </div>
               <span class="upgrade-source-note">GitHub Releases</span>
             </div>
@@ -212,9 +212,9 @@
 
               <div class="upgrade-primary-fields">
                 <div class="upgrade-field upgrade-device-field">
-                  <span class="upgrade-field-label">升级串口设备</span>
+                  <span class="upgrade-field-label">升级接口</span>
                   <button class="upgrade-field-control" id="upgradeDeviceButton" type="button">
-                    <span id="upgradeDeviceValue">选择升级串口设备</span><i data-lucide="chevron-down"></i>
+                    <span id="upgradeDeviceValue">选择升级接口</span><i data-lucide="chevron-down"></i>
                   </button>
                 </div>
                 <label class="upgrade-field upgrade-release-field" for="upgradeReleaseSelect">
@@ -228,18 +228,18 @@
 
               <div class="upgrade-mapping">
                 <div class="upgrade-mapping-header">
-                  <h3>TX / RX 目标映射</h3>
-                  <span>展开设置目标设备、端口与通道</span>
+                  <h3>固件型号</h3>
+                  <span>USB 自动锁定 · UART 可选择</span>
                 </div>
                 <div class="upgrade-target-rows">
-                  <button class="upgrade-target" type="button" data-upgrade-role="TX" aria-pressed="false">
+                  <button class="upgrade-target" type="button" data-upgrade-role="TX" aria-pressed="false" disabled>
                     <span class="upgrade-role-badge role-tx">TX</span>
-                    <span class="upgrade-target-copy"><strong>发送目标</strong><small id="upgradeTxDevice">同升级设备</small></span>
+                    <span class="upgrade-target-copy"><strong>TX 固件</strong><small id="upgradeTxDevice">选择升级接口后确定</small></span>
                     <i data-lucide="chevron-right"></i>
                   </button>
-                  <button class="upgrade-target" type="button" data-upgrade-role="RX" aria-pressed="false">
+                  <button class="upgrade-target" type="button" data-upgrade-role="RX" aria-pressed="false" disabled>
                     <span class="upgrade-role-badge role-rx">RX</span>
-                    <span class="upgrade-target-copy"><strong>接收目标</strong><small id="upgradeRxDevice">同升级设备</small></span>
+                    <span class="upgrade-target-copy"><strong>RX 固件</strong><small id="upgradeRxDevice">选择升级接口后确定</small></span>
                     <i data-lucide="chevron-right"></i>
                   </button>
                 </div>
@@ -276,7 +276,7 @@
   <dialog class="help-dialog" id="helpDialog"><button class="dialog-close icon-button icon-button-small" id="closeHelpButton" type="button" aria-label="关闭"><i data-lucide="x"></i></button><h2>使用说明</h2><ol><li>将 TX 原生 USB 接入电脑并点击“重新选择”。</li><li>选择 BIN 文件，确认地址后开始烧录。</li><li>切换到串口终端，设置参数后打开串口。</li></ol></dialog>
   <dialog class="upgrade-device-dialog" id="upgradeDeviceDialog">
     <div class="upgrade-dialog-header"><h2>选择升级接口</h2><button class="icon-button icon-button-small" id="closeUpgradeDeviceDialog" type="button" aria-label="关闭"><i data-lucide="x"></i></button></div>
-    <button class="upgrade-device-choice" id="upgradeUsbChoice" type="button"><i data-lucide="usb"></i><span><strong>CRazyLink USB</strong><small>升级已有 TX/RX，自动识别本机角色</small></span><i data-lucide="chevron-right"></i></button>
+    <button class="upgrade-device-choice" id="upgradeUsbChoice" type="button"><i data-lucide="usb"></i><span><strong>CRazyLink USB</strong><small>升级当前连接设备，自动锁定 TX/RX 角色</small></span><i data-lucide="chevron-right"></i></button>
     <button class="upgrade-device-choice" id="upgradeSerialChoice" type="button"><i data-lucide="cable"></i><span><strong>UART0 / USB Download Mode</strong><small>完整烧录 ESP32-S3 开发板或空片</small></span><i data-lucide="chevron-right"></i></button>
   </dialog>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>

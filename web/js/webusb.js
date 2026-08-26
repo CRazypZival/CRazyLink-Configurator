@@ -165,12 +165,19 @@
       if (outResult.status !== "ok" || outResult.bytesWritten !== request.length) {
         throw new Error("WebUSB 请求未完整发送");
       }
-      const inResult = await withTimeout(
-        this.device.transferIn(this.interface.inputEndpoint, protocol.WEBUSB_PACKET_SIZE),
-        options.timeoutMs || 2500,
-        "等待设备响应",
-      );
-      if (inResult.status !== "ok" || !inResult.data) throw new Error("WebUSB 响应读取失败");
+      const timeoutMs = options.timeoutMs || 2500;
+      const deadline = Date.now() + timeoutMs;
+      let inResult;
+      do {
+        const remaining = deadline - Date.now();
+        if (remaining <= 0) throw new Error("等待设备响应超时");
+        inResult = await withTimeout(
+          this.device.transferIn(this.interface.inputEndpoint, protocol.WEBUSB_PACKET_SIZE),
+          remaining,
+          "等待设备响应",
+        );
+        if (inResult.status !== "ok" || !inResult.data) throw new Error("WebUSB 响应读取失败");
+      } while (inResult.data.byteLength === 0);
       const response = protocol.decodePacket(new Uint8Array(
         inResult.data.buffer,
         inResult.data.byteOffset,
@@ -317,14 +324,17 @@
       await this.request(protocol.WebOpcode.UART_CLOSE);
     }
 
-    async uploadOta(image, targetRole, onProgress) {
+    async uploadOta(image, onProgress) {
+      if (!this.localInfo || ![DeviceRole.TX, DeviceRole.RX].includes(this.localInfo.role)) {
+        throw new Error("无法识别当前 CRazyLink 设备角色");
+      }
       const bytes = protocol.asBytes(image);
       const begin = new Uint8Array(9);
       const view = new DataView(begin.buffer);
-      begin[0] = targetRole;
+      begin[0] = this.localInfo.role;
       view.setUint32(1, bytes.length, true);
       view.setUint32(5, protocol.crc32(bytes), true);
-      await this.request(protocol.WebOpcode.OTA_BEGIN, { data: begin, timeoutMs: 5000 });
+      await this.request(protocol.WebOpcode.OTA_BEGIN, { data: begin, timeoutMs: 30000 });
       for (let offset = 0; offset < bytes.length; offset += protocol.WEBUSB_DATA_SIZE) {
         const chunk = bytes.slice(offset, offset + protocol.WEBUSB_DATA_SIZE);
         await this.request(protocol.WebOpcode.OTA_DATA, { offset, data: chunk, timeoutMs: 5000 });

@@ -93,3 +93,49 @@ test("connect remains available for local TX OTA when RX is offline", async () =
   assert.equal(info.peerConnected, false);
   assert.equal(info.firmwareVersion, "1.1.0");
 });
+
+test("USB OTA always targets the connected device role", async () => {
+  const connection = new CrazylinkUsbDevice({});
+  connection.localInfo = { role: 2 };
+  const requests = [];
+  connection.request = async (opcode, options = {}) => {
+    requests.push({ opcode, options });
+    return {};
+  };
+  await connection.uploadOta(Uint8Array.from({ length: 48 }, (_, index) => index), () => {});
+  assert.deepEqual(requests.map((entry) => entry.opcode), [
+    global.CRazyLink.WebOpcode.OTA_BEGIN,
+    global.CRazyLink.WebOpcode.OTA_DATA,
+    global.CRazyLink.WebOpcode.OTA_DATA,
+    global.CRazyLink.WebOpcode.OTA_COMMIT,
+  ]);
+  assert.equal(requests[0].options.data[0], 2);
+});
+
+test("USB OTA rejects an unknown local role", async () => {
+  const connection = new CrazylinkUsbDevice({});
+  await assert.rejects(() => connection.uploadOta(Uint8Array.of(0xe9)), /无法识别/);
+});
+
+test("request ignores TinyUSB zero-length packets", async () => {
+  const response = global.CRazyLink.encodePacket({
+    opcode: global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO,
+    flags: global.CRazyLink.WebPacketFlag.RESPONSE,
+    sequence: 1,
+    data: Uint8Array.of(1, 1, 1, 0, 8, 1),
+  });
+  let reads = 0;
+  const connection = new CrazylinkUsbDevice({
+    opened: true,
+    transferOut: async (_, data) => ({ status: "ok", bytesWritten: data.byteLength }),
+    transferIn: async () => {
+      reads += 1;
+      if (reads === 1) return { status: "ok", data: new DataView(new ArrayBuffer(0)) };
+      return { status: "ok", data: new DataView(response.buffer) };
+    },
+  });
+  connection.interface = { inputEndpoint: 1, outputEndpoint: 1 };
+  const packet = await connection.request(global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO);
+  assert.equal(reads, 2);
+  assert.deepEqual([...packet.data], [1, 1, 1, 0, 8, 1]);
+});
