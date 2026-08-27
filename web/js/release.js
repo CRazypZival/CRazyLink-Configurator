@@ -9,6 +9,7 @@
   const SIGNATURE_SIZE = 64;
   const MAGIC = Uint8Array.of(0x43, 0x52, 0x4c, 0x31, 0x0d, 0x0a, 0x1a, 0x0a);
   const RELEASES_API = "https://api.github.com/repos/CRazypZival/CRazyLink-Configurator/releases?per_page=30";
+  const UNIVERSAL_ROLE = "CRAZYLINK";
   const TRUSTED_RELEASE_KEY = Object.freeze({
     kty: "EC",
     x: "pIMxYXpPU5r-feoFCx6N7ktpTJjhUMTPBF6CSLotuWg",
@@ -91,7 +92,7 @@
       throw new Error("CRL 固件清单无效");
     }
     if (manifest.format !== "CRL1" || manifest.chip !== "ESP32-S3" ||
-        !["TX", "RX"].includes(manifest.role) || !Array.isArray(manifest.segments)) {
+        ![UNIVERSAL_ROLE, "TX", "RX"].includes(manifest.role) || !Array.isArray(manifest.segments)) {
       throw new Error("CRL 固件清单字段无效");
     }
     return {
@@ -161,7 +162,10 @@
     const settings = options || {};
     const parsed = parseCrlPackage(value);
     await verifyCrlSignature(parsed, settings.publicKey, settings.crypto);
-    if (settings.role && parsed.manifest.role !== settings.role) throw new Error(`固件目标为 ${parsed.manifest.role}，不能烧录到 ${settings.role}`);
+    if (settings.role && parsed.manifest.role !== settings.role &&
+        parsed.manifest.role !== UNIVERSAL_ROLE && settings.role !== UNIVERSAL_ROLE) {
+      throw new Error(`固件目标为 ${parsed.manifest.role}，不能烧录到 ${settings.role}`);
+    }
     const plain = restorePayload(parsed);
     const segments = [];
     for (const entry of parsed.manifest.segments) {
@@ -197,20 +201,26 @@
     return results;
   }
 
-  async function downloadReleasePackage(release, role, fetchImpl) {
-    const entry = release?.manifest?.packages?.find((item) => item.role === role);
-    if (!entry) throw new Error(`发布版本不包含 ${role} 固件`);
-    const response = await (fetchImpl || fetch)(
+  async function downloadReleasePackage(release, roleOrFetch, fetchImpl) {
+    const requestedRole = typeof roleOrFetch === "string" ? roleOrFetch : UNIVERSAL_ROLE;
+    const fetcher = typeof roleOrFetch === "function" ? roleOrFetch : (fetchImpl || fetch);
+    const packages = release?.manifest?.packages || [];
+    const entry = packages.find((item) => item.role === UNIVERSAL_ROLE) ||
+      packages.find((item) => item.role === requestedRole) ||
+      (packages.length === 1 ? packages[0] : null);
+    if (!entry) throw new Error("发布版本不包含 CRazyLink 固件");
+    const response = await fetcher(
       `https://github.com/CRazypZival/CRazyLink-Configurator/releases/download/${encodeURIComponent(release.tag)}/${encodeURIComponent(entry.file)}`,
     );
     if (!response.ok) throw new Error(`固件下载失败：HTTP ${response.status}`);
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (await sha256Hex(bytes) !== entry.sha256) throw new Error("下载固件与 Release 校验值不一致");
-    return openCrlPackage(bytes, { role });
+    return openCrlPackage(bytes, { role: UNIVERSAL_ROLE });
   }
 
   return {
     TRUSTED_RELEASE_KEY,
+    UNIVERSAL_ROLE,
     RELEASES_API,
     parseCrlPackage,
     verifyCrlSignature,

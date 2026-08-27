@@ -1,6 +1,7 @@
 # CRazyLink Configurator
 
-CRazyLink 的静态 Web 上位机。页面通过 WebUSB 连接 TX/RX 的原生 USB 功能接口，提供远程 SWD 烧录和目标 UART 监视。
+CRazyLink 的静态 Web 上位机。页面通过 WebUSB 连接 CRazyLink 的原生 USB 功能接口，
+提供本地/远程 SWD 烧录、目标 UART 监视和统一固件升级。
 
 ## 本地使用
 

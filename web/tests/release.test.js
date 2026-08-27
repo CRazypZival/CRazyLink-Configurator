@@ -19,7 +19,7 @@ test("release list ignores drafts and releases without a manifest", async () => 
       { tag_name: "v1", draft: false, prerelease: false, published_at: "now", assets: [{ name: "manifest.json", browser_download_url: "manifest" }] },
       { tag_name: "v0", draft: false, assets: [] },
     ]],
-    ["manifest", { packages: [{ role: "TX", file: "tx.crl" }] }],
+    ["manifest", { packages: [{ role: "CRAZYLINK", file: "crazylink.crl" }] }],
   ]);
   const fetchImpl = async (url) => ({ ok: true, json: async () => responses.get(url) });
   const result = await release.listFirmwareReleases(fetchImpl);

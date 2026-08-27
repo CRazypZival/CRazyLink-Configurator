@@ -10,8 +10,8 @@
   const textDecoder = new TextDecoder();
   const textEncoder = new TextEncoder();
 
-  const DeviceRole = Object.freeze({ TX: 1, RX: 2 });
-  const DeviceMode = Object.freeze({ ONLINE: 0, OFFLINE: 1 });
+  const DeviceRole = Object.freeze({ TX: 1, RX: 2, CRAZYLINK: 3 });
+  const DeviceMode = Object.freeze({ INDEPENDENT: 0, OFFLINE: 1, REMOTE_HOST: 2, REMOTE_DEVICE: 3 });
   const FlashState = Object.freeze({ IDLE: 0, READY: 1, FLASHING: 2, SUCCESS: 3, ERROR: 4, CANCELLED: 5 });
 
   function withTimeout(promise, timeoutMs, label) {
@@ -106,7 +106,9 @@
       } catch (_) {
         this.info = {
           role: this.localInfo.role,
-          mode: this.localInfo.role === DeviceRole.RX ? DeviceMode.OFFLINE : DeviceMode.ONLINE,
+          mode: Number.isInteger(this.localInfo.mode)
+            ? this.localInfo.mode
+            : (this.localInfo.role === DeviceRole.RX ? DeviceMode.REMOTE_DEVICE : DeviceMode.REMOTE_HOST),
           capabilities: 0,
           peerConnected: false,
           jobStored: false,
@@ -224,6 +226,7 @@
         firmwareVersion: `${packet.data[1]}.${packet.data[2]}.${packet.data[3]}`,
         flashSize: packet.data[4] * 1024 * 1024,
         otaSupported: Boolean(packet.data[5] & 1),
+        mode: packet.data.length > 6 ? packet.data[6] : null,
         serialNumber: this.serialNumber,
         productName: this.device.productName || "CRazyLink CMSIS-DAP",
       };
@@ -325,13 +328,13 @@
     }
 
     async uploadOta(image, onProgress) {
-      if (!this.localInfo || ![DeviceRole.TX, DeviceRole.RX].includes(this.localInfo.role)) {
-        throw new Error("无法识别当前 CRazyLink 设备角色");
+      if (!this.localInfo || ![DeviceRole.CRAZYLINK, DeviceRole.TX, DeviceRole.RX].includes(this.localInfo.role)) {
+        throw new Error("无法识别当前 CRazyLink 设备");
       }
       const bytes = protocol.asBytes(image);
       const begin = new Uint8Array(9);
       const view = new DataView(begin.buffer);
-      begin[0] = this.localInfo.role;
+      begin[0] = DeviceRole.CRAZYLINK;
       view.setUint32(1, bytes.length, true);
       view.setUint32(5, protocol.crc32(bytes), true);
       await this.request(protocol.WebOpcode.OTA_BEGIN, { data: begin, timeoutMs: 30000 });

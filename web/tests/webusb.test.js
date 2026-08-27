@@ -57,19 +57,20 @@ test("does not select a CDC bulk interface", () => {
 test("decodes local role, version, flash size, and OTA support", async () => {
   const connection = new CrazylinkUsbDevice({
     serialNumber: "ABC123",
-    productName: "CRazyLink_TX CMSIS-DAP",
+    productName: "CRazyLink CMSIS-DAP",
   });
   connection.request = async (opcode) => {
     assert.equal(opcode, global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO);
-    return { data: Uint8Array.of(1, 1, 1, 0, 8, 1) };
+    return { data: Uint8Array.of(3, 1, 1, 0, 8, 1, 0) };
   };
   assert.deepEqual(await connection.getLocalDeviceInfo(), {
-    role: 1,
+    role: 3,
     firmwareVersion: "1.1.0",
     flashSize: 8 * 1024 * 1024,
     otaSupported: true,
+    mode: 0,
     serialNumber: "ABC123",
-    productName: "CRazyLink_TX CMSIS-DAP",
+    productName: "CRazyLink CMSIS-DAP",
   });
 });
 
@@ -86,15 +87,15 @@ test("connect remains available for local TX OTA when RX is offline", async () =
     claimInterface: async () => {},
   });
   const connection = new CrazylinkUsbDevice(usbDevice);
-  connection.getLocalDeviceInfo = async () => ({ role: 1, firmwareVersion: "1.1.0", flashSize: 8 * 1024 * 1024, otaSupported: true });
+  connection.getLocalDeviceInfo = async () => ({ role: 3, firmwareVersion: "1.1.0", flashSize: 8 * 1024 * 1024, otaSupported: true });
   connection.getDeviceInfo = async () => { throw new Error("RX offline"); };
   const info = await connection.connect();
-  assert.equal(info.role, 1);
+  assert.equal(info.role, 3);
   assert.equal(info.peerConnected, false);
   assert.equal(info.firmwareVersion, "1.1.0");
 });
 
-test("USB OTA always targets the connected device role", async () => {
+test("USB OTA always targets the unified CRazyLink firmware", async () => {
   const connection = new CrazylinkUsbDevice({});
   connection.localInfo = { role: 2 };
   const requests = [];
@@ -109,7 +110,7 @@ test("USB OTA always targets the connected device role", async () => {
     global.CRazyLink.WebOpcode.OTA_DATA,
     global.CRazyLink.WebOpcode.OTA_COMMIT,
   ]);
-  assert.equal(requests[0].options.data[0], 2);
+  assert.equal(requests[0].options.data[0], 3);
 });
 
 test("USB OTA rejects an unknown local role", async () => {

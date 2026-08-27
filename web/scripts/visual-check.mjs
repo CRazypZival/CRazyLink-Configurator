@@ -30,7 +30,7 @@ try {
     await page.route("https://example.invalid/manifest.json", (route) => route.fulfill({
       status: 200,
       contentType: "application/json",
-      body: JSON.stringify({ packages: [{ role: "TX", file: "CRazyLink_TX_v1.1.0.crl" }, { role: "RX", file: "CRazyLink_RX_v1.1.0.crl" }] }),
+      body: JSON.stringify({ packages: [{ role: "CRAZYLINK", file: "CRazyLink_v1.1.0.crl" }] }),
     }));
     await page.goto(baseUrl, { waitUntil: "networkidle" });
     await page.waitForFunction(() => document.querySelector("#upgradeStatusText")?.textContent.includes("设备可用"));
@@ -47,7 +47,7 @@ try {
     }));
     if (layout.documentWidth > layout.viewportWidth || layout.bodyWidth > layout.viewportWidth) failures.push(`${viewport.name}: horizontal overflow`);
     if (layout.activeView !== "upgradeView") failures.push(`${viewport.name}: upgrade view is not active`);
-    if (layout.buttonText !== "FLASHING") failures.push(`${viewport.name}: FLASHING label changed`);
+    if (layout.buttonText !== "更新 CRazyLink") failures.push(`${viewport.name}: upgrade action label changed`);
     if (layout.clipped.length) failures.push(`${viewport.name}: clipped elements ${layout.clipped.join(", ")}`);
     if (consoleErrors.length) failures.push(`${viewport.name}: console errors ${consoleErrors.join(" | ")}`);
     await page.screenshot({ path: resolve(outputDirectory, `${viewport.name}.png`), fullPage: true });

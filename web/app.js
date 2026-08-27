@@ -22,7 +22,7 @@
       usbDevice: null,
       serialPort: null,
       localInfo: null,
-      role: null,
+      role: "CRAZYLINK",
       deviceLabel: "",
       loadingReleases: false,
       flashing: false,
@@ -110,13 +110,15 @@
       $("#terminalLinkState").textContent = "未连接";
       return;
     }
-    const role = info.role === 2 ? "RX" : "TX";
-    $("#deviceName").textContent = `CRazyLink ${role}`;
+    const modeNames = { 0: "独立", 1: "离线", 2: "远程主机", 3: "远程设备" };
+    const modeName = modeNames[info.mode] || "未知模式";
+    const modeLabel = info.mode === 2 ? "Host" : info.mode === 3 ? "Device" : "";
+    $("#deviceName").textContent = modeLabel ? `CRazyLink_${modeLabel}` : "CRazyLink";
     $("#deviceSerial").textContent = info.serialNumber || "USB 已授权";
-    $("#linkMetric").textContent = info.peerConnected ? "在线" : (info.mode === 1 ? "本地" : "等待 RX");
-    $("#modeMetric").textContent = info.mode === 1 ? "离线" : "在线";
+    $("#linkMetric").textContent = info.peerConnected ? "在线" : (info.mode <= 1 ? "本地" : "等待对端");
+    $("#modeMetric").textContent = modeName;
     $("#jobMetric").textContent = info.jobStored ? api.formatBytes(info.jobSize || 0) : "无";
-    $("#terminalLinkState").textContent = info.peerConnected ? "TX ↔ RX" : (info.mode === 1 ? "RX 本地" : "等待 RX");
+    $("#terminalLinkState").textContent = info.peerConnected ? "TX ↔ RX" : (info.mode <= 1 ? "本地 UART" : "等待对端");
     const mobilePort = $("#mobilePortLabel");
     if (mobilePort) mobilePort.textContent = "已连接";
     $$(".mode-option").forEach((button) => button.classList.toggle("is-active", Number(button.dataset.mode) === info.mode));
@@ -291,7 +293,7 @@
       state.upgrade.transport = null;
       state.upgrade.usbDevice = null;
       state.upgrade.localInfo = null;
-      state.upgrade.role = null;
+      state.upgrade.role = "CRAZYLINK";
       state.upgrade.deviceLabel = "";
       updateUpgradeUi();
     }
@@ -417,17 +419,17 @@
 
   async function setMode(event) {
     if (!state.device || state.flashing) return;
-    try { updateDeviceInfo(await state.device.setMode(Number(event.currentTarget.dataset.mode))); toast(`已切换至${event.currentTarget.dataset.mode === "1" ? "离线" : "在线"}模式`, "success"); }
+    try {
+      const mode = Number(event.currentTarget.dataset.mode);
+      updateDeviceInfo(await state.device.setMode(mode));
+      const labels = { 0: "独立", 1: "离线", 2: "远程主机", 3: "远程设备" };
+      toast(`已切换至${labels[mode] || "未知"}模式`, "success");
+    }
     catch (error) { toast(error.message, "error"); }
   }
 
-  function upgradeRoleName(code) {
-    return code === api.DeviceRole.RX ? "RX" : "TX";
-  }
-
   function shortUpgradeDeviceLabel() {
-    const label = state.upgrade.deviceLabel || "当前设备";
-    return label.replace(/^CRazyLink_[A-Z]+ CMSIS-DAP\s*·\s*/i, "");
+    return state.upgrade.deviceLabel || "当前设备";
   }
 
   function setUpgradeStatus(text, kind, progress) {
@@ -441,39 +443,17 @@
     const upgrade = state.upgrade;
     $("#upgradeDeviceValue").textContent = upgrade.deviceLabel || "选择升级接口";
     $(".upgrade-select-wrap").classList.toggle("has-value", Boolean(upgrade.release));
-    const portLabel = shortUpgradeDeviceLabel();
-    const localRole = upgrade.localInfo ? upgradeRoleName(upgrade.localInfo.role) : null;
-    const targetText = (role) => {
-      if (!upgrade.transport) return "选择升级接口后确定";
-      if (upgrade.transport === "serial") return `烧录到当前设备 · ${portLabel}`;
-      return role === localRole
-        ? `当前连接设备 · ${portLabel}`
-        : `请单独连接 CRazyLink ${role} USB`;
-    };
-    const txText = targetText("TX");
-    const rxText = targetText("RX");
-    $("#upgradeTxDevice").textContent = txText;
-    $("#upgradeRxDevice").textContent = rxText;
-    $$('[data-upgrade-role]').forEach((button) => {
-      const selected = button.dataset.upgradeRole === upgrade.role;
-      button.classList.toggle("is-selected", selected);
-      button.setAttribute("aria-pressed", String(selected));
-      button.disabled = upgrade.flashing || !upgrade.transport ||
-        (upgrade.transport === "usb" && button.dataset.upgradeRole !== localRole);
-    });
-
     if (upgrade.transport === "usb" && upgrade.localInfo) {
-      $("#upgradeDetectionLabel").textContent = `CRazyLink ${localRole} · v${upgrade.localInfo.firmwareVersion}`;
+      $("#upgradeDetectionLabel").textContent = `CRazyLink · v${upgrade.localInfo.firmwareVersion}`;
     } else if (upgrade.transport === "serial") {
       $("#upgradeDetectionLabel").textContent = "ESP32-S3 Download Mode";
     } else {
       $("#upgradeDetectionLabel").textContent = "自动识别设备类型";
     }
 
-    let helper = "选择发布 TAG 后可开始刷写";
+    let helper = "选择版本后更新 CRazyLink";
     if (upgrade.release && !upgrade.transport) helper = "连接升级设备后可开始刷写";
-    else if (upgrade.release && upgrade.transport === "serial" && !upgrade.role) helper = "选择 TX 或 RX 固件型号";
-    else if (upgrade.release && upgrade.transport && upgrade.role) helper = `${upgrade.release.tag} · ${upgrade.role} 已就绪`;
+    else if (upgrade.release && upgrade.transport) helper = `${upgrade.release.tag} · CRazyLink 已就绪`;
     $("#upgradeFlashHelper").textContent = helper;
     updateButtons();
   }
@@ -520,12 +500,12 @@
     state.upgrade.usbDevice = connection;
     state.upgrade.serialPort = null;
     state.upgrade.localInfo = localInfo;
-    state.upgrade.role = upgradeRoleName(localInfo.role);
+    state.upgrade.role = "CRAZYLINK";
     state.upgrade.deviceLabel = `${localInfo.productName} · ${localInfo.serialNumber}`;
     state.device = connection;
     updateDeviceInfo(connection.info);
     setConnection("connected", "设备已连接");
-    setUpgradeStatus(`已识别 CRazyLink ${state.upgrade.role}`, "success");
+    setUpgradeStatus("已识别 CRazyLink 设备", "success");
     updateUpgradeUi();
   }
 
@@ -551,7 +531,7 @@
       state.upgrade.serialPort = port;
       state.upgrade.usbDevice = null;
       state.upgrade.localInfo = null;
-      state.upgrade.role = null;
+      state.upgrade.role = "CRAZYLINK";
       state.upgrade.deviceLabel = api.describeSerialPort(port);
       $("#deviceName").textContent = "ESP32-S3 升级设备";
       $("#deviceSerial").textContent = state.upgrade.deviceLabel;
@@ -565,7 +545,7 @@
 
   function selectUpgradeRole(event) {
     if (event.currentTarget.disabled || state.upgrade.flashing || state.upgrade.transport !== "serial") return;
-    state.upgrade.role = event.currentTarget.dataset.upgradeRole;
+    state.upgrade.role = "CRAZYLINK";
     updateUpgradeUi();
   }
 
@@ -576,23 +556,21 @@
 
   async function flashUpgrade() {
     const upgrade = state.upgrade;
-    if (!upgrade.transport || !upgrade.release || !upgrade.role || upgrade.flashing) return;
+    if (!upgrade.transport || !upgrade.release || upgrade.flashing) return;
     upgrade.flashing = true;
     updateButtons();
     try {
       setUpgradeStatus(`正在下载并校验 ${upgrade.release.tag}`, "busy", 0);
-      const opened = await api.downloadReleasePackage(upgrade.release, upgrade.role);
+      const opened = await api.downloadReleasePackage(upgrade.release);
       if (upgrade.localInfo && opened.manifest.flashSize > upgrade.localInfo.flashSize) {
         throw new Error(`固件需要 ${api.formatBytes(opened.manifest.flashSize)} Flash，当前设备容量不足`);
       }
       if (upgrade.transport === "usb") {
-        const localRole = upgradeRoleName(upgrade.localInfo.role);
-        if (localRole !== upgrade.role) throw new Error(`当前连接的是 CRazyLink ${localRole}，只能更新本机固件`);
         const application = opened.segments.find((segment) => segment.kind === "application") ||
           opened.segments.find((segment) => segment.address === 0x10000);
         if (!application) throw new Error("CRL 固件包缺少 application 分段");
         await upgrade.usbDevice.uploadOta(application.data, (progress) => {
-          setUpgradeStatus(`正在通过 CRazyLink USB 更新 ${upgrade.role}`, "busy", progress);
+          setUpgradeStatus("正在通过 CRazyLink USB 更新当前设备", "busy", progress);
         });
       } else {
         await app.espFlasher.flash(upgrade.serialPort, opened, {
@@ -600,11 +578,11 @@
           eraseAll: $("#upgradeEraseSelect").value === "chip",
           verify: $("#upgradeVerifyCheck").checked,
           reset: $("#upgradeResetCheck").checked,
-          onProgress: (progress) => setUpgradeStatus(`正在完整烧录 ESP32-S3 ${upgrade.role}`, "busy", progress),
+          onProgress: (progress) => setUpgradeStatus("正在完整烧录 ESP32-S3 CRazyLink", "busy", progress),
         });
       }
-      setUpgradeStatus(`${upgrade.role} 固件升级完成`, "success", 100);
-      toast(`${upgrade.role} 固件升级完成`, "success");
+      setUpgradeStatus("CRazyLink 固件升级完成", "success", 100);
+      toast("CRazyLink 固件升级完成", "success");
     } catch (error) {
       setUpgradeStatus(error.message || "固件升级失败", "error");
       toast(error.message || "固件升级失败", "error");
@@ -647,7 +625,6 @@
     $("#upgradeUsbChoice").addEventListener("click", selectUpgradeUsb);
     $("#upgradeSerialChoice").addEventListener("click", selectUpgradeSerial);
     $("#upgradeReleaseSelect").addEventListener("change", selectUpgradeRelease);
-    $$('[data-upgrade-role]').forEach((button) => button.addEventListener("click", selectUpgradeRole));
     $("#upgradeAdvancedButton").addEventListener("click", toggleUpgradeAdvanced);
     $("#upgradeFlashButton").addEventListener("click", flashUpgrade);
     $("#refreshReleasesButton").addEventListener("click", () => loadFirmwareReleases(true));
@@ -678,7 +655,7 @@
           state.upgrade.transport = null;
           state.upgrade.usbDevice = null;
           state.upgrade.localInfo = null;
-          state.upgrade.role = null;
+          state.upgrade.role = "CRAZYLINK";
           state.upgrade.deviceLabel = "";
           setUpgradeStatus("CRazyLink USB 已断开", "warning");
           updateUpgradeUi();

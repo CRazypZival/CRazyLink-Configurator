@@ -226,25 +226,6 @@
                 </label>
               </div>
 
-              <div class="upgrade-mapping">
-                <div class="upgrade-mapping-header">
-                  <h3>固件型号</h3>
-                  <span>USB 自动锁定 · UART 可选择</span>
-                </div>
-                <div class="upgrade-target-rows">
-                  <button class="upgrade-target" type="button" data-upgrade-role="TX" aria-pressed="false" disabled>
-                    <span class="upgrade-role-badge role-tx">TX</span>
-                    <span class="upgrade-target-copy"><strong>TX 固件</strong><small id="upgradeTxDevice">选择升级接口后确定</small></span>
-                    <i data-lucide="chevron-right"></i>
-                  </button>
-                  <button class="upgrade-target" type="button" data-upgrade-role="RX" aria-pressed="false" disabled>
-                    <span class="upgrade-role-badge role-rx">RX</span>
-                    <span class="upgrade-target-copy"><strong>RX 固件</strong><small id="upgradeRxDevice">选择升级接口后确定</small></span>
-                    <i data-lucide="chevron-right"></i>
-                  </button>
-                </div>
-              </div>
-
               <button class="upgrade-advanced-disclosure" id="upgradeAdvancedButton" type="button" aria-expanded="false" aria-controls="upgradeAdvancedPanel">
                 <span><i data-lucide="settings-2"></i><strong>高级选项</strong></span>
                 <small>擦除策略 · 写入校验 · 完成后重启</small>
@@ -260,8 +241,8 @@
 
             <div class="upgrade-workflow-spacer"></div>
             <div class="upgrade-flash-action">
-              <span id="upgradeFlashHelper">选择发布 TAG 后可开始刷写</span>
-              <button class="upgrade-flashing-button" id="upgradeFlashButton" type="button" disabled><i data-lucide="upload"></i><span>FLASHING</span></button>
+              <span id="upgradeFlashHelper">选择版本后更新 CRazyLink</span>
+              <button class="upgrade-flashing-button" id="upgradeFlashButton" type="button" disabled><i data-lucide="upload"></i><span>更新 CRazyLink</span></button>
             </div>
           </div>
         </div>
@@ -276,7 +257,7 @@
   <dialog class="help-dialog" id="helpDialog"><button class="dialog-close icon-button icon-button-small" id="closeHelpButton" type="button" aria-label="关闭"><i data-lucide="x"></i></button><h2>使用说明</h2><ol><li>将 TX 原生 USB 接入电脑并点击“重新选择”。</li><li>选择 BIN 文件，确认地址后开始烧录。</li><li>切换到串口终端，设置参数后打开串口。</li></ol></dialog>
   <dialog class="upgrade-device-dialog" id="upgradeDeviceDialog">
     <div class="upgrade-dialog-header"><h2>选择升级接口</h2><button class="icon-button icon-button-small" id="closeUpgradeDeviceDialog" type="button" aria-label="关闭"><i data-lucide="x"></i></button></div>
-    <button class="upgrade-device-choice" id="upgradeUsbChoice" type="button"><i data-lucide="usb"></i><span><strong>CRazyLink USB</strong><small>升级当前连接设备，自动锁定 TX/RX 角色</small></span><i data-lucide="chevron-right"></i></button>
+    <button class="upgrade-device-choice" id="upgradeUsbChoice" type="button"><i data-lucide="usb"></i><span><strong>CRazyLink USB</strong><small>升级当前连接设备</small></span><i data-lucide="chevron-right"></i></button>
     <button class="upgrade-device-choice" id="upgradeSerialChoice" type="button"><i data-lucide="cable"></i><span><strong>UART0 / USB Download Mode</strong><small>完整烧录 ESP32-S3 开发板或空片</small></span><i data-lucide="chevron-right"></i></button>
   </dialog>
   <script src="https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js"></script>
