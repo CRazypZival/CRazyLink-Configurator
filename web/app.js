@@ -25,6 +25,7 @@
       errorCount: 0,
       openedAt: 0,
       runtimeTimer: null,
+      polling: false,
     },
     upgrade: {
       releases: [],
@@ -504,11 +505,18 @@
   function startSerialPolling() {
     stopSerialPolling();
     if (state.serial.paused) return;
-    state.pollTimer = window.setInterval(async () => {
-      if (!state.device || !state.serialOpen || state.serial.paused) return;
+    const poll = async () => {
+      if (state.serial.polling || !state.device || !state.serialOpen || state.serial.paused) return;
+      state.serial.polling = true;
       try {
-        const bytes = await state.device.readUart();
-        if (bytes?.length) appendTerminalEntry("RX", bytes);
+        // A WebUSB response carries 47 UART bytes. Drain several responses per
+        // tick so the browser can keep up with the target UART at high baud.
+        for (let count = 0; count < 64; count += 1) {
+          if (!state.device || !state.serialOpen || state.serial.paused) break;
+          const bytes = await state.device.readUart();
+          if (!bytes?.length) break;
+          appendTerminalEntry("RX", bytes);
+        }
       } catch (error) {
         stopSerialPolling();
         state.serialOpen = false;
@@ -517,8 +525,12 @@
         recordSerialError(error);
         updateButtons();
         toast(error.message || "串口读取失败", "error");
+      } finally {
+        state.serial.polling = false;
       }
-    }, 90);
+    };
+    state.pollTimer = window.setInterval(poll, 25);
+    poll();
   }
 
   async function toggleSerial() {
