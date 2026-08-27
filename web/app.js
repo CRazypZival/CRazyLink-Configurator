@@ -15,6 +15,17 @@
     serialOpen: false,
     pollTimer: null,
     terminalBytes: 0,
+    serial: {
+      paused: false,
+      filter: "all",
+      search: "",
+      entries: [],
+      rxFrames: 0,
+      txFrames: 0,
+      errorCount: 0,
+      openedAt: 0,
+      runtimeTimer: null,
+    },
     upgrade: {
       releases: [],
       release: null,
@@ -83,7 +94,7 @@
     $$("[data-view-panel]").forEach((panel) => panel.classList.toggle("is-active", panel.dataset.viewPanel === view));
     const copy = {
       flash: { title: "固件烧录", subtitle: "" },
-      serial: { title: "串口终端", subtitle: "" },
+      serial: { title: "串口调试", subtitle: "持续监听、发送与参数配置" },
       upgrade: { title: "固件升级", subtitle: "连接后自动识别设备类型" },
     }[view];
     $("#viewTitle").textContent = copy.title;
@@ -93,6 +104,7 @@
       subtitle.hidden = !copy.subtitle;
     }
     $("#standardHeaderActions").hidden = view === "upgrade";
+    $("#serialHeaderActions").hidden = view !== "serial";
     $("#upgradeHeaderActions").hidden = view !== "upgrade";
     $(".standard-mobile-actions").hidden = view === "upgrade";
     $(".upgrade-mobile-actions").hidden = view !== "upgrade";
@@ -107,7 +119,9 @@
       $("#linkMetric").textContent = "未连接";
       $("#modeMetric").textContent = "—";
       $("#jobMetric").textContent = "无任务";
-      $("#terminalLinkState").textContent = "未连接";
+      const linkState = $("#terminalLinkState");
+      if (linkState) linkState.textContent = "未连接";
+      setSerialStatus("未监听");
       return;
     }
     const modeNames = { 0: "独立", 1: "离线", 2: "远程主机", 3: "远程设备" };
@@ -118,7 +132,10 @@
     $("#linkMetric").textContent = info.peerConnected ? "在线" : (info.mode <= 1 ? "本地" : "等待对端");
     $("#modeMetric").textContent = modeName;
     $("#jobMetric").textContent = info.jobStored ? api.formatBytes(info.jobSize || 0) : "无";
-    $("#terminalLinkState").textContent = info.peerConnected ? "TX ↔ RX" : (info.mode <= 1 ? "本地 UART" : "等待对端");
+    const linkState = $("#terminalLinkState");
+    if (linkState) linkState.textContent = info.peerConnected ? "TX ↔ RX" : (info.mode <= 1 ? "本地 UART" : "等待对端");
+    const serialLabel = info.peerConnected ? "USB 功能接口 · TX ↔ RX" : (info.mode <= 1 ? "USB 功能接口 · 本地 UART" : "USB 功能接口 · 等待对端");
+    $("#serialPortLabel").textContent = serialLabel;
     const mobilePort = $("#mobilePortLabel");
     if (mobilePort) mobilePort.textContent = "已连接";
     $$(".mode-option").forEach((button) => button.classList.toggle("is-active", Number(button.dataset.mode) === info.mode));
@@ -130,8 +147,13 @@
     $("#mobileConnectButton").setAttribute("aria-label", connected ? "断开设备" : "连接设备");
     $("#flashButton").disabled = !connected || state.files.length === 0 || state.flashing;
     $("#clearFilesButton").disabled = state.files.length === 0 || state.flashing;
+    $("#exportFirmwareButton").disabled = state.files.length === 0 || state.flashing;
     $("#serialOpenButton").disabled = !connected || state.flashing;
     $("#serialSendButton").disabled = !connected || !state.serialOpen;
+    $("#serialCloseHeaderButton").disabled = !state.serialOpen;
+    $("#exportLogButton").disabled = state.serial.entries.length === 0;
+    $("#pauseListeningButton").disabled = !state.serialOpen;
+    $("#pauseListeningButton").querySelector("svg")?.setAttribute("data-lucide", state.serial.paused ? "play" : "pause");
     $("#serialOpenButton").querySelector("span").textContent = state.serialOpen ? "关闭串口" : "打开串口";
     $("#serialOpenButton").querySelector("svg")?.setAttribute("data-lucide", state.serialOpen ? "radio" : "radio-tower");
     const upgradeReady = Boolean(
@@ -141,6 +163,7 @@
     $("#upgradeDeviceButton").disabled = state.upgrade.flashing;
     $("#upgradeReleaseSelect").disabled = state.upgrade.flashing || state.upgrade.loadingReleases;
     $("#refreshReleasesButton").disabled = state.upgrade.loadingReleases || state.upgrade.flashing;
+    $("#saveRuntimeModeButton").disabled = state.upgrade.transport !== "usb" || !state.device || state.upgrade.flashing;
     iconRefresh();
   }
 
@@ -282,6 +305,7 @@
 
   async function disconnectDevice() {
     stopSerialPolling();
+    stopSerialRuntime();
     if (state.device) {
       try { if (state.serialOpen) await state.device.closeUart(); } catch (_) {}
       try { await state.device.disconnect(); } catch (_) {}
@@ -289,6 +313,10 @@
     state.device = null;
     state.info = null;
     state.serialOpen = false;
+    state.serial.paused = false;
+    state.serial.openedAt = 0;
+    $("#serialPortLabel").textContent = "USB 功能接口";
+    setSerialStatus("未监听");
     if (state.upgrade.transport === "usb") {
       state.upgrade.transport = null;
       state.upgrade.usbDevice = null;
@@ -361,17 +389,111 @@
     return bytes;
   }
 
-  function renderTerminal(bytes) {
-    if (!bytes.length) return;
-    state.terminalBytes += bytes.length;
+  function formatRuntime(milliseconds) {
+    const seconds = Math.max(0, Math.floor(milliseconds / 1000));
+    const hours = Math.floor(seconds / 3600);
+    const minutes = Math.floor((seconds % 3600) / 60);
+    const remainder = seconds % 60;
+    return [hours, minutes, remainder].map((value) => String(value).padStart(2, "0")).join(":");
+  }
+
+  function updateSerialTraffic() {
+    const serialTraffic = $("#serialTraffic");
+    if (serialTraffic) {
+      serialTraffic.textContent = "接收 " + state.serial.rxFrames + " 帧 · 发送 " +
+        state.serial.txFrames + " 帧 · 错误 " + state.serial.errorCount;
+    }
+  }
+
+  function updateSerialRuntime() {
+    const runtime = $("#serialRuntime");
+    if (!runtime) return;
+    const elapsed = state.serial.openedAt ? Date.now() - state.serial.openedAt : 0;
+    runtime.textContent = "持续时间 " + formatRuntime(elapsed);
+  }
+
+  function setSerialStatus(message, stateName) {
+    const statusMessage = $("#serialStatusMessage");
+    if (statusMessage) statusMessage.textContent = message;
+    const line = $(".serial-status-line");
+    if (line) line.dataset.state = stateName || (state.serialOpen ? "active" : "idle");
+    const indicator = $(".serial-status-indicator");
+    if (indicator) indicator.dataset.state = stateName || (state.serialOpen ? "active" : "idle");
+  }
+
+  function renderTerminalLog() {
     const output = $("#terminalOutput");
-    const placeholder = output.querySelector(".terminal-placeholder");
-    if (placeholder) placeholder.remove();
-    const text = $("#hexDisplayCheck").checked
-      ? Array.from(bytes, (value) => value.toString(16).padStart(2, "0")).join(" ")
-      : new TextDecoder().decode(bytes);
-    output.append(document.createTextNode(text));
-    output.scrollTop = output.scrollHeight;
+    if (!output) return;
+    const shouldScroll = $("#autoScrollCheck")?.checked;
+    output.replaceChildren();
+    const search = state.serial.search.trim().toLowerCase();
+    const visible = state.serial.entries.filter((entry) => {
+      if (state.serial.filter !== "all" && entry.direction !== state.serial.filter) return false;
+      return !search || entry.payload.toLowerCase().includes(search);
+    });
+    if (!visible.length) {
+      const placeholder = document.createElement("span");
+      placeholder.className = "terminal-placeholder";
+      placeholder.textContent = state.serial.entries.length ? "没有匹配的日志" : "等待目标数据…";
+      output.append(placeholder);
+      return;
+    }
+    for (const entry of visible) {
+      const line = document.createElement("div");
+      line.className = "terminal-log-entry";
+      line.dataset.direction = entry.direction;
+      if (entry.kind) line.dataset.kind = entry.kind;
+      const timestamp = document.createElement("span");
+      timestamp.className = "terminal-log-time";
+      timestamp.textContent = entry.timestamp;
+      const direction = document.createElement("span");
+      direction.className = "terminal-log-direction";
+      direction.textContent = entry.direction;
+      const payload = document.createElement("span");
+      payload.className = "terminal-log-payload";
+      payload.textContent = entry.bytes
+        ? ($("#hexDisplayCheck")?.checked
+          ? Array.from(entry.bytes, (value) => value.toString(16).padStart(2, "0")).join(" ")
+          : new TextDecoder().decode(entry.bytes))
+        : entry.payload;
+      line.append(timestamp, direction, payload);
+      output.append(line);
+    }
+    if (shouldScroll) output.scrollTop = output.scrollHeight;
+  }
+
+  function appendTerminalEntry(direction, value, kind) {
+    const bytes = value instanceof Uint8Array ? new Uint8Array(value) : null;
+    const payload = bytes ? new TextDecoder().decode(bytes) : String(value || "");
+    if (!payload && !bytes?.length) return;
+    state.serial.entries.push({ timestamp: nowLabel(), direction, payload, bytes, kind: kind || "" });
+    if (state.serial.entries.length > 2000) state.serial.entries.splice(0, state.serial.entries.length - 2000);
+    if (direction === "RX") {
+      state.serial.rxFrames += 1;
+      state.terminalBytes += bytes?.length || 0;
+    } else if (direction === "TX") {
+      state.serial.txFrames += 1;
+    }
+    updateSerialTraffic();
+    renderTerminalLog();
+  }
+
+  function recordSerialError(error) {
+    state.serial.errorCount += 1;
+    updateSerialTraffic();
+    appendTerminalEntry("SYS", error?.message || String(error || "串口错误"), "error");
+  }
+
+  function stopSerialRuntime() {
+    if (state.serial.runtimeTimer) window.clearInterval(state.serial.runtimeTimer);
+    state.serial.runtimeTimer = null;
+    updateSerialRuntime();
+  }
+
+  function startSerialRuntime() {
+    stopSerialRuntime();
+    state.serial.runtimeTimer = window.setInterval(updateSerialRuntime, 1000);
+    updateSerialRuntime();
   }
 
   function stopSerialPolling() {
@@ -381,9 +503,21 @@
 
   function startSerialPolling() {
     stopSerialPolling();
+    if (state.serial.paused) return;
     state.pollTimer = window.setInterval(async () => {
-      if (!state.device || !state.serialOpen) return;
-      try { renderTerminal(await state.device.readUart()); } catch (error) { stopSerialPolling(); toast(error.message, "error"); }
+      if (!state.device || !state.serialOpen || state.serial.paused) return;
+      try {
+        const bytes = await state.device.readUart();
+        if (bytes?.length) appendTerminalEntry("RX", bytes);
+      } catch (error) {
+        stopSerialPolling();
+        state.serialOpen = false;
+        stopSerialRuntime();
+        setSerialStatus("监听失败", "error");
+        recordSerialError(error);
+        updateButtons();
+        toast(error.message || "串口读取失败", "error");
+      }
     }, 90);
   }
 
@@ -393,16 +527,31 @@
       stopSerialPolling();
       try { await state.device.closeUart(); } catch (error) { toast(error.message, "error"); }
       state.serialOpen = false;
+      state.serial.paused = false;
+      stopSerialRuntime();
       $("#terminalStatus").textContent = "串口已关闭";
-      logFlash("目标 UART 已停止。");
+      setSerialStatus("未监听");
+      appendTerminalEntry("SYS", "串口已关闭");
     } else {
       try {
         await state.device.openUart({ baudRate: Number($("#baudSelect").value), dataBits: Number($("#dataBitsSelect").value), parity: $("#paritySelect").value, stopBits: Number($("#stopBitsSelect").value) });
         state.serialOpen = true;
+        state.serial.paused = false;
+        state.serial.openedAt = Date.now();
+        const parity = { none: "N", odd: "O", even: "E" }[$("#paritySelect").value] || "N";
+        $("#serialPortLabel").textContent = "USB 功能接口 · " + $("#baudSelect").value + " / " +
+          $("#dataBitsSelect").value + parity + $("#stopBitsSelect").value;
+        setSerialStatus("正在监听", "active");
+        appendTerminalEntry("SYS", "串口已打开 · " + $("#baudSelect").value + " / " +
+          $("#dataBitsSelect").value + parity + $("#stopBitsSelect").value);
+        startSerialRuntime();
         $("#terminalStatus").textContent = `${$("#baudSelect").value} / ${$("#dataBitsSelect").value}${$("#paritySelect").value[0].toUpperCase()}${$("#stopBitsSelect").value}`;
         startSerialPolling();
         toast("目标 UART 已打开", "success");
-      } catch (error) { toast(error.message, "error"); }
+      } catch (error) {
+        recordSerialError(error);
+        toast(error.message, "error");
+      }
     }
     updateButtons();
   }
@@ -412,9 +561,69 @@
     const value = $("#terminalInput").value;
     if (!value) return;
     try {
-      await state.device.writeUart($("#hexSendCheck").checked ? parseHex(value) : new TextEncoder().encode(value));
+      const hex = $("#hexSendCheck").checked;
+      let bytes = hex ? parseHex(value) : new TextEncoder().encode(value);
+      if (!hex) {
+        const endings = { CRLF: "\r\n", LF: "\n", CR: "\r" };
+        const ending = endings[$("#lineEndingSelect").value] || "";
+        if (ending) bytes = new TextEncoder().encode(value + ending);
+      }
+      await state.device.writeUart(bytes);
+      appendTerminalEntry("TX", bytes);
       $("#terminalInput").value = "";
-    } catch (error) { toast(error.message, "error"); }
+    } catch (error) {
+      recordSerialError(error);
+      toast(error.message, "error");
+    }
+  }
+
+  function toggleSerialPause() {
+    if (!state.serialOpen) return;
+    state.serial.paused = !state.serial.paused;
+    if (state.serial.paused) {
+      stopSerialPolling();
+      setSerialStatus("已暂停", "paused");
+      $("#pauseListeningButton").setAttribute("aria-label", "恢复监听");
+      $("#pauseListeningButton").setAttribute("title", "恢复监听");
+      $("#pauseListeningButton").querySelector("svg")?.setAttribute("data-lucide", "play");
+      appendTerminalEntry("SYS", "监听已暂停");
+    } else {
+      setSerialStatus("正在监听", "active");
+      $("#pauseListeningButton").setAttribute("aria-label", "暂停监听");
+      $("#pauseListeningButton").setAttribute("title", "暂停监听");
+      $("#pauseListeningButton").querySelector("svg")?.setAttribute("data-lucide", "pause");
+      appendTerminalEntry("SYS", "监听已恢复");
+      startSerialPolling();
+    }
+    iconRefresh();
+  }
+
+  function exportTerminalLog() {
+    if (!state.serial.entries.length) return;
+    const body = state.serial.entries.map((entry) =>
+      "[" + entry.timestamp + "] " + entry.direction + " " + entry.payload).join("\n") + "\n";
+    const url = URL.createObjectURL(new Blob([body], { type: "text/plain;charset=utf-8" }));
+    const link = document.createElement("a");
+    link.href = url;
+    link.download = "crazylink-serial-" + new Date().toISOString().replace(/[:.]/g, "-") + ".log";
+    link.click();
+    window.setTimeout(() => URL.revokeObjectURL(url), 0);
+  }
+
+  function exportMergedFirmware() {
+    if (!state.files.length) return;
+    try {
+      const merged = api.mergeFirmware(state.files, selectedTarget());
+      const url = URL.createObjectURL(new Blob([merged.image], { type: "application/octet-stream" }));
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = "crazylink-merged-" + api.formatAddress(merged.base).slice(2) + ".bin";
+      link.click();
+      window.setTimeout(() => URL.revokeObjectURL(url), 0);
+      toast("合并 BIN 已导出", "success");
+    } catch (error) {
+      toast(error.message || "固件合并失败", "error");
+    }
   }
 
   async function setMode(event) {
@@ -450,11 +659,18 @@
     } else {
       $("#upgradeDetectionLabel").textContent = "自动识别设备类型";
     }
+    if (upgrade.localInfo && Number.isInteger(upgrade.localInfo.mode)) {
+      $("#runtimeModeSelect").value = String(upgrade.localInfo.mode);
+    } else if (state.info && Number.isInteger(state.info.mode)) {
+      $("#runtimeModeSelect").value = String(state.info.mode);
+    }
 
     let helper = "选择版本后更新 CRazyLink";
     if (upgrade.release && !upgrade.transport) helper = "连接升级设备后可开始刷写";
     else if (upgrade.release && upgrade.transport) helper = `${upgrade.release.tag} · CRazyLink 已就绪`;
     $("#upgradeFlashHelper").textContent = helper;
+    const upgradeAction = $("#upgradeFlashButton")?.querySelector("span");
+    if (upgradeAction) upgradeAction.textContent = upgrade.transport === "serial" ? "制作 CRazyLink" : "更新 CRazyLink";
     updateButtons();
   }
 
@@ -525,6 +741,7 @@
   async function selectUpgradeSerial() {
     $("#upgradeDeviceDialog").close();
     try {
+      if (!app.espFlasher?.supported) throw new Error("当前浏览器不支持 Web Serial 或 ESP32-S3 烧录组件未加载");
       setUpgradeStatus("等待串口设备授权", "busy");
       const port = await app.espFlasher.requestPort();
       state.upgrade.transport = "serial";
@@ -599,6 +816,24 @@
     $("#upgradeAdvancedButton").setAttribute("aria-expanded", String(expanded));
   }
 
+  function toggleRuntimeMode() {
+    const panel = $("#runtimeModePanel");
+    const expanded = panel.hidden;
+    panel.hidden = !expanded;
+    $("#runtimeModeDisclosure").setAttribute("aria-expanded", String(expanded));
+  }
+
+  async function saveRuntimeMode() {
+    if (state.upgrade.transport !== "usb" || !state.device || state.upgrade.flashing) return;
+    try {
+      const mode = Number($("#runtimeModeSelect").value);
+      updateDeviceInfo(await state.device.setMode(mode));
+      toast("运行模式已保存，设备将重启", "success");
+    } catch (error) {
+      toast(error.message || "运行模式保存失败", "error");
+    }
+  }
+
   function bind() {
     $$("[data-view]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.view)));
     $("#connectButton").addEventListener("click", connectDevice);
@@ -612,9 +847,39 @@
     $("#flashButton").addEventListener("click", flashFirmware);
     $$(".mode-option").forEach((button) => button.addEventListener("click", setMode));
     $("#serialOpenButton").addEventListener("click", toggleSerial);
+    $("#serialCloseHeaderButton").addEventListener("click", () => { if (state.serialOpen) toggleSerial(); });
     $("#serialSendButton").addEventListener("click", sendSerial);
     $("#terminalInput").addEventListener("keydown", (event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") sendSerial(); });
-    $("#clearTerminalButton").addEventListener("click", () => { $("#terminalOutput").replaceChildren(Object.assign(document.createElement("span"), { className: "terminal-placeholder", textContent: "等待目标数据…" })); state.terminalBytes = 0; });
+    $("#terminalInput").addEventListener("keydown", (event) => {
+      if (event.key === "Enter" && !event.shiftKey && !event.metaKey && !event.ctrlKey) {
+        event.preventDefault();
+        sendSerial();
+      }
+    });
+    $("#terminalSearch").addEventListener("input", (event) => {
+      state.serial.search = event.target.value;
+      renderTerminalLog();
+    });
+    $$(".terminal-filter").forEach((button) => button.addEventListener("click", () => {
+      state.serial.filter = button.dataset.terminalFilter || "all";
+      $$(".terminal-filter").forEach((item) => item.classList.toggle("is-active", item === button));
+      renderTerminalLog();
+    }));
+    $("#autoScrollCheck").addEventListener("change", () => renderTerminalLog());
+    const hexDisplayCheck = $("#hexDisplayCheck");
+    if (hexDisplayCheck) hexDisplayCheck.addEventListener("change", renderTerminalLog);
+    $("#pauseListeningButton").addEventListener("click", toggleSerialPause);
+    $("#exportLogButton").addEventListener("click", exportTerminalLog);
+    $("#clearTerminalButton").addEventListener("click", () => {
+      state.serial.entries = [];
+      state.serial.rxFrames = 0;
+      state.serial.txFrames = 0;
+      state.serial.errorCount = 0;
+      state.terminalBytes = 0;
+      updateSerialTraffic();
+      renderTerminalLog();
+    });
+    $("#exportFirmwareButton").addEventListener("click", exportMergedFirmware);
     const aboutButton = $("#aboutButton");
     if (aboutButton) aboutButton.addEventListener("click", () => $("#helpDialog").showModal());
     $("#closeHelpButton").addEventListener("click", () => $("#helpDialog").close());
@@ -626,6 +891,8 @@
     $("#upgradeSerialChoice").addEventListener("click", selectUpgradeSerial);
     $("#upgradeReleaseSelect").addEventListener("change", selectUpgradeRelease);
     $("#upgradeAdvancedButton").addEventListener("click", toggleUpgradeAdvanced);
+    $("#runtimeModeDisclosure").addEventListener("click", toggleRuntimeMode);
+    $("#saveRuntimeModeButton").addEventListener("click", saveRuntimeMode);
     $("#upgradeFlashButton").addEventListener("click", flashUpgrade);
     $("#refreshReleasesButton").addEventListener("click", () => loadFirmwareReleases(true));
     $("#mobileUpgradeMenuButton").addEventListener("click", () => loadFirmwareReleases(true));

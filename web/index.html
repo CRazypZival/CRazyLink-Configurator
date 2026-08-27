@@ -23,7 +23,7 @@
             <i data-lucide="file-up"></i><span>固件烧录</span>
           </button>
           <button class="nav-item" type="button" data-view="serial">
-            <i data-lucide="terminal"></i><span>串口终端</span>
+            <i data-lucide="terminal"></i><span>串口调试</span>
           </button>
           <button class="nav-item" type="button" data-view="upgrade">
             <i data-lucide="upload"></i><span>固件升级</span>
@@ -71,6 +71,12 @@
           </div>
           <button class="button button-secondary" id="connectButton" type="button"><i data-lucide="refresh-cw"></i><span>重新选择</span></button>
         </div>
+        <div class="header-actions serial-header-actions" id="serialHeaderActions" hidden>
+          <div class="selected-port-badge" id="serialPortBadge">
+            <span class="state-dot" aria-hidden="true"></span><span id="serialPortLabel">USB 功能接口</span>
+          </div>
+          <button class="button button-secondary serial-close-header" id="serialCloseHeaderButton" type="button"><i data-lucide="x"></i><span>关闭串口</span></button>
+        </div>
         <div class="header-actions upgrade-header-actions" id="upgradeHeaderActions" hidden>
           <button class="upgrade-source-button" id="releaseSourceButton" type="button"><i data-lucide="github"></i><span>GitHub Releases</span></button>
           <button class="icon-button upgrade-refresh-button" id="refreshReleasesButton" type="button" aria-label="刷新发布列表" title="刷新发布列表"><i data-lucide="refresh-cw"></i></button>
@@ -79,7 +85,7 @@
 
       <div class="mobile-tabs" role="tablist" aria-label="工作区">
         <button class="mobile-tab is-active" type="button" data-view="flash" role="tab" aria-selected="true">固件烧录</button>
-        <button class="mobile-tab" type="button" data-view="serial" role="tab" aria-selected="false">串口终端</button>
+        <button class="mobile-tab" type="button" data-view="serial" role="tab" aria-selected="false">串口调试</button>
         <button class="mobile-tab" type="button" data-view="upgrade" role="tab" aria-selected="false">固件升级</button>
       </div>
 
@@ -88,8 +94,8 @@
           <div class="files-workspace">
             <div class="list-header">
               <div>
-                <h2>固件清单</h2>
-                <p>最多添加 3 个 BIN、HEX 或 ELF 文件，地址从文件内容读取</p>
+                <h2>选择固件</h2>
+                <p>支持 BIN / HEX / ELF · 每项可设置独立起始地址</p>
               </div>
               <div class="list-header-actions">
                 <span class="count-badge" id="fileCount">0 / 3</span>
@@ -107,14 +113,6 @@
               <div><i data-lucide="circle-check"></i><span id="mergeMessage">等待添加固件</span></div>
               <strong id="mergeSize">—</strong>
             </div>
-            <div class="ready-checklist">
-              <h3>烧录前检查</h3>
-              <div class="check-items">
-                <span><i data-lucide="check"></i>地址有效</span>
-                <span><i data-lucide="check"></i>设备在线</span>
-                <span><i data-lucide="check"></i>供电稳定</span>
-              </div>
-            </div>
           </div>
 
           <aside class="flash-settings-panel">
@@ -123,13 +121,13 @@
               <button class="icon-button icon-button-small" id="refreshDeviceButton" type="button" title="刷新设备状态" aria-label="刷新设备状态"><i data-lucide="refresh-cw"></i></button>
             </div>
             <label class="field-label" for="eraseSelect">擦除方式
-              <select id="eraseSelect"><option value="sector">按范围擦除</option><option value="chip">整片擦除</option><option value="none">不擦除</option></select>
+              <select id="eraseSelect"><option value="chip" selected>全片擦除</option><option value="sector">按范围擦除</option><option value="none">不擦除</option></select>
             </label>
             <label class="field-label" for="speedSelect">传输速率
               <select id="speedSelect"><option value="1000">1 MHz</option><option value="500">500 kHz</option><option value="2000">2 MHz</option></select>
             </label>
-            <label class="field-label target-field" for="targetSelect">目标型号
-              <select id="targetSelect"><option value="stm32f103c8">STM32F103C8T6 · 64 KB</option></select>
+            <label class="field-label target-field" for="targetSelect">MCU 型号
+              <select id="targetSelect"><option value="stm32f103c8">STM32</option></select>
             </label>
             <div class="switch-group">
               <label class="switch-row"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
@@ -142,8 +140,8 @@
               <div><span>合并大小</span><strong id="taskSizeSummary">—</strong></div>
             </div>
             <label class="task-note" for="jobNote">任务备注<textarea id="jobNote" rows="2" maxlength="30" placeholder="可选"></textarea></label>
-            <button class="button button-primary start-flash" id="flashButton" type="button" disabled><i data-lucide="play"></i><span>开始烧录</span></button>
-            <button class="button button-secondary export-button" type="button" disabled><i data-lucide="download"></i><span>导出合并 BIN</span></button>
+            <button class="button button-primary start-flash" id="flashButton" type="button" disabled><i data-lucide="play"></i><span>烧录固件</span></button>
+            <button class="button button-secondary export-button" id="exportFirmwareButton" type="button" disabled><i data-lucide="download"></i><span>导出合并 BIN</span></button>
             <div class="mode-switch" role="group" aria-label="设备模式">
               <button class="mode-option is-active" type="button" data-mode="0">在线</button>
               <button class="mode-option" type="button" data-mode="1">离线</button>
@@ -160,8 +158,8 @@
       <section class="view" id="serialView" data-view-panel="serial">
         <div class="serial-content">
           <section class="serial-config-bar">
-            <div class="serial-config-title"><strong>连接参数</strong><span id="terminalStatus">端口未打开</span></div>
-            <label class="field-label" for="baudSelect">波特率<select id="baudSelect"><option>1200</option><option>9600</option><option>19200</option><option>38400</option><option selected>115200</option><option>230400</option><option>460800</option><option>921600</option><option>100000</option></select></label>
+            <div class="serial-config-title"><strong>串口参数</strong><span id="terminalStatus">端口未打开</span></div>
+            <label class="field-label" for="baudSelect">波特率 1200-921600<select id="baudSelect"><option>1200</option><option>9600</option><option>19200</option><option>38400</option><option selected>115200</option><option>230400</option><option>460800</option><option>921600</option><option>100000</option></select></label>
             <label class="field-label" for="dataBitsSelect">数据位<select id="dataBitsSelect"><option>5</option><option>6</option><option>7</option><option selected>8</option></select></label>
             <label class="field-label" for="stopBitsSelect">停止位<select id="stopBitsSelect"><option value="1">1</option><option value="1.5">1.5</option><option value="2">2</option></select></label>
             <label class="field-label" for="paritySelect">校验位<select id="paritySelect"><option value="none">无</option><option value="odd">奇</option><option value="even">偶</option></select></label>
@@ -171,21 +169,24 @@
           </section>
           <section class="terminal-panel">
             <div class="terminal-toolbar">
-              <div class="terminal-toolbar-left"><strong>接收日志</strong><span id="terminalLinkState">USB CDC · 等待连接</span></div>
-              <div class="terminal-toolbar-right"><label class="terminal-toggle"><input id="hexDisplayCheck" type="checkbox"><span>HEX</span></label><button class="terminal-icon-button" id="clearTerminalButton" type="button" title="清空接收日志" aria-label="清空接收日志"><i data-lucide="trash-2"></i></button></div>
+              <div class="terminal-toolbar-left">
+                <div class="terminal-search"><i data-lucide="search"></i><input id="terminalSearch" type="search" placeholder="过滤日志" aria-label="过滤日志"></div>
+                <div class="terminal-filters" role="group" aria-label="日志方向"><button class="terminal-filter is-active" type="button" data-terminal-filter="all">全部</button><button class="terminal-filter" type="button" data-terminal-filter="RX">RX</button><button class="terminal-filter" type="button" data-terminal-filter="TX">TX</button></div>
+              </div>
+              <div class="terminal-toolbar-right"><label class="terminal-toggle"><input id="autoScrollCheck" type="checkbox" checked><span>自动滚动</span></label><button class="terminal-icon-button" id="pauseListeningButton" type="button" title="暂停监听" aria-label="暂停监听"><i data-lucide="pause"></i></button><button class="terminal-icon-button" id="clearTerminalButton" type="button" title="清空接收日志" aria-label="清空接收日志"><i data-lucide="trash-2"></i></button><button class="terminal-icon-button" id="exportLogButton" type="button" title="导出日志" aria-label="导出日志" disabled><i data-lucide="download"></i></button></div>
             </div>
             <pre class="terminal-output" id="terminalOutput" aria-live="polite"><span class="terminal-placeholder">等待目标数据…</span></pre>
             <div class="serial-composer">
               <div class="format-control"><label><input id="hexSendCheck" type="checkbox"><span>HEX</span></label><span class="format-ascii">ASCII</span></div>
-              <label class="terminal-input-wrap" for="terminalInput"><span class="sr-only">发送内容</span><textarea id="terminalInput" rows="1" placeholder="输入发送内容…"></textarea></label>
-              <select class="line-ending-select" aria-label="行尾"><option>CRLF</option><option>LF</option><option>CR</option></select>
+              <label class="terminal-input-wrap" for="terminalInput"><span class="sr-only">发送内容</span><textarea id="terminalInput" rows="1" placeholder="输入要发送的数据…"></textarea></label>
+              <select class="line-ending-select" id="lineEndingSelect" aria-label="行尾"><option>CRLF</option><option>LF</option><option>CR</option></select>
               <button class="button button-primary send-button" id="serialSendButton" type="button" disabled><i data-lucide="send"></i><span>发送</span></button>
             </div>
           </section>
         </div>
         <div class="status-line serial-status-line">
-          <div><i data-lucide="radio"></i><span>正在监听</span><span class="runtime-label">持续时间 00:00:00</span></div>
-          <span class="browser-requirement">接收 0 帧 · 发送 0 帧 · 错误 0</span>
+          <div><span class="serial-status-indicator" aria-hidden="true"></span><span id="serialStatusMessage">未监听</span><span class="runtime-label" id="serialRuntime">持续时间 00:00:00</span></div>
+          <span class="browser-requirement" id="serialTraffic">接收 0 帧 · 发送 0 帧 · 错误 0</span>
         </div>
       </section>
 
@@ -206,7 +207,7 @@
 
             <section class="upgrade-config-card" aria-labelledby="upgradeConfigTitle">
               <div class="upgrade-config-header">
-                <h3 id="upgradeConfigTitle">升级配置</h3>
+                <h3 id="upgradeConfigTitle">升级固件</h3>
                 <div class="upgrade-detection-pill"><i data-lucide="cpu"></i><span id="upgradeDetectionLabel">自动识别设备类型</span></div>
               </div>
 
@@ -226,6 +227,10 @@
                 </label>
               </div>
 
+              <div class="upgrade-package-validation" id="upgradePackageValidation">
+                <i data-lucide="shield-check"></i><span>CRL 包 · 选择 TAG 后校验签名</span>
+              </div>
+              <p class="upgrade-branch-note">更新保留当前模式 · 空片制作默认独立模式</p>
               <button class="upgrade-advanced-disclosure" id="upgradeAdvancedButton" type="button" aria-expanded="false" aria-controls="upgradeAdvancedPanel">
                 <span><i data-lucide="settings-2"></i><strong>高级选项</strong></span>
                 <small>擦除策略 · 写入校验 · 完成后重启</small>
@@ -239,6 +244,20 @@
               </div>
             </section>
 
+            <section class="runtime-mode-card" aria-labelledby="runtimeModeTitle">
+              <button class="runtime-mode-disclosure" id="runtimeModeDisclosure" type="button" aria-expanded="false" aria-controls="runtimeModePanel">
+                <span class="runtime-mode-label"><i data-lucide="sliders-horizontal"></i><strong id="runtimeModeTitle">切换运行模式</strong></span>
+                <span class="runtime-mode-state">折叠 <i data-lucide="chevron-right"></i></span>
+              </button>
+              <div class="runtime-mode-panel" id="runtimeModePanel" hidden>
+                <div class="runtime-mode-controls">
+                  <label class="upgrade-field" for="runtimeModeSelect"><span class="upgrade-field-label">运行模式</span><span class="upgrade-field-control upgrade-select-wrap"><select id="runtimeModeSelect"><option value="0">独立模式</option><option value="1">离线模式</option><option value="2">远程主机</option><option value="3">远程设备</option></select><i data-lucide="chevron-down"></i></span></label>
+                  <button class="button button-primary" id="saveRuntimeModeButton" type="button" disabled><i data-lucide="save"></i><span>保存</span></button>
+                </div>
+                <p>保存后设备重启并以新模式运行</p>
+              </div>
+            </section>
+
             <div class="upgrade-workflow-spacer"></div>
             <div class="upgrade-flash-action">
               <span id="upgradeFlashHelper">选择版本后更新 CRazyLink</span>
@@ -248,7 +267,7 @@
         </div>
         <div class="upgrade-status-line">
           <div><span class="upgrade-status-dot" aria-hidden="true"></span><span id="upgradeStatusText">正在同步发布列表</span><span id="upgradeProgressLabel"></span></div>
-          <span id="upgradeStatusSource"><span class="upgrade-desktop-copy">github.com/CR072/CRazyLink · Releases</span><span class="upgrade-short-copy">GitHub Releases</span></span>
+          <span id="upgradeStatusSource"><span class="upgrade-desktop-copy">github.com/CRazypZival/CRazyLink-Configurator · Releases</span><span class="upgrade-short-copy">GitHub Releases</span></span>
         </div>
       </section>
     </main>
