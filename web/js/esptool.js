@@ -33,9 +33,25 @@
       throw new Error("CRL 固件包没有可烧录分段");
     }
     if (openedPackage.manifest.chip !== "ESP32-S3") throw new Error("固件目标不是 ESP32-S3");
+    if (!Number.isSafeInteger(openedPackage.manifest.flashSize) ||
+        openedPackage.manifest.flashSize <= 0 || openedPackage.manifest.flashSize > 0x100000000) {
+      throw new Error("固件 Flash 容量无效");
+    }
+    const ranges = [];
     for (const segment of openedPackage.segments) {
       if (!Number.isInteger(segment.address) || segment.address < 0 || !(segment.data instanceof Uint8Array) || !segment.data.length) {
         throw new Error(`CRL 固件分段无效：${segment.name || "unknown"}`);
+      }
+      const end = segment.address + segment.data.length;
+      if (!Number.isSafeInteger(end) || end > openedPackage.manifest.flashSize) {
+        throw new Error(`CRL 固件分段超出 Flash：${segment.name || "unknown"}`);
+      }
+      ranges.push({ address: segment.address, end, name: segment.name || "unknown" });
+    }
+    ranges.sort((left, right) => left.address - right.address);
+    for (let index = 1; index < ranges.length; index += 1) {
+      if (ranges[index].address < ranges[index - 1].end) {
+        throw new Error(`CRL 固件分段重叠：${ranges[index].name}`);
       }
     }
   }
@@ -106,5 +122,5 @@
     }
   }
 
-  return { DEFAULT_ESP_FLASH_BAUD: DEFAULT_BAUD_RATE, EspSerialFlasher, describeSerialPort };
+  return { DEFAULT_ESP_FLASH_BAUD: DEFAULT_BAUD_RATE, EspSerialFlasher, describeSerialPort, validatePackage };
 });

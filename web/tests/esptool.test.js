@@ -1,17 +1,31 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-const { EspSerialFlasher, describeSerialPort } = require("../js/esptool.js");
+const { EspSerialFlasher, describeSerialPort, validatePackage } = require("../js/esptool.js");
 
 function firmware(role = "TX") {
   return {
-    manifest: { chip: "ESP32-S3", role },
+    manifest: { chip: "ESP32-S3", role, flashSize: 8 * 1024 * 1024 },
     segments: [
       { name: "bootloader", address: 0, data: Uint8Array.of(1, 2) },
       { name: "application", address: 0x10000, data: Uint8Array.of(3, 4, 5) },
     ],
   };
 }
+
+test("serial flasher rejects overlapping or out-of-range CRL segments", () => {
+  assert.throws(() => validatePackage({
+    manifest: { chip: "ESP32-S3", flashSize: 0x100 },
+    segments: [
+      { name: "a", address: 0, data: Uint8Array.of(1, 2) },
+      { name: "b", address: 1, data: Uint8Array.of(3) },
+    ],
+  }), /重叠/);
+  assert.throws(() => validatePackage({
+    manifest: { chip: "ESP32-S3", flashSize: 0x100 },
+    segments: [{ name: "a", address: 0xff, data: Uint8Array.of(1, 2) }],
+  }), /超出 Flash/);
+});
 
 test("describes FTDI and native ESP32-S3 serial ports", () => {
   assert.equal(describeSerialPort({ getInfo: () => ({ usbVendorId: 0x0403, usbProductId: 0x6015 }) }), "FTDI UART0 · 0403:6015");

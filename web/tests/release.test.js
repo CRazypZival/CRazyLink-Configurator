@@ -26,3 +26,29 @@ test("release list ignores drafts and releases without a manifest", async () => 
   assert.equal(result.length, 1);
   assert.equal(result[0].tag, "v1");
 });
+
+test("CRL manifest validation rejects unsafe address and payload layouts", () => {
+  const base = {
+    flashSize: 0x100,
+    segments: [{
+      name: "application",
+      kind: "application",
+      address: 0,
+      offset: 0,
+      length: 2,
+      sha256: "0".repeat(64),
+    }],
+  };
+  assert.equal(release.validateManifest(base), 2);
+  assert.throws(() => release.validateManifest({
+    ...base,
+    segments: [{ ...base.segments[0], address: 0xff }],
+  }), /超出 Flash/);
+  assert.throws(() => release.validateManifest({
+    ...base,
+    segments: [
+      base.segments[0],
+      { ...base.segments[0], name: "overlap", offset: 2, address: 1 },
+    ],
+  }), /重叠/);
+});

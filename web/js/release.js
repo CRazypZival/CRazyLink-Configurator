@@ -7,6 +7,7 @@
 
   const HEADER_SIZE = 24;
   const SIGNATURE_SIZE = 64;
+  const ADDRESS_LIMIT = 0x100000000;
   const MAGIC = Uint8Array.of(0x43, 0x52, 0x4c, 0x31, 0x0d, 0x0a, 0x1a, 0x0a);
   const RELEASES_API = "https://api.github.com/repos/CRazypZival/CRazyLink-Configurator/releases?per_page=30";
   const UNIVERSAL_ROLE = "CRAZYLINK";
@@ -84,7 +85,11 @@
     const signatureLength = view.getUint16(20, true);
     if (formatVersion !== 1 || signatureLength !== SIGNATURE_SIZE) throw new Error("CRL 固件包版本不受支持");
     const signedLength = HEADER_SIZE + manifestLength + payloadLength;
-    if (signedLength + signatureLength !== bytes.length) throw new Error("CRL 固件包长度无效");
+    if (manifestLength > bytes.length - HEADER_SIZE - signatureLength ||
+        payloadLength > bytes.length - HEADER_SIZE - manifestLength - signatureLength ||
+        signedLength + signatureLength !== bytes.length) {
+      throw new Error("CRL 固件包长度无效");
+    }
     let manifest;
     try {
       manifest = JSON.parse(new TextDecoder().decode(bytes.slice(HEADER_SIZE, HEADER_SIZE + manifestLength)));
@@ -95,6 +100,7 @@
         ![UNIVERSAL_ROLE, "TX", "RX"].includes(manifest.role) || !Array.isArray(manifest.segments)) {
       throw new Error("CRL 固件清单字段无效");
     }
+    validateManifest(manifest);
     return {
       bytes,
       manifest,
@@ -102,6 +108,39 @@
       signedBytes: bytes.slice(0, signedLength),
       signature: bytes.slice(signedLength),
     };
+  }
+
+  function validateManifest(manifest) {
+    if (!Number.isSafeInteger(manifest.flashSize) || manifest.flashSize <= 0 ||
+        manifest.flashSize > ADDRESS_LIMIT || manifest.segments.length === 0) {
+      throw new Error("CRL 固件 Flash 清单无效");
+    }
+
+    let expectedOffset = 0;
+    const ranges = [];
+    for (const entry of manifest.segments) {
+      if (typeof entry.name !== "string" || typeof entry.kind !== "string" ||
+          typeof entry.sha256 !== "string" || !/^[0-9a-f]{64}$/i.test(entry.sha256) ||
+          !Number.isSafeInteger(entry.address) || entry.address < 0 ||
+          !Number.isSafeInteger(entry.offset) || entry.offset !== expectedOffset ||
+          !Number.isSafeInteger(entry.length) || entry.length <= 0) {
+        throw new Error(`CRL 固件分段清单无效：${entry.name || "unknown"}`);
+      }
+      const end = entry.address + entry.length;
+      if (!Number.isSafeInteger(end) || end > manifest.flashSize) {
+        throw new Error(`CRL 固件分段超出 Flash：${entry.name}`);
+      }
+      ranges.push({ address: entry.address, end, name: entry.name });
+      expectedOffset += entry.length;
+      if (!Number.isSafeInteger(expectedOffset)) throw new Error("CRL 固件分段总长度无效");
+    }
+    ranges.sort((left, right) => left.address - right.address);
+    for (let index = 1; index < ranges.length; index += 1) {
+      if (ranges[index].address < ranges[index - 1].end) {
+        throw new Error(`CRL 固件分段重叠：${ranges[index].name}`);
+      }
+    }
+    return expectedOffset;
   }
 
   async function sha256Hex(value, cryptoImpl) {
@@ -133,15 +172,26 @@
 
   function restorePayload(parsed) {
     const transform = parsed.manifest.transform || {};
-    if (transform.name !== "chunk-interleave-xor-v1" || !Number.isInteger(transform.chunkSize) ||
-        !Number.isInteger(transform.plainLength) || !Array.isArray(transform.order)) {
+    if (transform.name !== "chunk-interleave-xor-v1" || !Number.isSafeInteger(transform.chunkSize) ||
+        transform.chunkSize < 64 || transform.chunkSize > 65536 ||
+        !Number.isSafeInteger(transform.plainLength) || transform.plainLength <= 0 ||
+        !Array.isArray(transform.order)) {
       throw new Error("CRL 固件变换参数无效");
+    }
+    if (transform.plainLength !== parsed.payload.length) {
+      throw new Error("CRL 固件载荷长度无效");
     }
     const chunkCount = Math.ceil(transform.plainLength / transform.chunkSize);
     if (transform.order.length !== chunkCount || new Set(transform.order).size !== chunkCount) {
       throw new Error("CRL 固件分块顺序无效");
     }
-    const nonce = decodeBase64(transform.nonce);
+    let nonce;
+    try {
+      nonce = decodeBase64(transform.nonce);
+    } catch (_) {
+      throw new Error("CRL 固件随机数无效");
+    }
+    if (nonce.length < 8 || nonce.length > 64) throw new Error("CRL 固件随机数长度无效");
     const plain = new Uint8Array(transform.plainLength);
     let payloadOffset = 0;
     for (const originalIndex of transform.order) {
@@ -167,6 +217,8 @@
       throw new Error(`固件目标为 ${parsed.manifest.role}，不能烧录到 ${settings.role}`);
     }
     const plain = restorePayload(parsed);
+    const expectedPlainLength = validateManifest(parsed.manifest);
+    if (expectedPlainLength !== plain.length) throw new Error("CRL 固件分段总长度不匹配");
     const segments = [];
     for (const entry of parsed.manifest.segments) {
       if (!Number.isInteger(entry.offset) || !Number.isInteger(entry.length) ||
@@ -228,6 +280,7 @@
     listFirmwareReleases,
     downloadReleasePackage,
     restorePayload,
+    validateManifest,
     sha256Hex,
   };
 });
