@@ -193,73 +193,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "type": "frame",
-              "id": "q2G3vd",
-              "name": "Sidebar Device Status",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 12,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "S67vx",
-                  "name": "Connected Device Summary",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "ellipse",
-                      "id": "vPtay",
-                      "name": "Connected Indicator",
-                      "fill": "$color-success",
-                      "width": 8,
-                      "height": 8
-                    },
-                    {
-                      "type": "frame",
-                      "id": "kpW6A",
-                      "name": "Connected Device Text",
-                      "layout": "vertical",
-                      "gap": 4,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "a5vyZa",
-                          "name": "Connection Status",
-                          "fill": "$color-surface",
-                          "content": "设备已连接",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "Y6stY",
-                          "name": "Connection Port",
-                          "fill": "$color-muted-2",
-                          "content": "USB Serial · COM4",
-                          "fontFamily": "$font-mono",
-                          "fontSize": 10,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "jnj6H",
-                  "name": "App Version",
-                  "fill": "$color-muted-2",
-                  "content": "CRazyLink Configurator 0.1",
-                  "fontFamily": "$font-mono",
-                  "fontSize": 10,
-                  "fontWeight": "normal"
-                }
-              ]
             }
           ]
         },
@@ -312,7 +245,7 @@
                 {
                   "type": "frame",
                   "id": "YuFdW",
-                  "name": "Header Device Actions",
+                  "name": "Connection Header Actions",
                   "gap": 12,
                   "alignItems": "center",
                   "children": [
@@ -320,6 +253,7 @@
                       "type": "frame",
                       "id": "g5OOw",
                       "name": "Selected Port Badge",
+                      "reusable": true,
                       "height": 38,
                       "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
@@ -335,7 +269,7 @@
                         {
                           "type": "icon",
                           "id": "n56elP",
-                          "name": "USB Icon",
+                          "name": "Connection Port Icon",
                           "width": 16,
                           "height": 16,
                           "icon": "usb",
@@ -345,9 +279,9 @@
                         {
                           "type": "text",
                           "id": "avFyR",
-                          "name": "Selected Port Text",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "USB Serial · COM4",
+                          "content": "CRazyLink_Host · COM4",
                           "fontFamily": "$font-mono",
                           "fontSize": 11,
                           "fontWeight": "500"
@@ -358,7 +292,10 @@
                       "type": "frame",
                       "id": "gLm3s",
                       "name": "Reconnect Device Button",
+                      "reusable": true,
+                      "width": 100,
                       "height": 38,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
@@ -1478,7 +1415,7 @@
             {
               "type": "frame",
               "id": "arBbv",
-              "name": "Firmware Status Line",
+              "name": "Firmware Task Status",
               "width": "fill_container",
               "height": 40,
               "fill": "$color-surface",
@@ -1501,21 +1438,11 @@
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "icon",
-                      "id": "d1eem9",
-                      "name": "Status Check Icon",
-                      "width": 14,
-                      "height": 14,
-                      "icon": "circle-check",
-                      "library": "lucide",
-                      "fill": "$color-success"
-                    },
-                    {
                       "type": "text",
                       "id": "nlu4x",
                       "name": "Status Message",
                       "fill": "$color-muted",
-                      "content": "设备可用，等待烧录",
+                      "content": "等待烧录",
                       "fontFamily": "$font-body",
                       "fontSize": 11,
                       "fontWeight": "500"
@@ -1730,73 +1657,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "type": "frame",
-              "id": "K0am8",
-              "name": "Serial Sidebar Device Status",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 12,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "dUh8Y",
-                  "name": "Open Port Summary",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "ellipse",
-                      "id": "p3IeJ",
-                      "name": "Listening Indicator",
-                      "fill": "$color-success",
-                      "width": 8,
-                      "height": 8
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Yom6D",
-                      "name": "Open Port Text",
-                      "layout": "vertical",
-                      "gap": 4,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "sR3fw",
-                          "name": "Open Port Status",
-                          "fill": "$color-surface",
-                          "content": "串口已打开",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "tPJTA",
-                          "name": "Open Port Name",
-                          "fill": "$color-muted-2",
-                          "content": "USB Serial · COM4",
-                          "fontFamily": "$font-mono",
-                          "fontSize": 10,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "FV7sZ",
-                  "name": "Serial App Version",
-                  "fill": "$color-muted-2",
-                  "content": "CRazyLink Configurator 0.1",
-                  "fontFamily": "$font-mono",
-                  "fontSize": 10,
-                  "fontWeight": "normal"
-                }
-              ]
             }
           ]
         },
@@ -1843,30 +1703,20 @@
                       "fontFamily": "$font-body",
                       "fontSize": 24,
                       "fontWeight": "700"
-                    },
-                    {
-                      "type": "text",
-                      "id": "yIH4a",
-                      "name": "Serial Header Subtitle",
-                      "fill": "$color-muted",
-                      "content": "持续监听、发送与参数配置",
-                      "fontFamily": "$font-body",
-                      "fontSize": 11,
-                      "fontWeight": "normal"
                     }
                   ]
                 },
                 {
                   "type": "frame",
                   "id": "IjWZn",
-                  "name": "Serial Header Actions",
+                  "name": "Connection Header Actions",
                   "gap": 12,
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "frame",
                       "id": "A1hts",
-                      "name": "Serial Selected Port Badge",
+                      "name": "Selected Port Badge",
                       "height": 38,
                       "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
@@ -1882,7 +1732,7 @@
                         {
                           "type": "icon",
                           "id": "JtOsh",
-                          "name": "Serial USB Icon",
+                          "name": "Connection Port Icon",
                           "width": 16,
                           "height": 16,
                           "icon": "usb",
@@ -1892,9 +1742,9 @@
                         {
                           "type": "text",
                           "id": "ketlA",
-                          "name": "Serial Selected Port Text",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "USB Serial · COM4",
+                          "content": "CRazyLink_Host · COM4",
                           "fontFamily": "$font-mono",
                           "fontSize": 11,
                           "fontWeight": "500"
@@ -1904,11 +1754,12 @@
                     {
                       "type": "frame",
                       "id": "g5Njo",
-                      "name": "Close Serial Button",
+                      "name": "Reconnect Device Button",
+                      "width": 100,
                       "height": 38,
-                      "fill": "$color-accent-soft",
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
-                      "stroke": "$color-accent",
+                      "stroke": "$color-rule",
                       "strokeWidth": 1,
                       "gap": 8,
                       "padding": [
@@ -1920,19 +1771,19 @@
                         {
                           "type": "icon",
                           "id": "eQ7ps",
-                          "name": "Close Serial Icon",
+                          "name": "Reconnect Icon",
                           "width": 14,
                           "height": 14,
-                          "icon": "square",
+                          "icon": "refresh-cw",
                           "library": "lucide",
-                          "fill": "$color-accent"
+                          "fill": "$color-muted"
                         },
                         {
                           "type": "text",
                           "id": "bg6eV",
-                          "name": "Close Serial Label",
-                          "fill": "$color-accent",
-                          "content": "关闭串口",
+                          "name": "Reconnect Label",
+                          "fill": "$color-ink",
+                          "content": "重新选择",
                           "fontFamily": "$font-body",
                           "fontSize": 13,
                           "fontWeight": "650"
@@ -3816,14 +3667,6 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "ellipse",
-                  "id": "J5MV0P",
-                  "name": "Tablet Firmware Connected Dot",
-                  "fill": "$color-success",
-                  "width": 8,
-                  "height": 8
-                },
-                {
                   "type": "icon",
                   "id": "nBU85",
                   "name": "Tablet Firmware Settings Icon",
@@ -3902,7 +3745,7 @@
                     {
                       "type": "frame",
                       "id": "gzoGz",
-                      "name": "Tablet Firmware Port Badge",
+                      "name": "Selected Port Badge",
                       "height": 36,
                       "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
@@ -3916,19 +3759,21 @@
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "ellipse",
-                          "id": "d7zk5r",
-                          "name": "Tablet Firmware Port Dot",
-                          "fill": "$color-success",
-                          "width": 7,
-                          "height": 7
+                          "type": "icon",
+                          "id": "u3YcJW",
+                          "name": "Tablet Firmware Port Icon",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "usb",
+                          "library": "lucide",
+                          "fill": "$color-success"
                         },
                         {
                           "type": "text",
                           "id": "hRWL1",
-                          "name": "Tablet Firmware Port Label",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "COM4",
+                          "content": "CRazyLink_Host · COM4",
                           "fontFamily": "$font-mono",
                           "fontSize": 11,
                           "fontWeight": "600"
@@ -3938,9 +3783,10 @@
                     {
                       "type": "frame",
                       "id": "uy6DD",
-                      "name": "Tablet Firmware Change Port",
+                      "name": "Reconnect Device Button",
                       "width": 36,
                       "height": 36,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
@@ -3950,7 +3796,7 @@
                         {
                           "type": "icon",
                           "id": "qSFV8",
-                          "name": "Tablet Firmware Change Port Icon",
+                          "name": "Reconnect Icon",
                           "width": 15,
                           "height": 15,
                           "icon": "refresh-cw",
@@ -4768,7 +4614,7 @@
             {
               "type": "frame",
               "id": "bSUYV",
-              "name": "Tablet Firmware Status",
+              "name": "Tablet Firmware Task Status",
               "width": "fill_container",
               "height": 36,
               "fill": "$color-surface",
@@ -4786,9 +4632,9 @@
                 {
                   "type": "text",
                   "id": "jLEn0",
-                  "name": "Tablet Firmware Ready",
+                  "name": "Tablet Firmware Status",
                   "fill": "$color-success",
-                  "content": "● 设备可用，等待烧录",
+                  "content": "等待烧录",
                   "fontFamily": "$font-body",
                   "fontSize": 10,
                   "fontWeight": "600"
@@ -4970,14 +4816,6 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "ellipse",
-                  "id": "S58FL",
-                  "name": "Tablet Serial Connected Dot",
-                  "fill": "$color-success",
-                  "width": 8,
-                  "height": 8
-                },
-                {
                   "type": "icon",
                   "id": "DY6lk",
                   "name": "Tablet Serial Settings Icon",
@@ -5056,7 +4894,7 @@
                     {
                       "type": "frame",
                       "id": "r91Ob5",
-                      "name": "Tablet Serial Port Badge",
+                      "name": "Selected Port Badge",
                       "height": 36,
                       "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
@@ -5070,19 +4908,21 @@
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "ellipse",
-                          "id": "qYT9u",
-                          "name": "Tablet Serial Port Dot",
-                          "fill": "$color-success",
-                          "width": 7,
-                          "height": 7
+                          "type": "icon",
+                          "id": "LvBTs",
+                          "name": "Tablet Serial Port Icon",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "usb",
+                          "library": "lucide",
+                          "fill": "$color-success"
                         },
                         {
                           "type": "text",
                           "id": "U3pvHY",
-                          "name": "Tablet Serial Port Label",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "COM4",
+                          "content": "CRazyLink_Host · COM4",
                           "fontFamily": "$font-mono",
                           "fontSize": 11,
                           "fontWeight": "600"
@@ -5092,38 +4932,25 @@
                     {
                       "type": "frame",
                       "id": "i8LFB",
-                      "name": "Tablet Close Serial",
+                      "name": "Reconnect Device Button",
+                      "width": 36,
                       "height": 36,
-                      "fill": "$color-accent-soft",
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
-                      "stroke": "$color-accent",
+                      "stroke": "$color-rule",
                       "strokeWidth": 1,
-                      "gap": 8,
-                      "padding": [
-                        0,
-                        12
-                      ],
+                      "justifyContent": "center",
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "icon",
                           "id": "NedqV",
-                          "name": "Tablet Close Serial Icon",
+                          "name": "Reconnect Icon",
                           "width": 13,
                           "height": 13,
-                          "icon": "square",
+                          "icon": "refresh-cw",
                           "library": "lucide",
-                          "fill": "$color-accent"
-                        },
-                        {
-                          "type": "text",
-                          "id": "Y6l1tH",
-                          "name": "Tablet Close Serial Label",
-                          "fill": "$color-accent",
-                          "content": "关闭",
-                          "fontFamily": "$font-body",
-                          "fontSize": 11,
-                          "fontWeight": "650"
+                          "fill": "$color-muted"
                         }
                       ]
                     }
@@ -6737,58 +6564,11 @@
             {
               "type": "frame",
               "id": "g8FkI",
-              "name": "Upgrade Desktop Sidebar Status",
+              "name": "Upgrade Desktop Sidebar App Status",
               "width": "fill_container",
               "layout": "vertical",
               "gap": 10,
               "children": [
-                {
-                  "type": "frame",
-                  "id": "yI9an",
-                  "name": "Upgrade Desktop Device Status",
-                  "width": "fill_container",
-                  "gap": 10,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "ellipse",
-                      "id": "teost",
-                      "name": "Upgrade Desktop Device Dot",
-                      "fill": "$color-success",
-                      "width": 8,
-                      "height": 8
-                    },
-                    {
-                      "type": "frame",
-                      "id": "Fdmtq",
-                      "name": "Upgrade Desktop Device Text",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "AQYl7",
-                          "name": "Upgrade Desktop Device State",
-                          "fill": "$color-surface",
-                          "content": "设备已连接",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "zbYxL",
-                          "name": "Upgrade Desktop Device Port",
-                          "fill": "$color-muted-2",
-                          "content": "USB Serial · COM4",
-                          "fontFamily": "$font-mono",
-                          "fontSize": 10,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
                 {
                   "type": "text",
                   "id": "C7nVN",
@@ -6851,14 +6631,14 @@
                 {
                   "type": "frame",
                   "id": "Qm3DU",
-                  "name": "Upgrade Desktop Header Actions",
-                  "gap": 10,
+                  "name": "Connection Header Actions",
+                  "gap": 12,
                   "alignItems": "center",
                   "children": [
                     {
                       "type": "frame",
                       "id": "usdSa",
-                      "name": "Upgrade Serial Port",
+                      "name": "Selected Port Badge",
                       "height": 38,
                       "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
@@ -6874,7 +6654,7 @@
                         {
                           "type": "icon",
                           "id": "k5gB1",
-                          "name": "Upgrade Serial Port Icon",
+                          "name": "Connection Port Icon",
                           "width": 16,
                           "height": 16,
                           "icon": "usb",
@@ -6884,11 +6664,11 @@
                         {
                           "type": "text",
                           "id": "swmbT",
-                          "name": "Upgrade Serial Port Label",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "USB Serial · COM4",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
+                          "content": "CRazyLink_Host · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 11,
                           "fontWeight": "650"
                         }
                       ]
@@ -6896,24 +6676,40 @@
                     {
                       "type": "frame",
                       "id": "c132Mu",
-                      "name": "Upgrade Refresh Device",
-                      "width": 38,
+                      "name": "Reconnect Device Button",
+                      "width": 100,
                       "height": 38,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        12
+                      ],
                       "justifyContent": "center",
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "icon",
                           "id": "mejGa",
-                          "name": "Upgrade Refresh Releases Icon",
+                          "name": "Reconnect Icon",
                           "width": 15,
                           "height": 15,
                           "icon": "refresh-cw",
                           "library": "lucide",
                           "fill": "$color-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "Jomzr",
+                          "name": "Reconnect Label",
+                          "fill": "$color-ink",
+                          "content": "重新选择",
+                          "fontFamily": "$font-body",
+                          "fontSize": 13,
+                          "fontWeight": "600"
                         }
                       ]
                     }
@@ -7161,7 +6957,7 @@
             {
               "type": "frame",
               "id": "wy1ip",
-              "name": "Upgrade Desktop Status",
+              "name": "Upgrade Task Status",
               "width": "fill_container",
               "height": 40,
               "fill": "$color-surface",
@@ -7184,19 +6980,11 @@
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "ellipse",
-                      "id": "z5OjCA",
-                      "name": "Upgrade Desktop Status Dot",
-                      "fill": "$color-success",
-                      "width": 7,
-                      "height": 7
-                    },
-                    {
                       "type": "text",
                       "id": "XGn9e",
                       "name": "Upgrade Desktop Status Text",
                       "fill": "$color-success",
-                      "content": "发布列表已同步，设备可用",
+                      "content": "发布列表已同步",
                       "fontFamily": "$font-body",
                       "fontSize": 11,
                       "fontWeight": "600"
@@ -7370,14 +7158,6 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "ellipse",
-                  "id": "iOnKb",
-                  "name": "Upgrade Tablet Device Dot",
-                  "fill": "$color-success",
-                  "width": 8,
-                  "height": 8
-                },
-                {
                   "type": "icon",
                   "id": "AOTRe",
                   "name": "Upgrade Tablet Settings",
@@ -7446,7 +7226,7 @@
                     {
                       "type": "frame",
                       "id": "ZmVyX",
-                      "name": "Upgrade Tablet Serial Port",
+                      "name": "Selected Port Badge",
                       "height": 36,
                       "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
@@ -7462,7 +7242,7 @@
                         {
                           "type": "icon",
                           "id": "Rwmul",
-                          "name": "Upgrade Tablet Serial Port Icon",
+                          "name": "Connection Port Icon",
                           "width": 15,
                           "height": 15,
                           "icon": "usb",
@@ -7472,10 +7252,10 @@
                         {
                           "type": "text",
                           "id": "aHlAR",
-                          "name": "Upgrade Tablet Serial Port Label",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "COM4",
-                          "fontFamily": "$font-body",
+                          "content": "CRazyLink_Host · COM4",
+                          "fontFamily": "$font-mono",
                           "fontSize": 11,
                           "fontWeight": "650"
                         }
@@ -7484,9 +7264,10 @@
                     {
                       "type": "frame",
                       "id": "PI46Z",
-                      "name": "Upgrade Tablet Refresh Device",
+                      "name": "Reconnect Device Button",
                       "width": 36,
                       "height": 36,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
@@ -7496,7 +7277,7 @@
                         {
                           "type": "icon",
                           "id": "n0YPN1",
-                          "name": "Upgrade Tablet Refresh Icon",
+                          "name": "Reconnect Icon",
                           "width": 14,
                           "height": 14,
                           "icon": "refresh-cw",
@@ -7849,7 +7630,7 @@
             {
               "type": "frame",
               "id": "lxNCp",
-              "name": "Upgrade Tablet Status",
+              "name": "Upgrade Tablet Task Status",
               "width": "fill_container",
               "height": 36,
               "fill": "$color-surface",
@@ -7869,7 +7650,7 @@
                   "id": "uYWuv",
                   "name": "Upgrade Tablet Status Text",
                   "fill": "$color-success",
-                  "content": "● 发布列表已同步，设备可用",
+                  "content": "发布列表已同步",
                   "fontFamily": "$font-body",
                   "fontSize": 10,
                   "fontWeight": "600"
@@ -8622,73 +8403,6 @@
                   ]
                 }
               ]
-            },
-            {
-              "type": "frame",
-              "id": "LWZeI",
-              "name": "Sidebar Device Status",
-              "width": "fill_container",
-              "layout": "vertical",
-              "gap": 12,
-              "children": [
-                {
-                  "type": "frame",
-                  "id": "U3BqkT",
-                  "name": "Connected Device Summary",
-                  "width": "fill_container",
-                  "gap": 12,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "ellipse",
-                      "id": "heDqY",
-                      "name": "Connected Indicator",
-                      "fill": "$color-success",
-                      "width": 8,
-                      "height": 8
-                    },
-                    {
-                      "type": "frame",
-                      "id": "SEVD6",
-                      "name": "Connected Device Text",
-                      "layout": "vertical",
-                      "gap": 4,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "O0ggN5",
-                          "name": "Connection Status",
-                          "fill": "$color-surface",
-                          "content": "设备已连接",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "VQ0pA",
-                          "name": "Connection Port",
-                          "fill": "$color-muted-2",
-                          "content": "USB Serial · COM4",
-                          "fontFamily": "$font-mono",
-                          "fontSize": 10,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
-                {
-                  "type": "text",
-                  "id": "M8hG44",
-                  "name": "App Version",
-                  "fill": "$color-muted-2",
-                  "content": "CRazyLink Configurator 0.1",
-                  "fontFamily": "$font-mono",
-                  "fontSize": 10,
-                  "fontWeight": "normal"
-                }
-              ]
             }
           ]
         },
@@ -8741,7 +8455,7 @@
                 {
                   "type": "frame",
                   "id": "yQMkX",
-                  "name": "Header Device Actions",
+                  "name": "Connection Header Actions",
                   "gap": 12,
                   "alignItems": "center",
                   "children": [
@@ -8764,7 +8478,7 @@
                         {
                           "type": "icon",
                           "id": "FvZLU",
-                          "name": "USB Icon",
+                          "name": "Connection Port Icon",
                           "width": 16,
                           "height": 16,
                           "icon": "usb",
@@ -8774,9 +8488,9 @@
                         {
                           "type": "text",
                           "id": "LAT7t",
-                          "name": "Selected Port Text",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "USB Serial · COM4",
+                          "content": "CRazyLink_Host · COM4",
                           "fontFamily": "$font-mono",
                           "fontSize": 11,
                           "fontWeight": "500"
@@ -8787,7 +8501,9 @@
                       "type": "frame",
                       "id": "YAiUb",
                       "name": "Reconnect Device Button",
+                      "width": 100,
                       "height": 38,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
@@ -9046,7 +8762,7 @@
             {
               "type": "frame",
               "id": "nNZUs",
-              "name": "Firmware Status Line",
+              "name": "CRazyLink Creation Task Status",
               "width": "fill_container",
               "height": 40,
               "fill": "$color-surface",
@@ -9069,21 +8785,11 @@
                   "alignItems": "center",
                   "children": [
                     {
-                      "type": "icon",
-                      "id": "ACOrV",
-                      "name": "Status Check Icon",
-                      "width": 14,
-                      "height": 14,
-                      "icon": "circle-check",
-                      "library": "lucide",
-                      "fill": "$color-success"
-                    },
-                    {
                       "type": "text",
                       "id": "D8VspW",
                       "name": "Status Message",
                       "fill": "$color-muted",
-                      "content": "设备可用，等待制作 CRazyLink",
+                      "content": "等待制作 CRazyLink",
                       "fontFamily": "$font-body",
                       "fontSize": 11,
                       "fontWeight": "500"
@@ -9267,14 +8973,6 @@
               "alignItems": "center",
               "children": [
                 {
-                  "type": "ellipse",
-                  "id": "AysgD",
-                  "name": "Tablet Firmware Connected Dot",
-                  "fill": "$color-success",
-                  "width": 8,
-                  "height": 8
-                },
-                {
                   "type": "icon",
                   "id": "zKfKZ",
                   "name": "Tablet Firmware Settings Icon",
@@ -9353,7 +9051,7 @@
                     {
                       "type": "frame",
                       "id": "SNqdR",
-                      "name": "Tablet Firmware Port Badge",
+                      "name": "Selected Port Badge",
                       "height": 36,
                       "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
@@ -9367,19 +9065,21 @@
                       "alignItems": "center",
                       "children": [
                         {
-                          "type": "ellipse",
-                          "id": "U7ddJw",
-                          "name": "Tablet Firmware Port Dot",
-                          "fill": "$color-success",
-                          "width": 7,
-                          "height": 7
+                          "type": "icon",
+                          "id": "lBncO",
+                          "name": "Tablet Firmware Port Icon",
+                          "width": 16,
+                          "height": 16,
+                          "icon": "usb",
+                          "library": "lucide",
+                          "fill": "$color-success"
                         },
                         {
                           "type": "text",
                           "id": "C8qC5X",
-                          "name": "Tablet Firmware Port Label",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "COM4",
+                          "content": "CRazyLink_Host · COM4",
                           "fontFamily": "$font-mono",
                           "fontSize": 11,
                           "fontWeight": "600"
@@ -9389,9 +9089,10 @@
                     {
                       "type": "frame",
                       "id": "RqQhJ",
-                      "name": "Tablet Firmware Change Port",
+                      "name": "Reconnect Device Button",
                       "width": 36,
                       "height": 36,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
@@ -9401,7 +9102,7 @@
                         {
                           "type": "icon",
                           "id": "cY2I0",
-                          "name": "Tablet Firmware Change Port Icon",
+                          "name": "Reconnect Icon",
                           "width": 15,
                           "height": 15,
                           "icon": "refresh-cw",
@@ -9765,9 +9466,9 @@
                 {
                   "type": "text",
                   "id": "NROOQ",
-                  "name": "Tablet Firmware Ready",
+                  "name": "Tablet Firmware Status",
                   "fill": "$color-success",
-                  "content": "● 设备可用，等待制作 CRazyLink",
+                  "content": "等待制作 CRazyLink",
                   "fontFamily": "$font-body",
                   "fontSize": 10,
                   "fontWeight": "600"
@@ -9989,58 +9690,11 @@
             {
               "type": "frame",
               "id": "iOFJp",
-              "name": "Upgrade Desktop Sidebar Status",
+              "name": "Upgrade Desktop Sidebar App Status",
               "width": "fill_container",
               "layout": "vertical",
               "gap": 10,
               "children": [
-                {
-                  "type": "frame",
-                  "id": "uLUeO",
-                  "name": "Upgrade Desktop Device Status",
-                  "width": "fill_container",
-                  "gap": 10,
-                  "alignItems": "center",
-                  "children": [
-                    {
-                      "type": "ellipse",
-                      "id": "pBpek",
-                      "name": "Upgrade Desktop Device Dot",
-                      "fill": "$color-success",
-                      "width": 8,
-                      "height": 8
-                    },
-                    {
-                      "type": "frame",
-                      "id": "WNji5",
-                      "name": "Upgrade Desktop Device Text",
-                      "layout": "vertical",
-                      "gap": 2,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "iRwdr",
-                          "name": "Upgrade Desktop Device State",
-                          "fill": "$color-surface",
-                          "content": "设备已连接",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "text",
-                          "id": "UNhe9",
-                          "name": "Upgrade Desktop Device Port",
-                          "fill": "$color-muted-2",
-                          "content": "USB Serial · COM4",
-                          "fontFamily": "$font-mono",
-                          "fontSize": 10,
-                          "fontWeight": "normal"
-                        }
-                      ]
-                    }
-                  ]
-                },
                 {
                   "type": "text",
                   "id": "Yl7vV",
@@ -10103,8 +9757,8 @@
                 {
                   "type": "frame",
                   "id": "LZfHn",
-                  "name": "Upgrade Desktop Header Actions",
-                  "gap": 10,
+                  "name": "Connection Header Actions",
+                  "gap": 12,
                   "alignItems": "center",
                   "children": [
                     {
@@ -10126,7 +9780,7 @@
                         {
                           "type": "icon",
                           "id": "t751z",
-                          "name": "Upgrade Serial Port Icon",
+                          "name": "Connection Port Icon",
                           "width": 16,
                           "height": 16,
                           "icon": "usb",
@@ -10136,11 +9790,11 @@
                         {
                           "type": "text",
                           "id": "fDb9U",
-                          "name": "Upgrade Serial Port Label",
+                          "name": "Connection Port Text",
                           "fill": "$color-ink",
-                          "content": "USB Serial · COM4",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
+                          "content": "CRazyLink_Host · COM4",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 11,
                           "fontWeight": "650"
                         }
                       ]
@@ -10148,24 +9802,40 @@
                     {
                       "type": "frame",
                       "id": "gqF5i",
-                      "name": "Upgrade Refresh Device",
-                      "width": 38,
+                      "name": "Reconnect Device Button",
+                      "width": 100,
                       "height": 38,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
+                      "gap": 8,
+                      "padding": [
+                        0,
+                        12
+                      ],
                       "justifyContent": "center",
                       "alignItems": "center",
                       "children": [
                         {
                           "type": "icon",
                           "id": "mi6ht",
-                          "name": "Upgrade Refresh Releases Icon",
+                          "name": "Reconnect Icon",
                           "width": 15,
                           "height": 15,
                           "icon": "refresh-cw",
                           "library": "lucide",
                           "fill": "$color-muted"
+                        },
+                        {
+                          "type": "text",
+                          "id": "f13ZeO",
+                          "name": "Reconnect Label",
+                          "fill": "$color-ink",
+                          "content": "重新选择",
+                          "fontFamily": "$font-body",
+                          "fontSize": 13,
+                          "fontWeight": "600"
                         }
                       ]
                     }
@@ -10251,6 +9921,818 @@
                       "fontWeight": "600"
                     }
                   ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "M1sq2Q",
+      "x": 1560,
+      "y": 0,
+      "name": "Connection Header Replacement Cards",
+      "context": "Hallmark · component: connection header variants · genre: modern-minimal · states complete · critique: P5 H5 E5 S5 R5 V4 · contrast pass",
+      "clip": true,
+      "width": 520,
+      "height": 980,
+      "fill": "$color-paper",
+      "cornerRadius": "$radius-md",
+      "stroke": "$color-rule",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 24,
+      "children": [
+        {
+          "type": "text",
+          "id": "oczhY",
+          "name": "Connection Components Title",
+          "fill": "$color-ink",
+          "content": "连接区 · 可替换组件",
+          "fontFamily": "$font-body",
+          "fontSize": 20,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "n2qgNH",
+          "name": "Connection Components Subtitle",
+          "fill": "$color-muted",
+          "content": "Firmware / Computer Large · 右上角",
+          "fontFamily": "$font-mono",
+          "fontSize": 10,
+          "fontWeight": "500"
+        },
+        {
+          "type": "text",
+          "id": "f6mnG",
+          "name": "Port Badge Variants Heading",
+          "fill": "$color-muted",
+          "content": "Selected Port Badge",
+          "fontFamily": "$font-body",
+          "fontSize": 11,
+          "fontWeight": "700"
+        },
+        {
+          "type": "frame",
+          "id": "j5Mpr",
+          "name": "Port Badge Variants",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "gc6ad",
+              "name": "Selected Port Badge / Connected State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "SbKOQ",
+                  "name": "Selected Port Badge / Connected State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "已连接",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "BQWmE",
+                  "type": "ref",
+                  "ref": "g5OOw",
+                  "name": "Selected Port Badge / Connected",
+                  "width": 187,
+                  "descendants": {
+                    "n56elP": {
+                      "name": "Connection Port Icon",
+                      "icon": "usb",
+                      "fill": "$color-success"
+                    },
+                    "avFyR": {
+                      "name": "Connection Port Text",
+                      "content": "CRazyLink_Host · COM4",
+                      "fill": "$color-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "DGw9q",
+              "name": "Selected Port Badge / Connecting State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "eJEi1",
+                  "name": "Selected Port Badge / Connecting State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "连接中",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "kUSUv",
+                  "type": "ref",
+                  "ref": "g5OOw",
+                  "name": "Selected Port Badge / Connecting",
+                  "width": 187,
+                  "fill": "$color-surface-2",
+                  "descendants": {
+                    "n56elP": {
+                      "name": "Connection Port Icon",
+                      "icon": "loader-circle",
+                      "fill": "$color-accent"
+                    },
+                    "avFyR": {
+                      "name": "Connection Port Text",
+                      "content": "连接中",
+                      "fill": "$color-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "H5HmDR",
+              "name": "Selected Port Badge / No Port State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "HoYru",
+                  "name": "Selected Port Badge / No Port State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "未选择",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "Zxst6",
+                  "type": "ref",
+                  "ref": "g5OOw",
+                  "name": "Selected Port Badge / No Port",
+                  "width": 187,
+                  "fill": "$color-surface-2",
+                  "descendants": {
+                    "n56elP": {
+                      "name": "Connection Port Icon",
+                      "icon": "usb",
+                      "fill": "$color-muted-2"
+                    },
+                    "avFyR": {
+                      "name": "Connection Port Text",
+                      "content": "未选择串口",
+                      "fill": "$color-muted"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "upNSO",
+              "name": "Selected Port Badge / Disconnected State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "BXPHt",
+                  "name": "Selected Port Badge / Disconnected State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "已断开",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "T6xkin",
+                  "type": "ref",
+                  "ref": "g5OOw",
+                  "name": "Selected Port Badge / Disconnected",
+                  "width": 187,
+                  "fill": "$color-accent-soft",
+                  "stroke": "$color-warning",
+                  "descendants": {
+                    "n56elP": {
+                      "name": "Connection Port Icon",
+                      "icon": "usb",
+                      "fill": "$color-warning"
+                    },
+                    "avFyR": {
+                      "name": "Connection Port Text",
+                      "content": "串口已断开 · COM4",
+                      "fill": "$color-warning"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "jJ9dz",
+              "name": "Selected Port Badge / Error State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "K1BWe",
+                  "name": "Selected Port Badge / Error State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "连接失败",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "X90Adr",
+                  "type": "ref",
+                  "ref": "g5OOw",
+                  "name": "Selected Port Badge / Error",
+                  "width": 187,
+                  "fill": "$color-accent-soft",
+                  "stroke": "$color-accent",
+                  "descendants": {
+                    "n56elP": {
+                      "name": "Connection Port Icon",
+                      "icon": "triangle-alert",
+                      "fill": "$color-accent"
+                    },
+                    "avFyR": {
+                      "name": "Connection Port Text",
+                      "content": "连接失败 · COM4",
+                      "fill": "$color-accent"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "FUpit",
+              "name": "Selected Port Badge / Permission Denied State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "QXUw2",
+                  "name": "Selected Port Badge / Permission Denied State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "无权限",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "AfRMQ",
+                  "type": "ref",
+                  "ref": "g5OOw",
+                  "name": "Selected Port Badge / Permission Denied",
+                  "width": 187,
+                  "fill": "$color-accent-soft",
+                  "stroke": "$color-warning",
+                  "descendants": {
+                    "n56elP": {
+                      "name": "Connection Port Icon",
+                      "icon": "shield-alert",
+                      "fill": "$color-warning"
+                    },
+                    "avFyR": {
+                      "name": "Connection Port Text",
+                      "content": "串口权限被拒绝",
+                      "fill": "$color-warning"
+                    }
+                  }
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "text",
+          "id": "YcTeM",
+          "name": "Reconnect Button Variants Heading",
+          "fill": "$color-muted",
+          "content": "Reconnect Device Button",
+          "fontFamily": "$font-body",
+          "fontSize": 11,
+          "fontWeight": "700"
+        },
+        {
+          "type": "frame",
+          "id": "CR01X",
+          "name": "Reconnect Button Variants",
+          "width": "fill_container",
+          "layout": "vertical",
+          "gap": 8,
+          "children": [
+            {
+              "type": "frame",
+              "id": "uV4R8",
+              "name": "Reconnect Device Button / Default State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "iPqiA",
+                  "name": "Reconnect Device Button / Default State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "默认",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "nTH5A",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Default",
+                  "width": 100,
+                  "fill": "$color-surface",
+                  "stroke": "$color-rule",
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "refresh-cw",
+                      "fill": "$color-muted"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "重新选择",
+                      "fill": "$color-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "Yt5zB",
+              "name": "Reconnect Device Button / Hover State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "lk3vq",
+                  "name": "Reconnect Device Button / Hover State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "悬停",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "C9T9um",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Hover",
+                  "width": 100,
+                  "fill": "$color-surface-2",
+                  "stroke": "$color-ink-2",
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "refresh-cw",
+                      "fill": "$color-ink"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "重新选择",
+                      "fill": "$color-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "MwaCx",
+              "name": "Reconnect Device Button / Focus State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "fKCdw",
+                  "name": "Reconnect Device Button / Focus State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "聚焦",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "OHt1X",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Focus",
+                  "width": 100,
+                  "fill": "$color-surface",
+                  "stroke": "$color-accent",
+                  "strokeWidth": 1,
+                  "effect": {
+                    "type": "shadow",
+                    "shadowType": "outer",
+                    "color": "$color-accent",
+                    "spread": 2
+                  },
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "refresh-cw",
+                      "fill": "$color-accent"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "重新选择",
+                      "fill": "$color-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "E6pUaW",
+              "name": "Reconnect Device Button / Active State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "qjvj4",
+                  "name": "Reconnect Device Button / Active State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "按下",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "EeiTI",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Active",
+                  "width": 100,
+                  "fill": "$color-accent-soft",
+                  "stroke": "$color-accent",
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "refresh-cw",
+                      "fill": "$color-accent"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "重新选择",
+                      "fill": "$color-accent"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "HaUmT",
+              "name": "Reconnect Device Button / Disabled State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "v381OH",
+                  "name": "Reconnect Device Button / Disabled State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "禁用",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "L55TM",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Disabled",
+                  "width": 100,
+                  "fill": "$color-surface-2",
+                  "stroke": "$color-rule",
+                  "opacity": 0.55,
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "refresh-cw",
+                      "fill": "$color-muted-2"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "重新选择",
+                      "fill": "$color-muted-2"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "l0iOXP",
+              "name": "Reconnect Device Button / Loading State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "u534y",
+                  "name": "Reconnect Device Button / Loading State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "加载",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "KR6J8",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Loading",
+                  "width": 100,
+                  "fill": "$color-surface",
+                  "stroke": "$color-rule",
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "loader-circle",
+                      "fill": "$color-accent"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "正在扫描",
+                      "fill": "$color-ink"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "w0KliK",
+              "name": "Reconnect Device Button / Error State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "VhlJB",
+                  "name": "Reconnect Device Button / Error State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "错误",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "Ayzet",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Error",
+                  "width": 100,
+                  "fill": "$color-accent-soft",
+                  "stroke": "$color-accent",
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "triangle-alert",
+                      "fill": "$color-accent"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "重试连接",
+                      "fill": "$color-accent"
+                    }
+                  }
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "IBPKP",
+              "name": "Reconnect Device Button / Success State Row",
+              "width": "fill_container",
+              "height": 48,
+              "fill": "$color-surface",
+              "cornerRadius": "$radius-sm",
+              "stroke": "$color-rule",
+              "strokeWidth": 1,
+              "gap": 12,
+              "padding": [
+                0,
+                12
+              ],
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "text",
+                  "id": "S7r8cf",
+                  "name": "Reconnect Device Button / Success State Label",
+                  "fill": "$color-muted",
+                  "textGrowth": "fixed-width",
+                  "width": 92,
+                  "content": "成功",
+                  "fontFamily": "$font-mono",
+                  "fontSize": 10,
+                  "fontWeight": "500"
+                },
+                {
+                  "id": "SiAZ6",
+                  "type": "ref",
+                  "ref": "gLm3s",
+                  "name": "Reconnect Device Button / Success",
+                  "width": 100,
+                  "fill": "$color-success-soft",
+                  "stroke": "$color-success",
+                  "descendants": {
+                    "o7heSx": {
+                      "name": "Reconnect Icon",
+                      "icon": "circle-check",
+                      "fill": "$color-success"
+                    },
+                    "j7LF6": {
+                      "name": "Reconnect Label",
+                      "content": "已更新",
+                      "fill": "$color-success"
+                    }
+                  }
                 }
               ]
             }

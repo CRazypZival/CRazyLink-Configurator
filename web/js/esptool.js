@@ -76,6 +76,28 @@
       return this.serial.requestPort();
     }
 
+    async probe(port, options) {
+      if (!this.supported) throw new Error("ESP32-S3 串口烧录组件未加载");
+      if (!port) throw new Error("尚未选择升级串口设备");
+      const settings = options || {};
+      const transport = new this.library.Transport(port, false);
+      const loader = new this.library.ESPLoader({
+        transport,
+        baudrate: settings.baudRate || DEFAULT_BAUD_RATE,
+        terminal: settings.terminal || { clean() {}, write() {}, writeLine() {} },
+        debugLogging: false,
+      });
+      try {
+        const chip = await loader.main(settings.before || "default_reset");
+        if (!/ESP32-S3/i.test(chip || "")) {
+          throw new Error(`检测到 ${chip || "未知芯片"}，目标必须是 ESP32-S3`);
+        }
+        return { chip };
+      } finally {
+        try { await transport.disconnect(); } catch (_) {}
+      }
+    }
+
     async flash(port, openedPackage, options) {
       if (!this.supported) throw new Error("ESP32-S3 串口烧录组件未加载");
       if (!port) throw new Error("尚未选择升级串口设备");

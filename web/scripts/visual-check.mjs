@@ -53,9 +53,8 @@ try {
     await page.screenshot({ path: resolve(outputDirectory, `${viewport.name}.png`), fullPage: true });
     if (viewport.name === "desktop-1440") {
       if (await page.locator("#upgradeReleaseSelect option").count() !== 2) failures.push("desktop-1440: release selector did not load");
-      await page.locator("#upgradeAdvancedButton").click();
-      if (!await page.locator("#upgradeAdvancedPanel").isVisible()) failures.push("desktop-1440: advanced options did not open");
-      await page.locator("#upgradeDeviceButton").click();
+      if (await page.locator("#blankFlashCard").isVisible()) failures.push("desktop-1440: blank flash card is visible before UART0 selection");
+      await page.locator("#connectButton").click();
       if (!await page.locator("#upgradeDeviceDialog").isVisible()) failures.push("desktop-1440: device dialog did not open");
       if (await page.locator(".upgrade-device-choice").count() !== 2) failures.push("desktop-1440: device choices are incomplete");
       await page.locator("#closeUpgradeDeviceDialog").click();

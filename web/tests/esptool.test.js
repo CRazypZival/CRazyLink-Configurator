@@ -32,6 +32,54 @@ test("describes FTDI and native ESP32-S3 serial ports", () => {
   assert.equal(describeSerialPort({ getInfo: () => ({ usbVendorId: 0x303a, usbProductId: 0x1001 }) }), "ESP32-S3 USB Download Mode · 303A:1001");
 });
 
+test("serial probe confirms an ESP32-S3 and closes its transport", async () => {
+  const calls = [];
+  class Transport {
+    constructor(port) { calls.push(["transport", port]); }
+    async disconnect() { calls.push(["disconnect"]); }
+  }
+  class ESPLoader {
+    constructor(options) { calls.push(["loader", options.baudrate]); }
+    async main(mode) { calls.push(["main", mode]); return "ESP32-S3 (revision v0.2)"; }
+  }
+  const flasher = new EspSerialFlasher({
+    serial: { requestPort: async () => ({}) },
+    library: { Transport, ESPLoader, md5: () => "md5" },
+  });
+  const result = await flasher.probe({ name: "port" });
+  assert.equal(result.chip, "ESP32-S3 (revision v0.2)");
+  assert.deepEqual(calls, [
+    ["transport", { name: "port" }],
+    ["loader", 460800],
+    ["main", "default_reset"],
+    ["disconnect"],
+  ]);
+});
+
+test("serial probe rejects non-S3 chips and always closes its transport", async () => {
+  let disconnected = false;
+  class Transport { async disconnect() { disconnected = true; } }
+  class ESPLoader { async main() { return "ESP32-C3"; } }
+  const flasher = new EspSerialFlasher({
+    serial: { requestPort: async () => ({}) },
+    library: { Transport, ESPLoader, md5: () => "md5" },
+  });
+  await assert.rejects(() => flasher.probe({}), /ESP32-S3/);
+  assert.equal(disconnected, true);
+});
+
+test("serial probe closes its transport after a ROM connection error", async () => {
+  let disconnected = false;
+  class Transport { async disconnect() { disconnected = true; } }
+  class ESPLoader { async main() { throw new Error("Unable to connect"); } }
+  const flasher = new EspSerialFlasher({
+    serial: { requestPort: async () => ({}) },
+    library: { Transport, ESPLoader, md5: () => "md5" },
+  });
+  await assert.rejects(() => flasher.probe({}), /Unable to connect/);
+  assert.equal(disconnected, true);
+});
+
 test("serial flasher writes every CRL segment and verifies with MD5", async () => {
   const calls = [];
   class Transport {

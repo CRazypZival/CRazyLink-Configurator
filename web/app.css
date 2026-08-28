@@ -283,6 +283,60 @@ textarea { padding: 8px 12px; resize: vertical; }
 .upgrade-device-choice strong { font-size: 12px; }
 .upgrade-device-choice small { color: var(--color-muted); font-size: 10px; }
 
+/* The upgrade screens mirror the compact cards in configurator.pen. */
+.upgrade-header-actions { display: none !important; }
+.upgrade-detection-header { display: none; }
+.upgrade-config-card { gap: 20px; }
+.upgrade-primary-fields { grid-template-columns: minmax(0, 1fr); }
+.upgrade-device-field,
+.upgrade-package-validation,
+.upgrade-branch-note,
+.upgrade-advanced-disclosure,
+.upgrade-advanced-panel { display: none; }
+.upgrade-config-card .upgrade-flash-action { flex: 0 0 68px; min-height: 68px; }
+.upgrade-config-card .upgrade-flash-action > span { font-size: 10px; }
+#upgradeStatusSource { display: none; }
+
+.blank-flash-card { display: grid; align-content: start; gap: 16px; min-height: 288px; padding: 20px; border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-surface); }
+.blank-flash-header { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-width: 0; height: 28px; }
+.blank-flash-header h3 { font-size: 16px; }
+.blank-detection-pill { display: inline-flex; align-items: center; gap: 6px; height: 28px; padding: 0 10px; border-radius: 14px; background: var(--color-success-soft); color: var(--color-success); font-size: 10px; font-weight: 650; white-space: nowrap; }
+.blank-detection-pill svg { width: 13px; height: 13px; }
+.blank-download-status { display: flex; align-items: center; gap: 8px; height: 34px; padding: 0 10px; background: var(--color-success-soft); color: var(--color-success); font-size: 11px; font-weight: 650; }
+.blank-download-status svg { width: 14px; height: 14px; }
+.blank-release-field { display: grid; grid-template-columns: 125px minmax(0, 1fr); align-items: center; gap: 12px; height: 54px; padding: 0 12px; background: var(--color-paper); color: var(--color-muted); font-size: 11px; font-weight: 600; }
+.blank-release-control { position: relative; min-width: 0; height: 54px; }
+.blank-release-control select { position: relative; z-index: 1; width: 100%; height: 54px; padding: 0 34px 0 0; border: 0; appearance: none; background: transparent; color: var(--color-ink); font-family: var(--font-mono); font-size: 11px; font-weight: 600; }
+.blank-release-control svg { position: absolute; top: 20px; right: 0; z-index: 0; width: 15px; height: 15px; color: var(--color-muted); }
+.blank-flash-button { display: inline-flex; align-items: center; justify-content: center; gap: 8px; height: 46px; border: 0; border-radius: var(--radius-sm); background: var(--color-accent); color: var(--color-accent-ink); font-size: 13px; font-weight: 650; }
+.blank-flash-button:disabled { background: var(--color-surface-2); color: var(--color-muted-2); cursor: not-allowed; }
+.blank-flash-button:not(:disabled):hover { filter: brightness(.96); }
+.blank-flash-button:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
+.blank-flash-button svg { width: 17px; height: 17px; }
+.upgrade-view.is-blank-flash .upgrade-config-card,
+.upgrade-view.is-blank-flash .runtime-mode-card { display: none; }
+.download-mode-prompt-card { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 10px; border-radius: var(--radius-sm); background: var(--color-accent-soft); color: var(--color-warning); font-size: 10px; font-weight: 600; }
+.download-mode-prompt-card svg { width: 14px; height: 14px; flex: 0 0 14px; }
+.upgrade-view.is-download-mode-required .upgrade-config-card,
+.upgrade-view.is-download-mode-required .runtime-mode-card { display: none; }
+
+@media (max-width: 959px) {
+  .blank-flash-card { min-height: 244px; padding: 16px; }
+  .blank-flash-header h3 { font-size: 14px; }
+  .blank-release-field { grid-template-columns: 108px minmax(0, 1fr); }
+}
+
+@media (max-width: 640px) {
+  .upgrade-view.is-blank-flash .upgrade-workflow { gap: 12px; }
+  .blank-flash-card { min-height: 0; gap: 12px; padding: 12px; }
+  .blank-flash-header h3 { font-size: 14px; }
+  .blank-detection-pill { padding: 0 8px; }
+  .blank-release-field { grid-template-columns: 1fr; gap: 2px; height: 60px; padding: 8px 12px; }
+  .blank-release-control, .blank-release-control select { height: 24px; }
+  .blank-release-control svg { top: 5px; }
+  .blank-flash-button { height: 48px; }
+}
+
 .toast-region { position: fixed; right: 20px; bottom: 20px; z-index: 5; display: grid; gap: 8px; width: min(360px, calc(100vw - 40px)); }
 .toast { padding: 12px 16px; border: 1px solid var(--color-rule); background: var(--color-surface); color: var(--color-ink); font-size: 12px; }
 .toast[data-kind="error"] { border-color: var(--color-accent); color: var(--color-accent); }

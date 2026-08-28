@@ -33,6 +33,7 @@
       transport: null,
       usbDevice: null,
       serialPort: null,
+      serialProbeState: "idle",
       localInfo: null,
       role: "CRAZYLINK",
       deviceLabel: "",
@@ -96,7 +97,7 @@
     const copy = {
       flash: { title: "固件烧录", subtitle: "" },
       serial: { title: "串口调试", subtitle: "持续监听、发送与参数配置" },
-      upgrade: { title: "固件升级", subtitle: "连接后自动识别设备类型" },
+      upgrade: { title: "固件升级", subtitle: "" },
     }[view];
     $("#viewTitle").textContent = copy.title;
     const subtitle = $("#pageSubtitle");
@@ -104,11 +105,12 @@
       subtitle.textContent = copy.subtitle;
       subtitle.hidden = !copy.subtitle;
     }
-    $("#standardHeaderActions").hidden = view === "upgrade";
-    $("#serialHeaderActions").hidden = view !== "serial";
-    $("#upgradeHeaderActions").hidden = view !== "upgrade";
+    $("#standardHeaderActions").hidden = false;
+    $("#serialHeaderActions").hidden = true;
     $(".standard-mobile-actions").hidden = view === "upgrade";
     $(".upgrade-mobile-actions").hidden = view !== "upgrade";
+    syncUpgradeVariant();
+    updateButtons();
     if (view === "upgrade" && state.upgrade.releases.length === 0 && !state.upgrade.loadingReleases) loadFirmwareReleases();
   }
 
@@ -144,7 +146,7 @@
 
   function updateButtons() {
     const connected = Boolean(state.device);
-    $("#connectButton").querySelector("span").textContent = connected ? "断开设备" : "连接设备";
+    $("#connectButton").querySelector("span").textContent = state.view === "upgrade" ? "重新选择" : (connected ? "断开设备" : "重新选择");
     $("#mobileConnectButton").setAttribute("aria-label", connected ? "断开设备" : "连接设备");
     $("#flashButton").disabled = !connected || state.files.length === 0 || state.flashing;
     $("#clearFilesButton").disabled = state.files.length === 0 || state.flashing;
@@ -163,8 +165,11 @@
     $("#upgradeFlashButton").disabled = !upgradeReady;
     $("#upgradeDeviceButton").disabled = state.upgrade.flashing;
     $("#upgradeReleaseSelect").disabled = state.upgrade.flashing || state.upgrade.loadingReleases;
-    $("#refreshReleasesButton").disabled = state.upgrade.loadingReleases || state.upgrade.flashing;
+    const refreshReleasesButton = $("#refreshReleasesButton");
+    if (refreshReleasesButton) refreshReleasesButton.disabled = state.upgrade.loadingReleases || state.upgrade.flashing;
     $("#saveRuntimeModeButton").disabled = state.upgrade.transport !== "usb" || !state.device || state.upgrade.flashing;
+    const blankFlashButton = $("#blankFlashButton");
+    if (blankFlashButton) blankFlashButton.disabled = !upgradeReady;
     iconRefresh();
   }
 
@@ -653,6 +658,33 @@
     return state.upgrade.deviceLabel || "当前设备";
   }
 
+  function syncUpgradeVariant() {
+    const blankMode = state.view === "upgrade" && state.upgrade.transport === "serial";
+    const downloadModeRequired = state.view === "upgrade" && state.upgrade.serialProbeState === "missing";
+    const view = $("#upgradeView");
+    const blankCard = $("#blankFlashCard");
+    const promptCard = $("#downloadModePromptCard");
+    if (!view || !blankCard || !promptCard) return;
+    view.classList.toggle("is-blank-flash", blankMode);
+    view.classList.toggle("is-download-mode-required", downloadModeRequired);
+    blankCard.hidden = !blankMode;
+    promptCard.hidden = !downloadModeRequired;
+    if (state.view !== "upgrade") return;
+
+    $("#viewTitle").textContent = blankMode ? "制作 CRazyLink" : "固件升级";
+    const subtitle = $("#pageSubtitle");
+    subtitle.textContent = "";
+    subtitle.hidden = true;
+    const upgradeNav = $(".nav-item[data-view=\"upgrade\"]");
+    const flashNav = $(".nav-item[data-view=\"flash\"]");
+    if (upgradeNav && flashNav) {
+      upgradeNav.classList.toggle("is-active", !blankMode);
+      flashNav.classList.toggle("is-active", blankMode);
+      upgradeNav.toggleAttribute("aria-current", !blankMode);
+      flashNav.toggleAttribute("aria-current", blankMode);
+    }
+  }
+
   function setUpgradeStatus(text, kind, progress) {
     const line = $(".upgrade-status-line");
     line.dataset.state = kind || "idle";
@@ -683,6 +715,14 @@
     $("#upgradeFlashHelper").textContent = helper;
     const upgradeAction = $("#upgradeFlashButton")?.querySelector("span");
     if (upgradeAction) upgradeAction.textContent = upgrade.transport === "serial" ? "制作 CRazyLink" : "更新 CRazyLink";
+    const blankReleaseSelect = $("#blankReleaseSelect");
+    if (blankReleaseSelect) blankReleaseSelect.value = upgrade.release?.tag || "";
+    const blankDownloadStatus = $("#blankDownloadStatus");
+    if (blankDownloadStatus) {
+      blankDownloadStatus.dataset.state = upgrade.transport === "serial" ? "ready" : "idle";
+      blankDownloadStatus.querySelector("span").textContent = upgrade.transport === "serial" ? "Download Mode 已就绪" : "等待 Download Mode";
+    }
+    syncUpgradeVariant();
     updateButtons();
   }
 
@@ -694,15 +734,17 @@
     try {
       const selectedTag = state.upgrade.release?.tag || "";
       state.upgrade.releases = await api.listFirmwareReleases();
-      const select = $("#upgradeReleaseSelect");
-      select.replaceChildren(new Option("选择发布 TAG", ""));
-      for (const release of state.upgrade.releases) {
-        const suffix = release.prerelease ? " · prerelease" : "";
-        select.append(new Option(`${release.tag}${suffix}`, release.tag));
+      const selects = [$("#upgradeReleaseSelect"), $("#blankReleaseSelect")].filter(Boolean);
+      for (const select of selects) {
+        select.replaceChildren(new Option(select.id === "blankReleaseSelect" ? "选择 CRazyLink TAG" : "选择发布 TAG", ""));
+        for (const release of state.upgrade.releases) {
+          const suffix = release.prerelease ? " · prerelease" : "";
+          select.append(new Option(`${release.tag}${suffix}`, release.tag));
+        }
       }
       const matched = state.upgrade.releases.find((release) => release.tag === selectedTag) || null;
       state.upgrade.release = matched;
-      select.value = matched?.tag || "";
+      for (const select of selects) select.value = matched?.tag || "";
       if (state.upgrade.releases.length) {
         setUpgradeStatus("发布列表已同步，设备可用", "success");
         if (notify) toast("发布列表已刷新", "success");
@@ -712,7 +754,9 @@
     } catch (error) {
       state.upgrade.releases = [];
       state.upgrade.release = null;
-      $("#upgradeReleaseSelect").replaceChildren(new Option("发布列表加载失败", ""));
+      [$("#upgradeReleaseSelect"), $("#blankReleaseSelect")].filter(Boolean).forEach((select) => {
+        select.replaceChildren(new Option("发布列表加载失败", ""));
+      });
       setUpgradeStatus(error.message || "发布列表加载失败", "error");
       if (notify) toast(error.message || "发布列表加载失败", "error");
     } finally {
@@ -727,6 +771,7 @@
     state.upgrade.transport = "usb";
     state.upgrade.usbDevice = connection;
     state.upgrade.serialPort = null;
+    state.upgrade.serialProbeState = "idle";
     state.upgrade.localInfo = localInfo;
     state.upgrade.role = "CRAZYLINK";
     state.upgrade.deviceLabel = `${localInfo.productName} · ${localInfo.serialNumber}`;
@@ -752,21 +797,42 @@
 
   async function selectUpgradeSerial() {
     $("#upgradeDeviceDialog").close();
+    let selectedPort = null;
     try {
       if (!app.espFlasher?.supported) throw new Error("当前浏览器不支持 Web Serial 或 ESP32-S3 烧录组件未加载");
       setUpgradeStatus("等待串口设备授权", "busy");
-      const port = await app.espFlasher.requestPort();
+      selectedPort = await app.espFlasher.requestPort();
+      setUpgradeStatus("正在检测 ESP32-S3 Download Mode", "busy");
+      const detected = await app.espFlasher.probe(selectedPort);
       state.upgrade.transport = "serial";
-      state.upgrade.serialPort = port;
+      state.upgrade.serialPort = selectedPort;
+      state.upgrade.serialProbeState = "ready";
       state.upgrade.usbDevice = null;
       state.upgrade.localInfo = null;
       state.upgrade.role = "CRAZYLINK";
-      state.upgrade.deviceLabel = api.describeSerialPort(port);
+      state.upgrade.deviceLabel = `${api.describeSerialPort(selectedPort)} · ${detected.chip}`;
       $("#deviceName").textContent = "ESP32-S3 升级设备";
       $("#deviceSerial").textContent = state.upgrade.deviceLabel;
-      setUpgradeStatus("串口已选择，等待识别 Download Mode", "success");
+      setConnection("connected", state.upgrade.deviceLabel);
+      setUpgradeStatus("ESP32-S3 Download Mode 已就绪", "success");
       updateUpgradeUi();
     } catch (error) {
+      if (selectedPort) {
+        state.upgrade.transport = null;
+        state.upgrade.serialPort = selectedPort;
+        state.upgrade.serialProbeState = "missing";
+        state.upgrade.usbDevice = null;
+        state.upgrade.localInfo = null;
+        state.upgrade.role = "CRAZYLINK";
+        state.upgrade.deviceLabel = api.describeSerialPort(selectedPort);
+        $("#deviceName").textContent = "ESP32-S3 升级设备";
+        $("#deviceSerial").textContent = state.upgrade.deviceLabel;
+        setConnection("error", state.upgrade.deviceLabel);
+        setUpgradeStatus("请让 ESP32-S3 进入 Download Mode", "warning");
+        updateUpgradeUi();
+        toast("Download Mode 未检测到 · 请先进入下载模式", "error");
+        return;
+      }
       setUpgradeStatus(error.message || "串口设备选择失败", "error");
       toast(error.message || "串口设备选择失败", "error");
     }
@@ -828,6 +894,14 @@
     $("#upgradeAdvancedButton").setAttribute("aria-expanded", String(expanded));
   }
 
+  function chooseConnection() {
+    if (state.view === "upgrade") {
+      $("#upgradeDeviceDialog").showModal();
+      return;
+    }
+    connectDevice();
+  }
+
   function toggleRuntimeMode() {
     const panel = $("#runtimeModePanel");
     const expanded = panel.hidden;
@@ -848,8 +922,8 @@
 
   function bind() {
     $$("[data-view]").forEach((button) => button.addEventListener("click", () => setView(button.dataset.view)));
-    $("#connectButton").addEventListener("click", connectDevice);
-    $("#mobileConnectButton").addEventListener("click", connectDevice);
+    $("#connectButton").addEventListener("click", chooseConnection);
+    $("#mobileConnectButton").addEventListener("click", chooseConnection);
     $("#refreshDeviceButton").addEventListener("click", refreshDevice);
     $("#firmwareInput").addEventListener("change", (event) => addFiles(event.target.files));
     $("#dropZone").addEventListener("dragover", (event) => { event.preventDefault(); $("#dropZone").classList.add("is-dragging"); });
@@ -902,13 +976,16 @@
     $("#upgradeUsbChoice").addEventListener("click", selectUpgradeUsb);
     $("#upgradeSerialChoice").addEventListener("click", selectUpgradeSerial);
     $("#upgradeReleaseSelect").addEventListener("change", selectUpgradeRelease);
+    $("#blankReleaseSelect").addEventListener("change", selectUpgradeRelease);
     $("#upgradeAdvancedButton").addEventListener("click", toggleUpgradeAdvanced);
     $("#runtimeModeDisclosure").addEventListener("click", toggleRuntimeMode);
     $("#saveRuntimeModeButton").addEventListener("click", saveRuntimeMode);
     $("#upgradeFlashButton").addEventListener("click", flashUpgrade);
-    $("#refreshReleasesButton").addEventListener("click", () => loadFirmwareReleases(true));
-    $("#mobileUpgradeMenuButton").addEventListener("click", () => loadFirmwareReleases(true));
-    [$("#releaseSourceButton"), $("#mobileReleaseSourceButton")].forEach((button) => button.addEventListener("click", () => {
+    $("#blankFlashButton").addEventListener("click", flashUpgrade);
+    const refreshReleasesButton = $("#refreshReleasesButton");
+    if (refreshReleasesButton) refreshReleasesButton.addEventListener("click", () => loadFirmwareReleases(true));
+    $("#mobileUpgradeDeviceButton").addEventListener("click", () => $("#upgradeDeviceDialog").showModal());
+    [$("#releaseSourceButton"), $("#mobileReleaseSourceButton")].filter(Boolean).forEach((button) => button.addEventListener("click", () => {
       window.open("https://github.com/CRazypZival/CRazyLink-Configurator/releases", "_blank", "noopener,noreferrer");
     }));
   }

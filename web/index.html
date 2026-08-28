@@ -54,7 +54,7 @@
         </div>
         <div class="upgrade-mobile-actions" hidden>
           <button class="upgrade-source-button" id="mobileReleaseSourceButton" type="button"><i data-lucide="github"></i><span>Releases</span></button>
-          <button class="icon-button" id="mobileUpgradeMenuButton" type="button" aria-label="刷新发布列表" title="刷新发布列表"><i data-lucide="ellipsis"></i></button>
+          <button class="icon-button" id="mobileUpgradeDeviceButton" type="button" aria-label="选择升级接口" title="选择升级接口"><i data-lucide="usb"></i></button>
         </div>
       </div>
     </header>
@@ -76,10 +76,6 @@
             <span class="state-dot" aria-hidden="true"></span><span id="serialPortLabel">USB 功能接口</span>
           </div>
           <button class="button button-secondary serial-close-header" id="serialCloseHeaderButton" type="button"><i data-lucide="x"></i><span>关闭串口</span></button>
-        </div>
-        <div class="header-actions upgrade-header-actions" id="upgradeHeaderActions" hidden>
-          <button class="upgrade-source-button" id="releaseSourceButton" type="button"><i data-lucide="github"></i><span>GitHub Releases</span></button>
-          <button class="icon-button upgrade-refresh-button" id="refreshReleasesButton" type="button" aria-label="刷新发布列表" title="刷新发布列表"><i data-lucide="refresh-cw"></i></button>
         </div>
       </header>
 
@@ -197,14 +193,6 @@
               <h2>固件升级</h2>
               <p>连接后自动识别设备类型</p>
             </div>
-            <div class="upgrade-detection-header">
-              <div>
-                <h2>设备类型自动识别</h2>
-                <p><span class="upgrade-desktop-copy">连接 USB 或 UART0 后自动选择升级流程</span><span class="upgrade-tablet-copy">连接接口后自动选择升级流程</span></p>
-              </div>
-              <span class="upgrade-source-note">GitHub Releases</span>
-            </div>
-
             <section class="upgrade-config-card" aria-labelledby="upgradeConfigTitle">
               <div class="upgrade-config-header">
                 <h3 id="upgradeConfigTitle">升级固件</h3>
@@ -242,6 +230,27 @@
                 <label class="upgrade-check"><input id="upgradeVerifyCheck" type="checkbox" checked><span>写入后校验</span></label>
                 <label class="upgrade-check"><input id="upgradeResetCheck" type="checkbox" checked><span>完成后重启</span></label>
               </div>
+              <div class="upgrade-flash-action">
+                <span id="upgradeFlashHelper">选择版本后更新 CRazyLink</span>
+                <button class="upgrade-flashing-button" id="upgradeFlashButton" type="button" disabled><i data-lucide="upload"></i><span>更新 CRazyLink</span></button>
+              </div>
+            </section>
+
+            <section class="blank-flash-card" id="blankFlashCard" hidden aria-labelledby="blankFlashTitle">
+              <div class="blank-flash-header">
+                <h3 id="blankFlashTitle">制作 CRazyLink</h3>
+                <span class="blank-detection-pill"><i data-lucide="cpu"></i><span>ESP32-S3 已识别</span></span>
+              </div>
+              <div class="blank-download-status" id="blankDownloadStatus"><i data-lucide="circle-check"></i><span>Download Mode 已就绪</span></div>
+              <label class="blank-release-field" for="blankReleaseSelect">
+                <span>发布 TAG</span>
+                <span class="blank-release-control"><select id="blankReleaseSelect" aria-label="CRazyLink 发布 TAG"><option value="">选择 CRazyLink TAG</option></select><i data-lucide="chevron-down"></i></span>
+              </label>
+              <button class="blank-flash-button" id="blankFlashButton" type="button" disabled><i data-lucide="upload"></i><span>制作 CRazyLink</span></button>
+            </section>
+
+            <section class="download-mode-prompt-card" id="downloadModePromptCard" hidden aria-live="polite">
+              <i data-lucide="triangle-alert"></i><span>Download Mode 未检测到 · 请先进入下载模式</span>
             </section>
 
             <section class="runtime-mode-card" aria-labelledby="runtimeModeTitle">
@@ -258,11 +267,6 @@
               </div>
             </section>
 
-            <div class="upgrade-workflow-spacer"></div>
-            <div class="upgrade-flash-action">
-              <span id="upgradeFlashHelper">选择版本后更新 CRazyLink</span>
-              <button class="upgrade-flashing-button" id="upgradeFlashButton" type="button" disabled><i data-lucide="upload"></i><span>更新 CRazyLink</span></button>
-            </div>
           </div>
         </div>
         <div class="upgrade-status-line">
