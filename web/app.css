@@ -96,7 +96,7 @@ svg { width: 18px; height: 18px; stroke-width: 1.8; }
 .check-items span { display: inline-flex; align-items: center; gap: 8px; }
 .check-items svg { width: 14px; height: 14px; color: var(--color-success); }
 
-.flash-settings-panel { display: grid; align-content: start; gap: 20px; min-width: 0; padding: 20px; border: 1px solid var(--color-rule); background: var(--color-surface); }
+.flash-settings-panel { display: grid; align-self: start; align-content: start; gap: 20px; min-width: 0; padding: 20px; border: 1px solid var(--color-rule); background: var(--color-surface); }
 .settings-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; }
 .field-label { display: grid; gap: 8px; color: var(--color-muted); font-size: 11px; font-weight: 600; }
 select, textarea { width: 100%; border: 1px solid var(--color-rule); border-radius: 0; background: var(--color-paper); color: var(--color-ink); }
@@ -327,8 +327,10 @@ textarea { padding: 8px 12px; resize: vertical; }
 .upgrade-view.is-download-mode-required .runtime-mode-card { display: none; }
 
 @media (max-width: 1199px) {
-  .blank-flash-card { min-height: 344px; padding: 16px; }
+  .blank-flash-card { min-height: 344px; gap: 12px; padding: 15px; }
+  .blank-flash-header { height: 26px; }
   .blank-flash-header h3 { font-size: 14px; }
+  .blank-detection-pill { height: 26px; }
   .blank-target-field, .blank-default-mode-field { position: relative; display: grid; align-content: center; gap: 3px; height: 48px; padding: 7px 10px; border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-muted); font-size: 10px; font-weight: 600; }
   .blank-target-field strong, .blank-default-mode-field strong { color: var(--color-ink); font-size: 11px; font-weight: 650; }
   .blank-target-field svg { position: absolute; top: 17px; right: 10px; width: 14px; height: 14px; color: var(--color-muted); }
@@ -373,6 +375,7 @@ textarea { padding: 8px 12px; resize: vertical; }
 }
 
 @media (max-width: 1199px) {
+  .view.is-active { grid-template-rows: minmax(0, 1fr) 36px; }
   .app-shell { grid-template-columns: 72px minmax(0, 1fr); }
   .sidebar { align-items: center; padding: 20px 12px; }
   .sidebar-top { justify-items: center; gap: 28px; }
@@ -389,13 +392,22 @@ textarea { padding: 8px 12px; resize: vertical; }
   .page-header { min-height: 72px; padding: 0 24px; }
   h1 { font-size: 20px; }
   .page-title-group p { font-size: 11px; }
-  .firmware-content { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 20px; padding: 20px; }
+  .firmware-content { grid-template-columns: minmax(0, 1fr); align-content: start; gap: 20px; padding: 24px; }
+  .list-header { min-height: 45px; }
+  .add-firmware { height: 56px; margin-top: -8px; }
+  .merge-summary { min-height: 48px; }
   .files-workspace, .flash-settings-panel { align-self: start; }
-  .flash-settings-panel { grid-template-columns: repeat(3, minmax(0, 1fr)) 168px; grid-template-rows: auto auto; align-items: end; column-gap: 12px; row-gap: 16px; padding: 16px; }
+  .flash-settings-panel { grid-template-columns: repeat(3, minmax(0, 1fr)) 168px; grid-template-rows: 57px 18px; align-items: end; column-gap: 12px; row-gap: 16px; padding: 15px; }
   .settings-header { display: none; }
   .flash-settings-panel > .field-label { grid-row: 1; gap: 4px; font-size: 10px; }
   .flash-settings-panel > .field-label select { height: 38px; padding: 0 8px; font-size: 11px; }
   .switch-group { display: flex; grid-column: 1 / 3; grid-row: 2; gap: 20px; padding: 0; }
+  .switch-row { justify-content: flex-start; gap: 8px; }
+  .switch-row > span:first-child { order: 1; }
+  .switch-row strong { font-size: 10px; line-height: 14px; }
+  .switch { order: -1; width: 34px; height: 18px; padding: 2px; flex-basis: 34px; }
+  .switch::after { width: 14px; height: 14px; }
+  .switch-row input:checked + .switch::after { transform: translateX(16px); }
   .switch-group small { display: none; }
   .task-summary { display: flex; grid-column: 3 / 5; grid-row: 2; justify-self: end; gap: 12px; border-top: 0; padding-top: 0; }
   .task-summary h3 { display: none; }
@@ -404,7 +416,7 @@ textarea { padding: 8px 12px; resize: vertical; }
   .start-flash { width: 168px; grid-column: 4; grid-row: 1; }
   .export-button, .mode-switch { display: none; }
   .serial-content { gap: 16px; padding: 20px; }
-  .serial-config-bar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: 17px 53px; column-gap: 8px; row-gap: 12px; min-height: 106px; padding: 12px; }
+  .serial-config-bar { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); grid-template-rows: 17px 51px; column-gap: 8px; row-gap: 12px; min-height: 106px; padding: 12px; }
   .serial-config-title { display: flex; grid-column: 1 / 3; grid-row: 1; align-items: center; }
   .serial-config-title span { display: none; }
   .listening-state { display: flex; grid-column: 4 / 6; grid-row: 1; justify-content: end; }
@@ -438,7 +450,7 @@ textarea { padding: 8px 12px; resize: vertical; }
   .upgrade-field-control > span:first-child, .upgrade-select-wrap select { font-size: 11px; }
   .upgrade-select-wrap select { height: 38px; padding-left: 10px; }
   .upgrade-mapping { gap: 12px; padding-top: 12px; }
-  .upgrade-package-validation { min-height: 30px; }
+  .upgrade-package-validation { min-height: 32px; }
   .upgrade-branch-note { font-size: 10px; }
   .upgrade-package-validation { display: flex; }
   .upgrade-branch-note { display: block; }
@@ -454,9 +466,11 @@ textarea { padding: 8px 12px; resize: vertical; }
   .upgrade-advanced-disclosure { height: 42px; padding-top: 12px; border-top: 1px solid var(--color-rule); }
   .upgrade-advanced-panel { grid-template-columns: repeat(2, minmax(0, 1fr)); }
   .upgrade-flash-action { min-height: 58px; padding: 0 16px; }
+  .upgrade-config-card .upgrade-flash-action { flex: 0 0 54px; min-height: 54px; }
   .upgrade-workflow-spacer { display: block; flex: 1; }
   .upgrade-flashing-button { height: 42px; font-size: 11px; }
   .upgrade-status-line { min-height: 36px; padding: 0 24px; font-size: 10px; }
+  .status-line { min-height: 36px; }
   #upgradeStatusSource .upgrade-desktop-copy { display: none; }
   #upgradeStatusSource .upgrade-short-copy { display: inline; }
 }
@@ -491,7 +505,7 @@ textarea { padding: 8px 12px; resize: vertical; }
   .file-address { width: auto; height: 32px; padding: 0; border: 0; text-align: right; }
   .file-address-value { height: 32px; max-width: 72%; font-size: 10px; }
   .file-remove { grid-column: 3; grid-row: 1; width: 40px; height: 40px; }
-  .add-firmware { height: 44px; font-size: 11px; }
+  .add-firmware { height: 44px; margin-top: 0; font-size: 11px; }
   .merge-summary { min-height: 44px; padding: 0 12px; font-size: 10px; }
   .merge-summary strong { font-size: 10px; }
   .ready-checklist { display: none; }
