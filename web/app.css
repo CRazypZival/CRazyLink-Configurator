@@ -176,7 +176,7 @@ textarea { padding: 8px 12px; resize: vertical; }
 .format-control label { display: grid; place-items: center; height: 28px; padding: 0 8px; cursor: pointer; }
 .format-control input { position: absolute; opacity: 0; }
 .format-control label { color: var(--color-terminal-muted); }
-.format-control label:has(input:checked) { background: var(--color-terminal-rule); color: var(--color-terminal-text); font-weight: 650; }
+.format-control label:has(input:checked), .format-control label.is-selected { background: var(--color-terminal-rule); color: var(--color-terminal-text); font-weight: 650; }
 .terminal-input-wrap { min-width: 0; }
 .terminal-input-wrap textarea { display: block; height: 38px; min-height: 38px; padding: 0 12px; border-color: var(--color-terminal-rule); background: var(--color-terminal); color: var(--color-terminal-text); line-height: 38px; resize: none; }
 .terminal-input-wrap textarea::placeholder { color: var(--color-terminal-muted); }
@@ -256,7 +256,11 @@ textarea { padding: 8px 12px; resize: vertical; }
 .runtime-mode-label svg, .runtime-mode-state svg { width: 16px; height: 16px; color: var(--color-muted); flex: 0 0 16px; }
 .runtime-mode-label strong { font-size: 13px; }
 .runtime-mode-state { gap: 6px; color: var(--color-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 600; }
+.runtime-mode-hint { display: none; color: var(--color-muted); font-size: 10px; font-weight: 400; }
 .runtime-mode-disclosure[aria-expanded="true"] { border-radius: var(--radius-md) var(--radius-md) 0 0; }
+.runtime-mode-card[data-expanded="true"] .runtime-mode-disclosure { height: auto; min-height: 19px; padding: 0 16px 12px; }
+.runtime-mode-card[data-expanded="true"] .runtime-mode-state { display: none; }
+.runtime-mode-card[data-expanded="true"] .runtime-mode-hint { display: inline; margin-left: auto; }
 .runtime-mode-disclosure[aria-expanded="true"] .runtime-mode-state svg { transform: rotate(90deg); }
 .runtime-mode-panel { display: grid; gap: 10px; padding: 0 16px 16px; }
 .runtime-mode-controls { display: grid; grid-template-columns: minmax(0, 1fr) 160px; align-items: end; gap: 12px; }
@@ -301,11 +305,16 @@ textarea { padding: 8px 12px; resize: vertical; }
 .upgrade-config-card .upgrade-flash-action > span { font-size: 10px; }
 .upgrade-card-disclosure { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 42px; padding: 0; border: 0; background: transparent; color: var(--color-ink); text-align: left; }
 .upgrade-card-label, .upgrade-card-state { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.upgrade-card-disclosure .upgrade-detection-pill { margin-left: auto; }
 .upgrade-card-label strong { font-size: 14px; }
 .upgrade-card-label svg, .upgrade-card-state svg { width: 15px; height: 15px; color: var(--color-muted); flex: 0 0 15px; }
 .upgrade-card-state { gap: 5px; color: var(--color-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 600; }
 .upgrade-card-disclosure[aria-expanded="true"] .upgrade-card-state svg { transform: rotate(90deg); }
 .upgrade-card-body { display: flex; flex-direction: column; gap: 20px; }
+.upgrade-config-card[data-expanded="false"] { min-height: 60px; gap: 0; padding: 0 20px; }
+.upgrade-config-card[data-expanded="false"] .upgrade-card-disclosure { min-height: 60px; }
+.upgrade-config-card[data-expanded="false"] .upgrade-detection-pill { display: none; }
+.upgrade-config-card[data-expanded="true"] .upgrade-card-state { display: none; }
 .upgrade-card-disclosure:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 #upgradeStatusSource { display: none; }
 
@@ -333,7 +342,7 @@ textarea { padding: 8px 12px; resize: vertical; }
 .download-mode-prompt-card svg { width: 14px; height: 14px; flex: 0 0 14px; }
 .upgrade-view.is-download-mode-required .upgrade-config-card,
 .upgrade-view.is-download-mode-required .runtime-mode-card { display: none; }
-.upgrade-prompt-card { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 14px; border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-muted); font-size: 12px; font-weight: 600; }
+.upgrade-prompt-card { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 10px; border: 1px solid var(--color-rule); border-radius: var(--radius-sm); background: var(--color-surface); color: var(--color-muted); font-size: 10px; font-weight: 600; }
 .upgrade-prompt-card svg { width: 16px; height: 16px; flex: 0 0 16px; }
 .connection-prompt-card { color: var(--color-muted); }
 .unsupported-device-prompt-card { color: var(--color-warning); }

@@ -276,6 +276,27 @@
     return targets[$("#targetSelect").value] || targets.stm32f103c8;
   }
 
+  function syncSwitchState() {
+    $$(".switch-row").forEach((row) => {
+      const input = row.querySelector("input[type=checkbox]");
+      if (input) row.dataset.checked = String(input.checked);
+    });
+  }
+
+  function selectedSendFormat() {
+    return $("#hexSendCheck")?.checked ? "hex" : "ascii";
+  }
+
+  function syncSendFormat() {
+    const format = selectedSendFormat();
+    const control = $(".format-control");
+    if (control) control.dataset.format = format;
+    $$(".format-control label").forEach((label) => {
+      const input = label.querySelector("input");
+      label.classList.toggle("is-selected", input?.checked === true);
+    });
+  }
+
   function setFlashStatus(text, chip, percent) {
     $("#flashStatusText").textContent = text;
     $("#flashStatusChip").textContent = chip;
@@ -588,7 +609,7 @@
     const value = $("#terminalInput").value;
     if (!value) return;
     try {
-      const hex = $("#hexSendCheck").checked;
+      const hex = selectedSendFormat() === "hex";
       let bytes = hex ? parseHex(value) : new TextEncoder().encode(value);
       if (!hex) {
         const endings = { CRLF: "\r\n", LF: "\n", CR: "\r" };
@@ -982,6 +1003,8 @@
         sendSerial();
       }
     });
+    $$(".format-control input[name=sendFormat]").forEach((input) => input.addEventListener("change", syncSendFormat));
+    $$(".switch-row input[type=checkbox]").forEach((input) => input.addEventListener("change", syncSwitchState));
     $("#terminalSearch").addEventListener("input", (event) => {
       state.serial.search = event.target.value;
       renderTerminalLog();
@@ -1049,6 +1072,8 @@
     const requestedView = new URLSearchParams(window.location.search).get("view");
     if (["flash", "serial", "upgrade"].includes(requestedView)) setView(requestedView);
     renderFiles();
+    syncSwitchState();
+    syncSendFormat();
     updateButtons();
     updateUpgradeUi();
     iconRefresh();

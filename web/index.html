@@ -126,8 +126,8 @@
               <select id="targetSelect"><option value="stm32f103c8">STM32F1 · Web 烧录</option><option value="at32">AT32 · CMSIS-DAP / OpenOCD</option><option value="gd32">GD32 · CMSIS-DAP / OpenOCD</option></select>
             </label>
             <div class="switch-group">
-              <label class="switch-row"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
-              <label class="switch-row"><span><strong>完成后复位</strong><small>烧录成功后请求系统复位</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+              <label class="switch-row" data-switch="verify"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+              <label class="switch-row" data-switch="reset"><span><strong>完成后复位</strong><small>烧录成功后请求系统复位</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
             </div>
             <div class="task-summary">
               <h3>本次任务</h3>
@@ -196,13 +196,10 @@
             <section class="upgrade-config-card" aria-labelledby="upgradeConfigHeading" data-expanded="true">
               <button class="upgrade-card-disclosure" id="upgradeCardDisclosure" type="button" aria-expanded="true" aria-controls="upgradeCardBody">
                 <span class="upgrade-card-label"><i data-lucide="upload"></i><strong id="upgradeConfigHeading">升级固件</strong></span>
+                <span class="upgrade-detection-pill"><i data-lucide="cpu"></i><span id="upgradeDetectionLabel">自动识别设备类型</span></span>
                 <span class="upgrade-card-state">展开 <i data-lucide="chevron-right"></i></span>
               </button>
               <div class="upgrade-card-body" id="upgradeCardBody">
-              <div class="upgrade-config-meta">
-                <div class="upgrade-detection-pill"><i data-lucide="cpu"></i><span id="upgradeDetectionLabel">自动识别设备类型</span></div>
-              </div>
-
               <div class="upgrade-primary-fields">
                 <label class="upgrade-field upgrade-release-field" for="upgradeReleaseSelect">
                   <span class="upgrade-field-label">发布 TAG</span>
@@ -273,6 +270,7 @@
             <section class="runtime-mode-card" aria-labelledby="runtimeModeTitle">
               <button class="runtime-mode-disclosure" id="runtimeModeDisclosure" type="button" aria-expanded="false" aria-controls="runtimeModePanel">
                 <span class="runtime-mode-label"><i data-lucide="sliders-horizontal"></i><strong id="runtimeModeTitle">切换运行模式</strong></span>
+                <small class="runtime-mode-hint">选择运行模式并保存</small>
                 <span class="runtime-mode-state">折叠 <i data-lucide="chevron-right"></i></span>
               </button>
               <div class="runtime-mode-panel" id="runtimeModePanel" hidden>
