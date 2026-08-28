@@ -40,6 +40,7 @@
       localInfo: null,
       role: "CRAZYLINK",
       deviceLabel: "",
+      uiVariant: "",
       loadingReleases: false,
       flashing: false,
     },
@@ -279,7 +280,11 @@
   function syncSwitchState() {
     $$(".switch-row").forEach((row) => {
       const input = row.querySelector("input[type=checkbox]");
-      if (input) row.dataset.checked = String(input.checked);
+      if (input) {
+        const checked = String(input.checked);
+        row.dataset.checked = checked;
+        row.setAttribute("aria-checked", checked);
+      }
     });
   }
 
@@ -293,7 +298,10 @@
     if (control) control.dataset.format = format;
     $$(".format-control label").forEach((label) => {
       const input = label.querySelector("input");
-      label.classList.toggle("is-selected", input?.checked === true);
+      const selected = input?.checked === true;
+      label.classList.toggle("is-selected", selected);
+      label.dataset.selected = String(selected);
+      label.setAttribute("aria-checked", String(selected));
     });
   }
 
@@ -703,6 +711,18 @@
     const upgradeCard = $(".upgrade-config-card");
     const runtimeCard = $(".runtime-mode-card");
     if (!view || !blankCard || !promptCard || !connectionPrompt || !unsupportedPrompt) return;
+    const previousVariant = state.upgrade.uiVariant;
+    state.upgrade.uiVariant = variant;
+    view.dataset.variant = variant;
+    if (previousVariant !== variant) {
+      if (variant === "crazylink") {
+        setDisclosure("#upgradeCardBody", "#upgradeCardDisclosure", true);
+        setDisclosure("#runtimeModePanel", "#runtimeModeDisclosure", false);
+      } else {
+        setDisclosure("#upgradeCardBody", "#upgradeCardDisclosure", false);
+        setDisclosure("#runtimeModePanel", "#runtimeModeDisclosure", false);
+      }
+    }
     view.classList.toggle("is-blank-flash", blankMode);
     view.classList.toggle("is-download-mode-required", downloadModeRequired);
     view.classList.toggle("is-upgrade-disconnected", disconnected);

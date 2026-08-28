@@ -102,6 +102,39 @@ async function verifySerialTablet(page, failures) {
   if (layout.config.height > 110) failures.push("serial/tablet-1024: configuration bar is taller than Pencil reference");
 }
 
+async function verifyUpgradeStates(page, failures) {
+  const disconnected = await page.evaluate(() => ({
+    variant: document.querySelector("#upgradeView")?.dataset.variant,
+    connectionPromptVisible: !document.querySelector("#upgradeConnectionPromptCard")?.hidden,
+    upgradeVisible: !document.querySelector(".upgrade-config-card")?.hidden,
+    runtimeVisible: !document.querySelector(".runtime-mode-card")?.hidden,
+  }));
+  if (disconnected.variant !== "disconnected" || !disconnected.connectionPromptVisible || disconnected.upgradeVisible || disconnected.runtimeVisible) {
+    failures.push("upgrade: disconnected state does not match the Pencil prompt layout");
+  }
+
+  await page.evaluate(() => { window.CRazyLinkApp.state.upgrade.transport = "usb"; });
+  await page.locator('.nav-item[data-view="upgrade"]').click();
+  await page.waitForFunction(() => document.querySelector("#upgradeView")?.dataset.variant === "crazylink");
+  await page.locator("#runtimeModeDisclosure").click();
+  const runtimeExpanded = await page.evaluate(() => ({
+    upgradeHidden: document.querySelector("#upgradeCardBody")?.hidden,
+    runtimeHidden: document.querySelector("#runtimeModePanel")?.hidden,
+  }));
+  if (!runtimeExpanded.upgradeHidden || runtimeExpanded.runtimeHidden) {
+    failures.push("upgrade: expanding runtime mode does not collapse firmware upgrade");
+  }
+
+  await page.locator("#upgradeCardDisclosure").click();
+  const upgradeExpanded = await page.evaluate(() => ({
+    upgradeHidden: document.querySelector("#upgradeCardBody")?.hidden,
+    runtimeHidden: document.querySelector("#runtimeModePanel")?.hidden,
+  }));
+  if (upgradeExpanded.upgradeHidden || !upgradeExpanded.runtimeHidden) {
+    failures.push("upgrade: expanding firmware upgrade does not collapse runtime mode");
+  }
+}
+
 await mkdir(outputDirectory, { recursive: true });
 const browser = await chromium.launch({ executablePath: chromePath, headless: true });
 const failures = [];
@@ -138,6 +171,7 @@ try {
       if (view.name === "upgrade" && viewport.name === "desktop-1440" && await page.locator("#upgradeReleaseSelect option").count() !== 2) {
         failures.push("upgrade/desktop-1440: release selector did not load");
       }
+      if (view.name === "upgrade" && viewport.name === "desktop-1440") await verifyUpgradeStates(page, failures);
       await page.screenshot({ path: resolve(outputDirectory, `${view.name}-${viewport.name}.png`), fullPage: true });
       console.log(`${view.name}/${viewport.name}: ${layout.viewportWidth}px, no horizontal overflow`);
       await page.close();

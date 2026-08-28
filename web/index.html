@@ -126,8 +126,8 @@
               <select id="targetSelect"><option value="stm32f103c8">STM32F1 · Web 烧录</option><option value="at32">AT32 · CMSIS-DAP / OpenOCD</option><option value="gd32">GD32 · CMSIS-DAP / OpenOCD</option></select>
             </label>
             <div class="switch-group">
-              <label class="switch-row" data-switch="verify"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
-              <label class="switch-row" data-switch="reset"><span><strong>完成后复位</strong><small>烧录成功后请求系统复位</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+              <label class="switch-row" data-switch="verify" role="switch" aria-checked="true"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+              <label class="switch-row" data-switch="reset" role="switch" aria-checked="true"><span><strong>完成后复位</strong><small>烧录成功后请求系统复位</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
             </div>
             <div class="task-summary">
               <h3>本次任务</h3>
@@ -173,7 +173,7 @@
             </div>
             <pre class="terminal-output" id="terminalOutput" aria-live="polite"><span class="terminal-placeholder">等待目标数据…</span></pre>
             <div class="serial-composer">
-              <div class="format-control" role="radiogroup" aria-label="发送格式"><label><input id="hexSendCheck" name="sendFormat" type="radio" value="hex"><span>HEX</span></label><label><input id="asciiSendCheck" name="sendFormat" type="radio" value="ascii" checked><span>ASCII</span></label></div>
+              <div class="format-control" role="radiogroup" aria-label="发送格式"><label data-format-option="hex" aria-checked="false"><input id="hexSendCheck" name="sendFormat" type="radio" value="hex"><span>HEX</span></label><label data-format-option="ascii" aria-checked="true"><input id="asciiSendCheck" name="sendFormat" type="radio" value="ascii" checked><span>ASCII</span></label></div>
               <label class="terminal-input-wrap" for="terminalInput"><span class="sr-only">发送内容</span><textarea id="terminalInput" rows="1" placeholder="输入要发送的数据…"></textarea></label>
               <select class="line-ending-select" id="lineEndingSelect" aria-label="行尾"><option>CRLF</option><option>LF</option><option>CR</option></select>
               <button class="button button-primary send-button" id="serialSendButton" type="button" disabled><i data-lucide="send"></i><span>发送</span></button>

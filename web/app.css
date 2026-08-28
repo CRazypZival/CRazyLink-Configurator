@@ -176,7 +176,7 @@ textarea { padding: 8px 12px; resize: vertical; }
 .format-control label { display: grid; place-items: center; height: 28px; padding: 0 8px; cursor: pointer; }
 .format-control input { position: absolute; opacity: 0; }
 .format-control label { color: var(--color-terminal-muted); }
-.format-control label:has(input:checked), .format-control label.is-selected { background: var(--color-terminal-rule); color: var(--color-terminal-text); font-weight: 650; }
+.format-control label:has(input:checked), .format-control label.is-selected, .format-control label[data-selected="true"] { background: var(--color-terminal-rule); color: var(--color-terminal-text); font-weight: 650; }
 .terminal-input-wrap { min-width: 0; }
 .terminal-input-wrap textarea { display: block; height: 38px; min-height: 38px; padding: 0 12px; border-color: var(--color-terminal-rule); background: var(--color-terminal); color: var(--color-terminal-text); line-height: 38px; resize: none; }
 .terminal-input-wrap textarea::placeholder { color: var(--color-terminal-muted); }
