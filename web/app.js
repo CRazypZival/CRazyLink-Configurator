@@ -163,7 +163,6 @@
       state.upgrade.transport && state.upgrade.release && state.upgrade.role && !state.upgrade.flashing,
     );
     $("#upgradeFlashButton").disabled = !upgradeReady;
-    $("#upgradeDeviceButton").disabled = state.upgrade.flashing;
     $("#upgradeReleaseSelect").disabled = state.upgrade.flashing || state.upgrade.loadingReleases;
     const refreshReleasesButton = $("#refreshReleasesButton");
     if (refreshReleasesButton) refreshReleasesButton.disabled = state.upgrade.loadingReleases || state.upgrade.flashing;
@@ -694,7 +693,6 @@
 
   function updateUpgradeUi() {
     const upgrade = state.upgrade;
-    $("#upgradeDeviceValue").textContent = upgrade.deviceLabel || "选择升级接口";
     $(".upgrade-select-wrap").classList.toggle("has-value", Boolean(upgrade.release));
     if (upgrade.transport === "usb" && upgrade.localInfo) {
       $("#upgradeDetectionLabel").textContent = `CRazyLink · v${upgrade.localInfo.firmwareVersion}`;
@@ -970,7 +968,6 @@
     if (aboutButton) aboutButton.addEventListener("click", () => $("#helpDialog").showModal());
     $("#closeHelpButton").addEventListener("click", () => $("#helpDialog").close());
     $("#helpDialog").addEventListener("click", (event) => { if (event.target === $("#helpDialog")) $("#helpDialog").close(); });
-    $("#upgradeDeviceButton").addEventListener("click", () => $("#upgradeDeviceDialog").showModal());
     $("#closeUpgradeDeviceDialog").addEventListener("click", () => $("#upgradeDeviceDialog").close());
     $("#upgradeDeviceDialog").addEventListener("click", (event) => { if (event.target === $("#upgradeDeviceDialog")) $("#upgradeDeviceDialog").close(); });
     $("#upgradeUsbChoice").addEventListener("click", selectUpgradeUsb);

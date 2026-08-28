@@ -200,12 +200,6 @@
               </div>
 
               <div class="upgrade-primary-fields">
-                <div class="upgrade-field upgrade-device-field">
-                  <span class="upgrade-field-label">升级接口</span>
-                  <button class="upgrade-field-control" id="upgradeDeviceButton" type="button">
-                    <span id="upgradeDeviceValue">选择升级接口</span><i data-lucide="chevron-down"></i>
-                  </button>
-                </div>
                 <label class="upgrade-field upgrade-release-field" for="upgradeReleaseSelect">
                   <span class="upgrade-field-label">发布 TAG</span>
                   <span class="upgrade-field-control upgrade-select-wrap">
@@ -221,7 +215,7 @@
               <p class="upgrade-branch-note">更新保留当前模式 · 空片制作默认独立模式</p>
               <button class="upgrade-advanced-disclosure" id="upgradeAdvancedButton" type="button" aria-expanded="false" aria-controls="upgradeAdvancedPanel">
                 <span><i data-lucide="settings-2"></i><strong>高级选项</strong></span>
-                <small>擦除策略 · 写入校验 · 完成后重启</small>
+                <small>CRL 签名校验 · 擦除策略 · 完成后重启</small>
                 <i data-lucide="chevron-right"></i>
               </button>
               <div class="upgrade-advanced-panel" id="upgradeAdvancedPanel" hidden>
@@ -241,11 +235,21 @@
                 <h3 id="blankFlashTitle">制作 CRazyLink</h3>
                 <span class="blank-detection-pill"><i data-lucide="cpu"></i><span>ESP32-S3 已识别</span></span>
               </div>
+              <div class="blank-target-field">
+                <span>目标设备</span>
+                <strong>ESP32-S3 空片 / 开发板</strong>
+                <i data-lucide="chevron-down"></i>
+              </div>
               <div class="blank-download-status" id="blankDownloadStatus"><i data-lucide="circle-check"></i><span>Download Mode 已就绪</span></div>
               <label class="blank-release-field" for="blankReleaseSelect">
                 <span>发布 TAG</span>
                 <span class="blank-release-control"><select id="blankReleaseSelect" aria-label="CRazyLink 发布 TAG"><option value="">选择 CRazyLink TAG</option></select><i data-lucide="chevron-down"></i></span>
               </label>
+              <div class="blank-default-mode-field">
+                <span>完成后运行模式</span>
+                <strong>独立模式</strong>
+                <small>默认</small>
+              </div>
               <button class="blank-flash-button" id="blankFlashButton" type="button" disabled><i data-lucide="upload"></i><span>制作 CRazyLink</span></button>
             </section>
 
