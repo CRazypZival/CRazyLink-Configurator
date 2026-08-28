@@ -25,6 +25,11 @@ function routeUrl(view) {
 }
 
 async function configureReleaseMocks(page) {
+  await page.route("https://unpkg.com/lucide@0.468.0/dist/umd/lucide.min.js", (route) => route.fulfill({
+    status: 200,
+    contentType: "application/javascript",
+    body: "window.lucide={createIcons:function(){}};",
+  }));
   await page.route("https://api.github.com/repos/CRazypZival/CRazyLink-Configurator/releases?per_page=30", (route) => route.fulfill({
     status: 200,
     contentType: "application/json",
@@ -110,7 +115,10 @@ try {
       await configureReleaseMocks(page);
       await page.goto(routeUrl(view.name), { waitUntil: "networkidle" });
       await page.waitForFunction((activeId) => document.getElementById(activeId)?.classList.contains("is-active"), view.activeId);
-      if (view.name === "upgrade") await page.waitForFunction(() => document.querySelector("#upgradeStatusText")?.textContent.includes("设备可用"));
+      if (view.name === "upgrade") await page.waitForFunction(() => {
+        const text = document.querySelector("#upgradeStatusText")?.textContent || "";
+        return text.includes("设备可用") || text.includes("请连接设备") || text.includes("请插入设备");
+      });
       const layout = await page.evaluate((activeId) => ({
         documentWidth: document.documentElement.scrollWidth,
         viewportWidth: window.innerWidth,

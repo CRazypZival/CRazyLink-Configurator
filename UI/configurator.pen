@@ -1857,8 +1857,8 @@
                     {
                       "type": "frame",
                       "id": "Ja7dX",
-                      "name": "Serial Baud Rate",
-                      "width": 146,
+                      "name": "Serial Baud Rate · Quick Or Custom",
+                      "width": 260,
                       "layout": "vertical",
                       "gap": 4,
                       "children": [
@@ -1867,47 +1867,98 @@
                           "id": "PNaCQ",
                           "name": "Serial Baud Rate Label",
                           "fill": "$color-muted",
-                          "content": "波特率 1200-921600",
+                          "content": "波特率快捷选项",
                           "fontFamily": "$font-body",
                           "fontSize": 10,
                           "fontWeight": "600"
                         },
                         {
                           "type": "frame",
-                          "id": "hGmc8",
-                          "name": "Serial Baud Rate Select",
+                          "id": "xZx8B",
+                          "name": "Serial Baud Rate Controls",
                           "width": "fill_container",
                           "height": 34,
-                          "fill": "$color-paper",
-                          "cornerRadius": "$radius-sm",
-                          "stroke": "$color-rule",
-                          "strokeWidth": 1,
-                          "padding": [
-                            0,
-                            12
-                          ],
-                          "justifyContent": "space_between",
+                          "gap": 8,
                           "alignItems": "center",
                           "children": [
                             {
-                              "type": "text",
-                              "id": "xj0Zz",
-                              "name": "Serial Baud Rate Value",
-                              "fill": "$color-ink",
-                              "content": "115200",
-                              "fontFamily": "$font-mono",
-                              "fontSize": 11,
-                              "fontWeight": "600"
+                              "type": "frame",
+                              "id": "hGmc8",
+                              "name": "Serial Baud Rate Quick Select",
+                              "width": "fill_container",
+                              "height": 34,
+                              "fill": "$color-paper",
+                              "cornerRadius": "$radius-sm",
+                              "stroke": "$color-rule",
+                              "strokeWidth": 1,
+                              "padding": [
+                                0,
+                                12
+                              ],
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "xj0Zz",
+                                  "name": "Serial Baud Rate Value",
+                                  "fill": "$color-ink",
+                                  "content": "115200",
+                                  "fontFamily": "$font-mono",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "icon",
+                                  "id": "dI0S5",
+                                  "name": "Serial Baud Rate Chevron",
+                                  "width": 13,
+                                  "height": 13,
+                                  "icon": "chevron-down",
+                                  "library": "lucide",
+                                  "fill": "$color-muted"
+                                }
+                              ]
                             },
                             {
-                              "type": "icon",
-                              "id": "dI0S5",
-                              "name": "Serial Baud Rate Chevron",
-                              "width": 13,
-                              "height": 13,
-                              "icon": "chevron-down",
-                              "library": "lucide",
-                              "fill": "$color-muted"
+                              "type": "frame",
+                              "id": "eIRzX",
+                              "name": "Custom Baud Rate Checkbox",
+                              "width": 106,
+                              "height": 34,
+                              "fill": "$color-surface",
+                              "cornerRadius": "$radius-sm",
+                              "stroke": "$color-rule",
+                              "strokeWidth": 1,
+                              "gap": 6,
+                              "padding": [
+                                0,
+                                8
+                              ],
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "EJbYj",
+                                  "name": "Custom Baud Rate Checkbox Mark",
+                                  "width": 16,
+                                  "height": 16,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": 2,
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1
+                                },
+                                {
+                                  "type": "text",
+                                  "id": "G1ltO",
+                                  "name": "Custom Baud Rate Checkbox Label",
+                                  "fill": "$color-muted",
+                                  "content": "自定义波特率",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 10,
+                                  "fontWeight": "600"
+                                }
+                              ]
                             }
                           ]
                         }
@@ -10733,6 +10784,475 @@
                       "fill": "$color-success"
                     }
                   }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "type": "frame",
+      "id": "T7D72",
+      "x": 1560,
+      "y": 1160,
+      "name": "Serial Configuration Bar · Custom Baud Rate",
+      "context": "Hallmark · component: serial configuration bar · genre: modern-minimal · states: default shortcut + custom input · critique: P5 H5 E5 S5 R5 V4",
+      "clip": true,
+      "width": 1180,
+      "height": 240,
+      "fill": "$color-paper",
+      "cornerRadius": "$radius-md",
+      "stroke": "$color-rule",
+      "strokeWidth": 1,
+      "layout": "vertical",
+      "gap": 12,
+      "padding": 24,
+      "children": [
+        {
+          "type": "text",
+          "id": "wv5Wn",
+          "name": "Serial Configuration Replacement Title",
+          "fill": "$color-ink",
+          "content": "串口参数 · 自定义波特率",
+          "fontFamily": "$font-body",
+          "fontSize": 18,
+          "fontWeight": "700"
+        },
+        {
+          "type": "text",
+          "id": "dnwzG",
+          "name": "Serial Configuration Replacement Subtitle",
+          "fill": "$color-muted",
+          "content": "Serial Configuration Bar · Custom Baud Rate Enabled",
+          "fontFamily": "$font-mono",
+          "fontSize": 10,
+          "fontWeight": "500"
+        },
+        {
+          "type": "frame",
+          "id": "xSj7t",
+          "name": "Serial Configuration Bar · Custom Baud Rate Enabled",
+          "reusable": true,
+          "width": "fill_container",
+          "height": 96,
+          "fill": "$color-surface",
+          "cornerRadius": "$radius-md",
+          "stroke": "$color-rule",
+          "strokeWidth": 1,
+          "gap": 16,
+          "padding": [
+            12,
+            16
+          ],
+          "alignItems": "center",
+          "children": [
+            {
+              "type": "frame",
+              "id": "OWcDP",
+              "name": "Connection Parameters Label",
+              "width": 88,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "j7CHD",
+                  "name": "Connection Parameters Title",
+                  "fill": "$color-ink",
+                  "content": "串口参数",
+                  "fontFamily": "$font-body",
+                  "fontSize": 13,
+                  "fontWeight": "700"
+                },
+                {
+                  "type": "text",
+                  "id": "DPnVd",
+                  "name": "Connection Parameters Hint",
+                  "fill": "$color-success",
+                  "content": "端口已打开",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "normal"
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "fheNd",
+              "name": "Serial Baud Rate · Custom Input",
+              "width": 260,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ATPXy",
+                  "name": "Serial Baud Rate Label",
+                  "fill": "$color-muted",
+                  "content": "波特率",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "zOh3Z",
+                  "name": "Custom Baud Rate Input Row",
+                  "width": "fill_container",
+                  "height": 34,
+                  "gap": 8,
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "frame",
+                      "id": "qjFTQ",
+                      "name": "Custom Baud Rate Text Input",
+                      "width": 146,
+                      "height": 34,
+                      "fill": "$color-paper",
+                      "cornerRadius": "$radius-sm",
+                      "stroke": "$color-accent",
+                      "strokeWidth": 1,
+                      "padding": [
+                        0,
+                        12
+                      ],
+                      "justifyContent": "space_between",
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "text",
+                          "id": "SKeQ4",
+                          "name": "Custom Baud Rate Value",
+                          "fill": "$color-ink",
+                          "content": "250000",
+                          "fontFamily": "$font-mono",
+                          "fontSize": 11,
+                          "fontWeight": "600"
+                        }
+                      ]
+                    },
+                    {
+                      "type": "frame",
+                      "id": "kk7yl",
+                      "name": "Custom Baud Rate Checkbox",
+                      "width": 106,
+                      "height": 34,
+                      "fill": "$color-accent-soft",
+                      "cornerRadius": "$radius-sm",
+                      "stroke": "$color-accent",
+                      "strokeWidth": 1,
+                      "gap": 6,
+                      "padding": [
+                        0,
+                        8
+                      ],
+                      "alignItems": "center",
+                      "children": [
+                        {
+                          "type": "frame",
+                          "id": "GxIi9",
+                          "name": "Custom Baud Rate Checkbox Mark",
+                          "width": 16,
+                          "height": 16,
+                          "fill": "$color-accent",
+                          "cornerRadius": 2,
+                          "justifyContent": "center",
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "icon",
+                              "id": "q6OEX",
+                              "name": "Custom Baud Rate Check Icon",
+                              "width": 12,
+                              "height": 12,
+                              "icon": "check",
+                              "library": "lucide",
+                              "fill": "$color-accent-ink"
+                            }
+                          ]
+                        },
+                        {
+                          "type": "text",
+                          "id": "khdfJ",
+                          "name": "Custom Baud Rate Checkbox Label",
+                          "fill": "$color-accent",
+                          "content": "自定义波特率",
+                          "fontFamily": "$font-body",
+                          "fontSize": 10,
+                          "fontWeight": "650"
+                        }
+                      ]
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "U8wbzv",
+              "name": "Serial Data Bits",
+              "width": 116,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "ImCog",
+                  "name": "Serial Data Bits Label",
+                  "fill": "$color-muted",
+                  "content": "数据位",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "Clnxh",
+                  "name": "Serial Data Bits Select",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "Xy85g",
+                      "name": "Serial Data Bits Value",
+                      "fill": "$color-ink",
+                      "content": "8",
+                      "fontFamily": "$font-mono",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "zbFD0",
+                      "name": "Serial Data Bits Chevron",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "e67z3U",
+              "name": "Serial Stop Bits",
+              "width": 116,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "vgZzP",
+                  "name": "Serial Stop Bits Label",
+                  "fill": "$color-muted",
+                  "content": "停止位",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "B88QJ6",
+                  "name": "Serial Stop Bits Select",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "i1on9X",
+                      "name": "Serial Stop Bits Value",
+                      "fill": "$color-ink",
+                      "content": "1",
+                      "fontFamily": "$font-mono",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "G2F5UZ",
+                      "name": "Serial Stop Bits Chevron",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "c7VpcO",
+              "name": "Serial Parity",
+              "width": 116,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "XU2ZW",
+                  "name": "Serial Parity Label",
+                  "fill": "$color-muted",
+                  "content": "校验位",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "O4bGvB",
+                  "name": "Serial Parity Select",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "vcEuj",
+                      "name": "Serial Parity Value",
+                      "fill": "$color-ink",
+                      "content": "无",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "aW7yE",
+                      "name": "Serial Parity Chevron",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "l2hjs",
+              "name": "Serial Flow Control",
+              "width": 116,
+              "layout": "vertical",
+              "gap": 4,
+              "children": [
+                {
+                  "type": "text",
+                  "id": "oKtZB",
+                  "name": "Serial Flow Control Label",
+                  "fill": "$color-muted",
+                  "content": "流控",
+                  "fontFamily": "$font-body",
+                  "fontSize": 10,
+                  "fontWeight": "600"
+                },
+                {
+                  "type": "frame",
+                  "id": "ok9vm",
+                  "name": "Serial Flow Control Select",
+                  "width": "fill_container",
+                  "height": 34,
+                  "fill": "$color-paper",
+                  "cornerRadius": "$radius-sm",
+                  "stroke": "$color-rule",
+                  "strokeWidth": 1,
+                  "padding": [
+                    0,
+                    12
+                  ],
+                  "justifyContent": "space_between",
+                  "alignItems": "center",
+                  "children": [
+                    {
+                      "type": "text",
+                      "id": "I9Bpg",
+                      "name": "Serial Flow Control Value",
+                      "fill": "$color-ink",
+                      "content": "无",
+                      "fontFamily": "$font-body",
+                      "fontSize": 11,
+                      "fontWeight": "600"
+                    },
+                    {
+                      "type": "icon",
+                      "id": "Kkd7J",
+                      "name": "Serial Flow Control Chevron",
+                      "width": 13,
+                      "height": 13,
+                      "icon": "chevron-down",
+                      "library": "lucide",
+                      "fill": "$color-muted"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "frame",
+              "id": "S8Gt4A",
+              "name": "Configuration Listening State",
+              "width": "fill_container",
+              "gap": 8,
+              "justifyContent": "end",
+              "alignItems": "center",
+              "children": [
+                {
+                  "type": "icon",
+                  "id": "Z1aNk",
+                  "name": "Configuration Listening Icon",
+                  "width": 16,
+                  "height": 16,
+                  "icon": "radio",
+                  "library": "lucide",
+                  "fill": "$color-success"
+                },
+                {
+                  "type": "text",
+                  "id": "EtAOp",
+                  "name": "Configuration Listening Text",
+                  "fill": "$color-success",
+                  "content": "持续监听",
+                  "fontFamily": "$font-body",
+                  "fontSize": 12,
+                  "fontWeight": "650"
                 }
               ]
             }

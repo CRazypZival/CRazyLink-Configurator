@@ -123,11 +123,11 @@
               <select id="speedSelect"><option value="1000">1 MHz</option><option value="500">500 kHz</option></select>
             </label>
             <label class="field-label target-field" for="targetSelect">MCU 型号
-              <select id="targetSelect"><option value="stm32f103c8">STM32</option></select>
+              <select id="targetSelect"><option value="stm32f103c8">STM32F1 · Web 烧录</option><option value="at32">AT32 · CMSIS-DAP / OpenOCD</option><option value="gd32">GD32 · CMSIS-DAP / OpenOCD</option></select>
             </label>
             <div class="switch-group">
               <label class="switch-row"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
-              <label class="switch-row"><span><strong>完成后复位</strong><small>烧录成功后重启目标板</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+              <label class="switch-row"><span><strong>完成后复位</strong><small>烧录成功后请求系统复位</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
             </div>
             <div class="task-summary">
               <h3>本次任务</h3>
@@ -173,7 +173,7 @@
             </div>
             <pre class="terminal-output" id="terminalOutput" aria-live="polite"><span class="terminal-placeholder">等待目标数据…</span></pre>
             <div class="serial-composer">
-              <div class="format-control"><label><input id="hexSendCheck" type="checkbox"><span>HEX</span></label><span class="format-ascii">ASCII</span></div>
+              <div class="format-control" role="radiogroup" aria-label="发送格式"><label><input id="hexSendCheck" name="sendFormat" type="radio" value="hex"><span>HEX</span></label><label><input id="asciiSendCheck" name="sendFormat" type="radio" value="ascii" checked><span>ASCII</span></label></div>
               <label class="terminal-input-wrap" for="terminalInput"><span class="sr-only">发送内容</span><textarea id="terminalInput" rows="1" placeholder="输入要发送的数据…"></textarea></label>
               <select class="line-ending-select" id="lineEndingSelect" aria-label="行尾"><option>CRLF</option><option>LF</option><option>CR</option></select>
               <button class="button button-primary send-button" id="serialSendButton" type="button" disabled><i data-lucide="send"></i><span>发送</span></button>
@@ -193,9 +193,13 @@
               <h2>固件升级</h2>
               <p>连接后自动识别设备类型</p>
             </div>
-            <section class="upgrade-config-card" aria-labelledby="upgradeConfigTitle">
-              <div class="upgrade-config-header">
-                <h3 id="upgradeConfigTitle">升级固件</h3>
+            <section class="upgrade-config-card" aria-labelledby="upgradeConfigHeading" data-expanded="true">
+              <button class="upgrade-card-disclosure" id="upgradeCardDisclosure" type="button" aria-expanded="true" aria-controls="upgradeCardBody">
+                <span class="upgrade-card-label"><i data-lucide="upload"></i><strong id="upgradeConfigHeading">升级固件</strong></span>
+                <span class="upgrade-card-state">展开 <i data-lucide="chevron-right"></i></span>
+              </button>
+              <div class="upgrade-card-body" id="upgradeCardBody">
+              <div class="upgrade-config-meta">
                 <div class="upgrade-detection-pill"><i data-lucide="cpu"></i><span id="upgradeDetectionLabel">自动识别设备类型</span></div>
               </div>
 
@@ -228,6 +232,7 @@
                 <span id="upgradeFlashHelper">选择版本后更新 CRazyLink</span>
                 <button class="upgrade-flashing-button" id="upgradeFlashButton" type="button" disabled><i data-lucide="upload"></i><span>更新 CRazyLink</span></button>
               </div>
+              </div>
             </section>
 
             <section class="blank-flash-card" id="blankFlashCard" hidden aria-labelledby="blankFlashTitle">
@@ -255,6 +260,14 @@
 
             <section class="download-mode-prompt-card" id="downloadModePromptCard" hidden aria-live="polite">
               <i data-lucide="triangle-alert"></i><span>Download Mode 未检测到 · 请先进入下载模式</span>
+            </section>
+
+            <section class="upgrade-prompt-card connection-prompt-card" id="upgradeConnectionPromptCard" hidden aria-live="polite">
+              <i data-lucide="usb"></i><span>请插入设备或允许设备权限</span>
+            </section>
+
+            <section class="upgrade-prompt-card unsupported-device-prompt-card" id="unsupportedDevicePromptCard" hidden aria-live="polite">
+              <i data-lucide="triangle-alert"></i><span>仅支持 CRazyLink 或 ESP32-S3 开发板</span>
             </section>
 
             <section class="runtime-mode-card" aria-labelledby="runtimeModeTitle">
@@ -291,6 +304,7 @@
   <script src="js/protocol.js"></script>
   <script src="js/firmware.js"></script>
   <script src="js/webusb.js"></script>
+  <script src="js/ui-state.js"></script>
   <script src="js/release.js"></script>
   <script src="vendor/esptool-global.js"></script>
   <script src="js/esptool.js"></script>

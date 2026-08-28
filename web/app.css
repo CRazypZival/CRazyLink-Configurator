@@ -173,10 +173,10 @@ textarea { padding: 8px 12px; resize: vertical; }
 .terminal-log-payload { min-width: 0; color: var(--color-terminal-text); white-space: pre-wrap; overflow-wrap: anywhere; }
 .serial-composer { display: grid; grid-template-columns: auto minmax(0, 1fr) 88px 102px; align-items: center; gap: 12px; padding: 0 16px; border-top: 1px solid var(--color-terminal-rule); background: var(--color-terminal-2); }
 .format-control { display: flex; align-items: center; height: 38px; padding: 4px; border: 1px solid var(--color-terminal-rule); background: var(--color-terminal); color: var(--color-terminal-muted); font-family: var(--font-mono); font-size: 10px; }
-.format-control label, .format-ascii { display: grid; place-items: center; height: 28px; padding: 0 8px; cursor: pointer; }
+.format-control label { display: grid; place-items: center; height: 28px; padding: 0 8px; cursor: pointer; }
 .format-control input { position: absolute; opacity: 0; }
 .format-control label { color: var(--color-terminal-muted); }
-.format-control label:has(input:checked), .format-ascii { background: var(--color-terminal-rule); color: var(--color-terminal-text); font-weight: 650; }
+.format-control label:has(input:checked) { background: var(--color-terminal-rule); color: var(--color-terminal-text); font-weight: 650; }
 .terminal-input-wrap { min-width: 0; }
 .terminal-input-wrap textarea { display: block; height: 38px; min-height: 38px; padding: 0 12px; border-color: var(--color-terminal-rule); background: var(--color-terminal); color: var(--color-terminal-text); line-height: 38px; resize: none; }
 .terminal-input-wrap textarea::placeholder { color: var(--color-terminal-muted); }
@@ -299,6 +299,14 @@ textarea { padding: 8px 12px; resize: vertical; }
 .upgrade-advanced-panel { display: none; }
 .upgrade-config-card .upgrade-flash-action { flex: 0 0 68px; min-height: 68px; }
 .upgrade-config-card .upgrade-flash-action > span { font-size: 10px; }
+.upgrade-card-disclosure { display: flex; align-items: center; justify-content: space-between; gap: 12px; width: 100%; min-height: 42px; padding: 0; border: 0; background: transparent; color: var(--color-ink); text-align: left; }
+.upgrade-card-label, .upgrade-card-state { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.upgrade-card-label strong { font-size: 14px; }
+.upgrade-card-label svg, .upgrade-card-state svg { width: 15px; height: 15px; color: var(--color-muted); flex: 0 0 15px; }
+.upgrade-card-state { gap: 5px; color: var(--color-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 600; }
+.upgrade-card-disclosure[aria-expanded="true"] .upgrade-card-state svg { transform: rotate(90deg); }
+.upgrade-card-body { display: flex; flex-direction: column; gap: 20px; }
+.upgrade-card-disclosure:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; }
 #upgradeStatusSource { display: none; }
 
 .blank-flash-card { display: grid; align-content: start; gap: 16px; min-height: 288px; padding: 20px; border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-surface); }
@@ -323,6 +331,16 @@ textarea { padding: 8px 12px; resize: vertical; }
 .upgrade-view.is-blank-flash .runtime-mode-card { display: none; }
 .download-mode-prompt-card { display: flex; align-items: center; gap: 8px; min-height: 32px; padding: 0 10px; border-radius: var(--radius-sm); background: var(--color-accent-soft); color: var(--color-warning); font-size: 10px; font-weight: 600; }
 .download-mode-prompt-card svg { width: 14px; height: 14px; flex: 0 0 14px; }
+.upgrade-view.is-download-mode-required .upgrade-config-card,
+.upgrade-view.is-download-mode-required .runtime-mode-card { display: none; }
+.upgrade-prompt-card { display: flex; align-items: center; gap: 8px; min-height: 52px; padding: 0 14px; border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-surface); color: var(--color-muted); font-size: 12px; font-weight: 600; }
+.upgrade-prompt-card svg { width: 16px; height: 16px; flex: 0 0 16px; }
+.connection-prompt-card { color: var(--color-muted); }
+.unsupported-device-prompt-card { color: var(--color-warning); }
+.upgrade-view.is-upgrade-disconnected .upgrade-config-card,
+.upgrade-view.is-upgrade-disconnected .runtime-mode-card,
+.upgrade-view.is-upgrade-unsupported .upgrade-config-card,
+.upgrade-view.is-upgrade-unsupported .runtime-mode-card,
 .upgrade-view.is-download-mode-required .upgrade-config-card,
 .upgrade-view.is-download-mode-required .runtime-mode-card { display: none; }
 
@@ -547,7 +565,7 @@ textarea { padding: 8px 12px; resize: vertical; }
   .terminal-log-entry { grid-template-columns: 58px 26px minmax(0, 1fr); gap: 6px; }
   .serial-composer { display: grid; grid-template-columns: minmax(0, 1fr) 44px; grid-template-rows: 44px 32px; gap: 8px; height: 104px; padding: 8px; }
   .format-control { grid-row: 2; grid-column: 1; height: 32px; }
-  .format-control label, .format-ascii { height: 24px; }
+  .format-control label { height: 24px; }
   .terminal-input-wrap { grid-row: 1; grid-column: 1; }
   .terminal-input-wrap textarea { height: 44px; min-height: 44px; line-height: 44px; }
   .line-ending-select { grid-row: 2; grid-column: 1 / -1; justify-self: end; width: 64px; height: 32px; margin-right: 52px; }
@@ -563,7 +581,10 @@ textarea { padding: 8px 12px; resize: vertical; }
   .upgrade-mobile-heading h2 { font-size: 18px; }
   .upgrade-mobile-heading p { font-size: 10px; }
   .upgrade-detection-header, .upgrade-config-header { display: none; }
-  .upgrade-config-card { display: contents; }
+  .upgrade-config-card { display: flex; gap: 12px; padding: 12px; }
+  .upgrade-card-disclosure { min-height: 40px; }
+  .upgrade-card-label strong { font-size: 12px; }
+  .upgrade-card-body { gap: 12px; }
   .upgrade-primary-fields { display: flex; flex-direction: column; gap: 8px; }
   .upgrade-field { display: flex; flex-direction: column; justify-content: center; gap: 4px; height: 52px; padding: 0 12px; border: 1px solid var(--color-rule); border-radius: var(--radius-md); background: var(--color-surface); }
   .upgrade-field-label { font-size: 10px; }

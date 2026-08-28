@@ -3,8 +3,11 @@
   "use strict";
 
   const api = window.CRazyLink || {};
+  const ui = window.CRazyLinkUi || {};
   const targets = {
-    stm32f103c8: { flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 0 },
+    stm32f103c8: { flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 0, webFlashSupported: true },
+    at32: { flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 1, webFlashSupported: false },
+    gd32: { flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 2, webFlashSupported: false },
   };
   const state = {
     view: "flash",
@@ -146,9 +149,10 @@
 
   function updateButtons() {
     const connected = Boolean(state.device);
+    const targetSupported = selectedTarget().webFlashSupported !== false;
     $("#connectButton").querySelector("span").textContent = state.view === "upgrade" ? "重新选择" : (connected ? "断开设备" : "重新选择");
     $("#mobileConnectButton").setAttribute("aria-label", connected ? "断开设备" : "连接设备");
-    $("#flashButton").disabled = !connected || state.files.length === 0 || state.flashing;
+    $("#flashButton").disabled = !connected || !targetSupported || state.files.length === 0 || state.flashing;
     $("#clearFilesButton").disabled = state.files.length === 0 || state.flashing;
     $("#exportFirmwareButton").disabled = state.files.length === 0 || state.flashing;
     $("#serialOpenButton").disabled = !connected || state.flashing;
@@ -346,6 +350,12 @@
   async function flashFirmware() {
     if (!state.device || state.files.length === 0 || state.flashing) return;
     const target = selectedTarget();
+    if (target.webFlashSupported === false) {
+      const message = "当前 Web 烧录仅支持 STM32F1；AT32/GD32 请使用 CMSIS-DAP / OpenOCD";
+      setFlashStatus(message, "错误", 0);
+      toast(message, "error");
+      return;
+    }
     try {
       const merged = api.mergeFirmware(state.files, target);
       state.flashing = true;
@@ -370,8 +380,9 @@
       await state.device.waitForFlash((status) => {
         setFlashStatus(status.message || "正在写入目标 MCU", status.state === api.FlashState.SUCCESS ? "完成" : "烧录中", 36 + status.progress * .64);
       }, 120000);
-      setFlashStatus("烧录成功，目标已复位", "完成", 100);
-      logFlash("SWD 烧录、校验和复位全部完成。", "success");
+      const resetRequested = $("#resetCheck").checked;
+      setFlashStatus(resetRequested ? "烧录成功，目标已复位" : "烧录成功，未请求复位", "完成", 100);
+      logFlash(resetRequested ? "SWD 烧录、校验和系统复位全部完成。" : "SWD 烧录和校验完成，未请求系统复位。", "success");
       setConnection("connected", "设备已连接");
       await refreshDevice();
     } catch (error) {
@@ -658,16 +669,29 @@
   }
 
   function syncUpgradeVariant() {
-    const blankMode = state.view === "upgrade" && state.upgrade.transport === "serial";
-    const downloadModeRequired = state.view === "upgrade" && state.upgrade.serialProbeState === "missing";
+    const variant = typeof ui.upgradeVariant === "function" ? ui.upgradeVariant(state.upgrade) : "disconnected";
+    const blankMode = state.view === "upgrade" && variant === "blank";
+    const downloadModeRequired = state.view === "upgrade" && variant === "download-required";
+    const disconnected = state.view === "upgrade" && variant === "disconnected";
+    const unsupported = state.view === "upgrade" && variant === "unsupported";
     const view = $("#upgradeView");
     const blankCard = $("#blankFlashCard");
     const promptCard = $("#downloadModePromptCard");
-    if (!view || !blankCard || !promptCard) return;
+    const connectionPrompt = $("#upgradeConnectionPromptCard");
+    const unsupportedPrompt = $("#unsupportedDevicePromptCard");
+    const upgradeCard = $(".upgrade-config-card");
+    const runtimeCard = $(".runtime-mode-card");
+    if (!view || !blankCard || !promptCard || !connectionPrompt || !unsupportedPrompt) return;
     view.classList.toggle("is-blank-flash", blankMode);
     view.classList.toggle("is-download-mode-required", downloadModeRequired);
+    view.classList.toggle("is-upgrade-disconnected", disconnected);
+    view.classList.toggle("is-upgrade-unsupported", unsupported);
     blankCard.hidden = !blankMode;
     promptCard.hidden = !downloadModeRequired;
+    connectionPrompt.hidden = !disconnected;
+    unsupportedPrompt.hidden = !unsupported;
+    if (upgradeCard) upgradeCard.hidden = blankMode || downloadModeRequired || disconnected || unsupported;
+    if (runtimeCard) runtimeCard.hidden = blankMode || downloadModeRequired || disconnected || unsupported;
     if (state.view !== "upgrade") return;
 
     $("#viewTitle").textContent = blankMode ? "制作 CRazyLink" : "固件升级";
@@ -744,7 +768,7 @@
       state.upgrade.release = matched;
       for (const select of selects) select.value = matched?.tag || "";
       if (state.upgrade.releases.length) {
-        setUpgradeStatus("发布列表已同步，设备可用", "success");
+        setUpgradeStatus(state.upgrade.transport ? "发布列表已同步，设备可用" : "发布列表已同步，请连接设备", state.upgrade.transport ? "success" : "idle");
         if (notify) toast("发布列表已刷新", "success");
       } else {
         setUpgradeStatus("未找到可用的 CRazyLink 固件发布", "warning");
@@ -818,7 +842,8 @@
       if (selectedPort) {
         state.upgrade.transport = null;
         state.upgrade.serialPort = selectedPort;
-        state.upgrade.serialProbeState = "missing";
+        const errorText = error && error.message ? error.message : "";
+        state.upgrade.serialProbeState = /目标必须是 ESP32-S3|检测到 .*ESP32-S3/i.test(errorText) ? "unsupported" : "missing";
         state.upgrade.usbDevice = null;
         state.upgrade.localInfo = null;
         state.upgrade.role = "CRAZYLINK";
@@ -826,9 +851,10 @@
         $("#deviceName").textContent = "ESP32-S3 升级设备";
         $("#deviceSerial").textContent = state.upgrade.deviceLabel;
         setConnection("error", state.upgrade.deviceLabel);
-        setUpgradeStatus("请让 ESP32-S3 进入 Download Mode", "warning");
+        const unsupported = state.upgrade.serialProbeState === "unsupported";
+        setUpgradeStatus(unsupported ? "仅支持 CRazyLink 或 ESP32-S3 开发板" : "请让 ESP32-S3 进入 Download Mode", "warning");
         updateUpgradeUi();
-        toast("Download Mode 未检测到 · 请先进入下载模式", "error");
+        toast(unsupported ? "仅支持 CRazyLink 或 ESP32-S3 开发板" : "Download Mode 未检测到 · 请先进入下载模式", "error");
         return;
       }
       setUpgradeStatus(error.message || "串口设备选择失败", "error");
@@ -888,8 +914,24 @@
   function toggleUpgradeAdvanced() {
     const panel = $("#upgradeAdvancedPanel");
     const expanded = panel.hidden;
+    if (expanded) setDisclosure("#runtimeModePanel", "#runtimeModeDisclosure", false);
     panel.hidden = !expanded;
     $("#upgradeAdvancedButton").setAttribute("aria-expanded", String(expanded));
+  }
+
+  function setDisclosure(panelSelector, buttonSelector, expanded) {
+    const panel = $(panelSelector);
+    const button = $(buttonSelector);
+    if (!panel || !button) return;
+    panel.hidden = !expanded;
+    button.setAttribute("aria-expanded", String(expanded));
+    button.closest("section")?.setAttribute("data-expanded", String(expanded));
+  }
+
+  function toggleUpgradeCard() {
+    const expanded = $("#upgradeCardBody")?.hidden;
+    if (expanded) setDisclosure("#runtimeModePanel", "#runtimeModeDisclosure", false);
+    setDisclosure("#upgradeCardBody", "#upgradeCardDisclosure", expanded);
   }
 
   function chooseConnection() {
@@ -903,8 +945,8 @@
   function toggleRuntimeMode() {
     const panel = $("#runtimeModePanel");
     const expanded = panel.hidden;
-    panel.hidden = !expanded;
-    $("#runtimeModeDisclosure").setAttribute("aria-expanded", String(expanded));
+    if (expanded) setDisclosure("#upgradeCardBody", "#upgradeCardDisclosure", false);
+    setDisclosure("#runtimeModePanel", "#runtimeModeDisclosure", expanded);
   }
 
   async function saveRuntimeMode() {
@@ -964,6 +1006,15 @@
       renderTerminalLog();
     });
     $("#exportFirmwareButton").addEventListener("click", exportMergedFirmware);
+    $("#targetSelect").addEventListener("change", () => {
+      const target = selectedTarget();
+      if (target.webFlashSupported === false) {
+        setFlashStatus("AT32/GD32 请使用 CMSIS-DAP / OpenOCD", "提示", 0);
+      } else {
+        setFlashStatus("设备可用，等待烧录", "待机", 0);
+      }
+      updateButtons();
+    });
     const aboutButton = $("#aboutButton");
     if (aboutButton) aboutButton.addEventListener("click", () => $("#helpDialog").showModal());
     $("#closeHelpButton").addEventListener("click", () => $("#helpDialog").close());
@@ -975,6 +1026,7 @@
     $("#upgradeReleaseSelect").addEventListener("change", selectUpgradeRelease);
     $("#blankReleaseSelect").addEventListener("change", selectUpgradeRelease);
     $("#upgradeAdvancedButton").addEventListener("click", toggleUpgradeAdvanced);
+    $("#upgradeCardDisclosure").addEventListener("click", toggleUpgradeCard);
     $("#runtimeModeDisclosure").addEventListener("click", toggleRuntimeMode);
     $("#saveRuntimeModeButton").addEventListener("click", saveRuntimeMode);
     $("#upgradeFlashButton").addEventListener("click", flashUpgrade);
