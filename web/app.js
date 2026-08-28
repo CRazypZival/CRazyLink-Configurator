@@ -5,9 +5,9 @@
   const api = window.CRazyLink || {};
   const ui = window.CRazyLinkUi || {};
   const targets = {
-    stm32f103c8: { flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 0, webFlashSupported: true },
-    at32: { flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 1, webFlashSupported: false },
-    gd32: { flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 2, webFlashSupported: false },
+    stm32f103c8: { label: "STM32F1", flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 0, webFlashSupported: true },
+    at32: { label: "AT32", flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 1, webFlashSupported: false },
+    gd32: { label: "GD32", flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 2, webFlashSupported: false },
   };
   const state = {
     view: "flash",
@@ -150,10 +150,14 @@
 
   function updateButtons() {
     const connected = Boolean(state.device);
-    const targetSupported = selectedTarget().webFlashSupported !== false;
+    const target = selectedTarget();
+    const targetSupported = target.webFlashSupported !== false;
     $("#connectButton").querySelector("span").textContent = state.view === "upgrade" ? "重新选择" : (connected ? "断开设备" : "重新选择");
     $("#mobileConnectButton").setAttribute("aria-label", connected ? "断开设备" : "连接设备");
     $("#flashButton").disabled = !connected || !targetSupported || state.files.length === 0 || state.flashing;
+    $("#flashButton").title = targetSupported
+      ? "通过 CRazyLink 烧录 STM32F1"
+      : `${target.label} 请使用 CMSIS-DAP / OpenOCD 烧录`;
     $("#clearFilesButton").disabled = state.files.length === 0 || state.flashing;
     $("#exportFirmwareButton").disabled = state.files.length === 0 || state.flashing;
     $("#serialOpenButton").disabled = !connected || state.flashing;
@@ -380,7 +384,7 @@
     if (!state.device || state.files.length === 0 || state.flashing) return;
     const target = selectedTarget();
     if (target.webFlashSupported === false) {
-      const message = "当前 Web 烧录仅支持 STM32F1；AT32/GD32 请使用 CMSIS-DAP / OpenOCD";
+      const message = `${target.label} 暂不支持 Web 烧录，请使用 CMSIS-DAP / OpenOCD`;
       setFlashStatus(message, "错误", 0);
       toast(message, "error");
       return;
@@ -1052,7 +1056,7 @@
     $("#targetSelect").addEventListener("change", () => {
       const target = selectedTarget();
       if (target.webFlashSupported === false) {
-        setFlashStatus("AT32/GD32 请使用 CMSIS-DAP / OpenOCD", "提示", 0);
+        setFlashStatus(`${target.label} 请使用 CMSIS-DAP / OpenOCD`, "提示", 0);
       } else {
         setFlashStatus("设备可用，等待烧录", "待机", 0);
       }

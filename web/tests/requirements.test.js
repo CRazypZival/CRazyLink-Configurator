@@ -12,6 +12,9 @@ test("flash target selector includes STM32F1, AT32, and GD32", () => {
   assert.match(html, /option value="stm32f103c8"/);
   assert.match(html, /option value="at32"/);
   assert.match(html, /option value="gd32"/);
+  assert.match(app, /label: "AT32"/);
+  assert.match(app, /label: "GD32"/);
+  assert.match(app, /请使用 CMSIS-DAP \/ OpenOCD 烧录/);
 });
 
 test("flash reset setting is sent in the job options and reports its result", () => {

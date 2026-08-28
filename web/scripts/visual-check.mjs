@@ -70,6 +70,33 @@ async function verifyFlashTablet(page, failures) {
   if (layout.settings.height > 128) failures.push("flash/tablet-1024: action band is taller than Pencil reference");
 }
 
+async function verifyFlashControls(page, failures) {
+  const options = await page.locator("#targetSelect option").allTextContents();
+  if (!options.some((text) => /AT32/.test(text)) || !options.some((text) => /GD32/.test(text))) {
+    failures.push("flash: MCU selector is missing AT32 or GD32");
+  }
+  const reset = page.locator("#resetCheck");
+  const initialReset = await reset.isChecked();
+  await page.locator('[data-switch="reset"]').click();
+  if ((await reset.isChecked()) === initialReset) failures.push("flash: reset switch did not toggle");
+  await page.locator('[data-switch="reset"]').click();
+}
+
+async function verifySerialFormat(page, failures) {
+  await page.locator("#hexSendCheck").check();
+  const hexState = await page.evaluate(() => ({
+    hex: document.querySelector('[data-format-option="hex"]')?.getAttribute("aria-checked"),
+    ascii: document.querySelector('[data-format-option="ascii"]')?.getAttribute("aria-checked"),
+  }));
+  if (hexState.hex !== "true" || hexState.ascii !== "false") failures.push("serial: HEX and ASCII selection is not mutually exclusive");
+  await page.locator("#asciiSendCheck").check();
+  const asciiState = await page.evaluate(() => ({
+    hex: document.querySelector('[data-format-option="hex"]')?.getAttribute("aria-checked"),
+    ascii: document.querySelector('[data-format-option="ascii"]')?.getAttribute("aria-checked"),
+  }));
+  if (asciiState.hex !== "false" || asciiState.ascii !== "true") failures.push("serial: switching back to ASCII leaves HEX selected");
+}
+
 async function verifySerialTablet(page, failures) {
   const layout = await page.evaluate(() => {
     const rect = (selector) => {
@@ -167,7 +194,9 @@ try {
       if (layout.clipped.length) failures.push(`${view.name}/${viewport.name}: clipped elements ${layout.clipped.join(", ")}`);
       if (consoleErrors.length) failures.push(`${view.name}/${viewport.name}: console errors ${consoleErrors.join(" | ")}`);
       if (view.name === "flash" && viewport.name === "tablet-1024") await verifyFlashTablet(page, failures);
+      if (view.name === "flash" && viewport.name === "desktop-1440") await verifyFlashControls(page, failures);
       if (view.name === "serial" && viewport.name === "tablet-1024") await verifySerialTablet(page, failures);
+      if (view.name === "serial" && viewport.name === "desktop-1440") await verifySerialFormat(page, failures);
       if (view.name === "upgrade" && viewport.name === "desktop-1440" && await page.locator("#upgradeReleaseSelect option").count() !== 2) {
         failures.push("upgrade/desktop-1440: release selector did not load");
       }
