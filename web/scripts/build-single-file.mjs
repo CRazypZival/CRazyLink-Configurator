@@ -1,4 +1,4 @@
-import { mkdir, readFile, writeFile } from "node:fs/promises";
+import { cp, mkdir, readFile, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { build } from "esbuild";
 
@@ -55,4 +55,9 @@ const inline = html
 const output = resolve(root, "dist/index.html");
 await mkdir(dirname(output), { recursive: true });
 await writeFile(output, inline, "utf8");
+try {
+  await cp(resolve(root, "releases"), resolve(root, "dist/releases"), { recursive: true });
+} catch (error) {
+  if (error.code !== "ENOENT") throw error;
+}
 console.log(`single-file build: ${output} (${inline.length} bytes)`);

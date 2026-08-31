@@ -11,6 +11,7 @@
   const MAGIC = Uint8Array.of(0x43, 0x52, 0x4c, 0x31, 0x0d, 0x0a, 0x1a, 0x0a);
   const RELEASES_API = "https://api.github.com/repos/CRazypZival/CRazyLink-Configurator/releases?per_page=30";
   const RELEASES_PAGE = "https://github.com/CRazypZival/CRazyLink-Configurator/releases";
+  const RELEASE_INDEX_URL = "releases/index.json";
   const UNIVERSAL_ROLE = "CRAZYLINK";
   const TRUSTED_RELEASE_KEY = Object.freeze({
     kty: "EC",
@@ -259,6 +260,32 @@
   }
 
   async function listFirmwareReleases(fetchImpl) {
+    try {
+      const staticReleases = await fetchJson(RELEASE_INDEX_URL, fetchImpl);
+      if (!Array.isArray(staticReleases)) throw new Error("静态发布索引格式无效");
+      const results = [];
+      for (const release of staticReleases) {
+        if (!release || !release.tag || !release.manifestUrl) continue;
+        let manifest;
+        try {
+          manifest = await fetchJson(release.manifestUrl, fetchImpl);
+        } catch (_) {
+          continue;
+        }
+        if (!manifest || !Array.isArray(manifest.packages)) continue;
+        results.push({
+          tag: release.tag,
+          prerelease: Boolean(release.prerelease),
+          publishedAt: release.publishedAt || null,
+          manifest,
+          packageUrl: release.packageUrl || null,
+        });
+      }
+      return results;
+    } catch (_) {
+      // Local/offline builds do not contain the Pages release index. Fall back to GitHub Releases.
+    }
+
     const releases = await fetchJson(RELEASES_API, fetchImpl);
     if (!Array.isArray(releases)) throw new Error("GitHub Releases 返回格式无效");
     const results = [];
@@ -273,7 +300,7 @@
         continue;
       }
       if (!manifest || !Array.isArray(manifest.packages)) continue;
-      results.push({ tag: release.tag_name, prerelease: Boolean(release.prerelease), publishedAt: release.published_at, manifest });
+      results.push({ tag: release.tag_name, prerelease: Boolean(release.prerelease), publishedAt: release.published_at, manifest, packageUrl: null });
     }
     return results;
   }
@@ -286,9 +313,9 @@
       packages.find((item) => item.role === requestedRole) ||
       (packages.length === 1 ? packages[0] : null);
     if (!entry) throw new Error("发布版本不包含 CRazyLink 固件");
-    const response = await fetcher(
-      `https://github.com/CRazypZival/CRazyLink-Configurator/releases/download/${encodeURIComponent(release.tag)}/${encodeURIComponent(entry.file)}`,
-    );
+    const packageUrl = release?.packageUrl ||
+      `https://github.com/CRazypZival/CRazyLink-Configurator/releases/download/${encodeURIComponent(release.tag)}/${encodeURIComponent(entry.file)}`;
+    const response = await fetcher(packageUrl);
     if (!response.ok) throw new Error(`固件下载失败：HTTP ${response.status}`);
     const bytes = new Uint8Array(await response.arrayBuffer());
     if (await sha256Hex(bytes) !== entry.sha256) throw new Error("下载固件与 Release 校验值不一致");
@@ -300,6 +327,7 @@
     UNIVERSAL_ROLE,
     RELEASES_API,
     RELEASES_PAGE,
+    RELEASE_INDEX_URL,
     parseCrlPackage,
     verifyCrlSignature,
     openCrlPackage,

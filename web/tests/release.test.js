@@ -32,6 +32,36 @@ test("an empty GitHub release list is a valid result", async () => {
   assert.deepEqual(await release.listFirmwareReleases(fetchImpl), []);
 });
 
+test("same-origin release index avoids GitHub asset CORS redirects", async () => {
+  const requests = [];
+  const fetchImpl = async (url) => {
+    requests.push(url);
+    if (url === release.RELEASE_INDEX_URL) {
+      return {
+        ok: true,
+        json: async () => [{
+          tag: "v1.1.2",
+          prerelease: false,
+          publishedAt: "now",
+          manifestUrl: "releases/v1.1.2/manifest.json",
+          packageUrl: "releases/v1.1.2/CRazyLink_v1.1.2.crl",
+        }],
+      };
+    }
+    if (url === "releases/v1.1.2/manifest.json") {
+      return {
+        ok: true,
+        json: async () => ({ packages: [{ role: "CRAZYLINK", file: "CRazyLink_v1.1.2.crl" }] }),
+      };
+    }
+    throw new Error(`unexpected request: ${url}`);
+  };
+  const result = await release.listFirmwareReleases(fetchImpl);
+  assert.equal(result[0].tag, "v1.1.2");
+  assert.equal(result[0].packageUrl, "releases/v1.1.2/CRazyLink_v1.1.2.crl");
+  assert.deepEqual(requests, [release.RELEASE_INDEX_URL, "releases/v1.1.2/manifest.json"]);
+});
+
 test("a broken release manifest does not block valid releases", async () => {
   const releases = [
     { tag_name: "v2", draft: false, assets: [{ name: "manifest.json", browser_download_url: "broken" }] },
