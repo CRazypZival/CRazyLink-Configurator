@@ -63,7 +63,14 @@ test("upgrade flow has connection prompts and exclusive disclosure styling", () 
   assert.match(app, /connectionState === "busy"/);
   assert.doesNotMatch(app, /upgradeConnected \? "断开连接"/);
   assert.doesNotMatch(app, /connected \? "断开设备"/);
-  assert.match(app, /if \(state\.upgrade\.transport\) \{\s*await disconnectDevice\(\)/);
+  assert.match(app, /async function chooseUpgradeConnection\(\)/);
+  assert.match(app, /previousTransport === "usb"/);
+  assert.match(app, /await selectUpgradeUsb\(\)/);
+  assert.match(app, /previousTransport === "serial"/);
+  assert.match(app, /await selectUpgradeSerial\(\)/);
+  assert.match(app, /await selectUpgradeAutomatically\(\)/);
+  assert.match(app, /if \(state\.view === "upgrade"\) \{\s*await chooseUpgradeConnection\(\)/);
+  assert.doesNotMatch(app, /if \(state\.upgrade\.transport\) \{\s*await disconnectDevice\(\)\s*\}\s*await selectUpgradeAutomatically\(\)/);
   assert.match(app, /state\.upgrade\.serialPort = null/);
   assert.match(app, /RELEASES_PAGE/);
   assert.match(css, /\.upgrade-config-card\[data-expanded="false"\]/);
