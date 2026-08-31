@@ -140,3 +140,27 @@ test("request ignores TinyUSB zero-length packets", async () => {
   assert.equal(reads, 2);
   assert.deepEqual([...packet.data], [1, 1, 1, 0, 8, 1]);
 });
+
+test("flash reset option is encoded for the RX job", async () => {
+  const connection = new CrazylinkUsbDevice({});
+  const requests = [];
+  connection.request = async (opcode, options = {}) => {
+    requests.push({ opcode, options });
+    return {};
+  };
+  const job = {
+    targetId: 0,
+    erase: "chip",
+    swdKHz: 1000,
+    base: 0x08000000,
+    image: Uint8Array.of(1, 2, 3),
+    crc: 0,
+    verify: true,
+    note: "",
+  };
+  await connection.uploadJob({ ...job, reset: false });
+  assert.equal(requests[0].options.data[1] & 8, 0);
+  requests.length = 0;
+  await connection.uploadJob({ ...job, reset: true });
+  assert.equal(requests[0].options.data[1] & 8, 8);
+});

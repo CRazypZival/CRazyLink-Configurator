@@ -10,6 +10,7 @@
   const ADDRESS_LIMIT = 0x100000000;
   const MAGIC = Uint8Array.of(0x43, 0x52, 0x4c, 0x31, 0x0d, 0x0a, 0x1a, 0x0a);
   const RELEASES_API = "https://api.github.com/repos/CRazypZival/CRazyLink-Configurator/releases?per_page=30";
+  const RELEASES_PAGE = "https://github.com/CRazypZival/CRazyLink-Configurator/releases";
   const UNIVERSAL_ROLE = "CRAZYLINK";
   const TRUSTED_RELEASE_KEY = Object.freeze({
     kty: "EC",
@@ -235,19 +236,43 @@
   }
 
   async function fetchJson(url, fetchImpl) {
-    const response = await (fetchImpl || fetch)(url, { headers: { Accept: "application/vnd.github+json" } });
-    if (!response.ok) throw new Error(`GitHub Releases 请求失败：HTTP ${response.status}`);
-    return response.json();
+    let response;
+    try {
+      response = await (fetchImpl || fetch)(url, {
+        cache: "no-store",
+        headers: { Accept: "application/vnd.github+json" },
+      });
+    } catch (error) {
+      const wrapped = new Error("无法连接 GitHub Releases，请检查网络或稍后重试");
+      wrapped.cause = error;
+      throw wrapped;
+    }
+    if (!response.ok) {
+      const suffix = response.status === 403 ? "（GitHub API 可能被限流）" : `：HTTP ${response.status}`;
+      const error = new Error(`GitHub Releases 请求失败${suffix}`);
+      error.status = response.status;
+      throw error;
+    }
+    const value = await response.json();
+    if (value == null) throw new Error("GitHub Releases 返回为空");
+    return value;
   }
 
   async function listFirmwareReleases(fetchImpl) {
     const releases = await fetchJson(RELEASES_API, fetchImpl);
+    if (!Array.isArray(releases)) throw new Error("GitHub Releases 返回格式无效");
     const results = [];
     for (const release of releases) {
       if (release.draft) continue;
       const manifestAsset = (release.assets || []).find((asset) => asset.name === "manifest.json");
       if (!manifestAsset) continue;
-      const manifest = await fetchJson(manifestAsset.browser_download_url, fetchImpl);
+      let manifest;
+      try {
+        manifest = await fetchJson(manifestAsset.browser_download_url, fetchImpl);
+      } catch (_) {
+        continue;
+      }
+      if (!manifest || !Array.isArray(manifest.packages)) continue;
       results.push({ tag: release.tag_name, prerelease: Boolean(release.prerelease), publishedAt: release.published_at, manifest });
     }
     return results;
@@ -274,6 +299,7 @@
     TRUSTED_RELEASE_KEY,
     UNIVERSAL_ROLE,
     RELEASES_API,
+    RELEASES_PAGE,
     parseCrlPackage,
     verifyCrlSignature,
     openCrlPackage,

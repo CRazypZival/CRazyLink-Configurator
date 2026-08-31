@@ -83,6 +83,14 @@ async function verifyFlashControls(page, failures) {
 }
 
 async function verifySerialFormat(page, failures) {
+  await page.locator("#customBaudCheck").check();
+  const customBaudState = await page.evaluate(() => ({
+    custom: document.querySelector("#customBaudInput")?.disabled === false,
+    presets: document.querySelector("#baudSelect")?.disabled === true,
+  }));
+  if (!customBaudState.custom || !customBaudState.presets) failures.push("serial: custom baud control did not replace presets");
+  await page.locator("#customBaudInput").fill("250000");
+  await page.locator("#customBaudCheck").uncheck();
   await page.locator("#hexSendCheck").check();
   const hexState = await page.evaluate(() => ({
     hex: document.querySelector('[data-format-option="hex"]')?.getAttribute("aria-checked"),

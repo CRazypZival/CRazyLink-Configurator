@@ -131,12 +131,22 @@ textarea { padding: 8px 12px; resize: vertical; }
 .browser-requirement { color: var(--color-muted-2); font-family: var(--font-mono); font-size: 10px; white-space: nowrap; }
 
 .serial-content { display: grid; grid-template-rows: auto minmax(0, 1fr); gap: 20px; min-height: 0; padding: 24px 40px; }
-.serial-config-bar { display: grid; grid-template-columns: 88px 146px 116px 116px 116px 116px minmax(0, 1fr) auto; align-items: end; gap: 16px; min-height: 82px; padding: 12px 16px; border: 1px solid var(--color-rule); background: var(--color-surface); }
+.serial-config-bar { display: grid; grid-template-columns: 88px 260px 116px 116px 116px 116px minmax(0, 1fr) auto; align-items: end; gap: 16px; min-height: 82px; padding: 12px 16px; border: 1px solid var(--color-rule); background: var(--color-surface); }
 .serial-config-title { display: grid; align-self: center; gap: 4px; }
 .serial-config-title strong { font-size: 13px; }
 .serial-config-title span { color: var(--color-success); font-size: 10px; }
 .serial-config-bar .field-label { gap: 4px; }
 .serial-config-bar select { height: 34px; padding: 0 12px; font-size: 12px; }
+.baud-field-group { display: flex; align-items: end; gap: 8px; min-width: 0; }
+.baud-field-group > .field-label { min-width: 0; flex: 1 1 auto; }
+.baud-control-row { min-width: 0; }
+.baud-control-row select, .baud-control-row input { width: 100%; height: 34px; }
+.baud-control-row input { display: none; padding: 0 10px; border: 1px solid var(--color-accent); border-radius: 0; background: var(--color-paper); color: var(--color-ink); font-family: var(--font-mono); font-size: 12px; }
+.baud-field-group[data-custom="true"] .baud-control-row select { display: none; }
+.baud-field-group[data-custom="true"] .baud-control-row input { display: block; }
+.custom-baud-option { display: inline-flex; align-items: center; justify-content: center; gap: 6px; width: 106px; height: 34px; padding: 0 8px; border: 1px solid var(--color-rule); background: var(--color-paper); color: var(--color-muted); font-size: 10px; font-weight: 650; white-space: nowrap; cursor: pointer; }
+.custom-baud-option:has(input:checked) { border-color: var(--color-accent); background: var(--color-accent-soft); color: var(--color-accent); }
+.custom-baud-option input { width: 14px; height: 14px; margin: 0; accent-color: var(--color-accent); }
 .flow-field select:disabled { color: var(--color-muted); opacity: 1; }
 .listening-state { display: flex; align-items: center; justify-content: end; gap: 8px; color: var(--color-success); font-size: 12px; font-weight: 650; white-space: nowrap; }
 .serial-open-button { display: none; }
@@ -258,7 +268,7 @@ textarea { padding: 8px 12px; resize: vertical; }
 .runtime-mode-state { gap: 6px; color: var(--color-muted); font-family: var(--font-mono); font-size: 10px; font-weight: 600; }
 .runtime-mode-hint { display: none; color: var(--color-muted); font-size: 10px; font-weight: 400; }
 .runtime-mode-disclosure[aria-expanded="true"] { border-radius: var(--radius-md) var(--radius-md) 0 0; }
-.runtime-mode-card[data-expanded="true"] .runtime-mode-disclosure { height: auto; min-height: 19px; padding: 0 16px 12px; }
+.runtime-mode-card[data-expanded="true"] .runtime-mode-disclosure { height: auto; min-height: 19px; padding: 16px 16px 12px; }
 .runtime-mode-card[data-expanded="true"] .runtime-mode-state { display: none; }
 .runtime-mode-card[data-expanded="true"] .runtime-mode-hint { display: inline; margin-left: auto; }
 .runtime-mode-disclosure[aria-expanded="true"] .runtime-mode-state svg { transform: rotate(90deg); }
@@ -448,6 +458,11 @@ textarea { padding: 8px 12px; resize: vertical; }
   .serial-config-title span { display: none; }
   .listening-state { display: flex; grid-column: 4 / 6; grid-row: 1; justify-content: end; }
   .serial-config-bar .field-label { grid-row: 2; min-width: 0; }
+  .baud-field-group { display: grid; grid-column: auto; grid-row: 2; grid-template-columns: minmax(0, 1fr) 22px; align-items: end; gap: 4px; min-width: 0; }
+  .baud-field-group > .field-label { grid-row: auto; }
+  .custom-baud-option { width: 22px; padding: 0; }
+  .custom-baud-option span { display: none; }
+  .baud-control-row input { padding: 0 6px; font-size: 11px; }
   .serial-config-bar .flow-field { display: grid; }
   .terminal-panel { grid-template-rows: 48px minmax(0, 1fr) 64px; }
   .terminal-toolbar { height: 48px; padding: 0 12px; }
@@ -557,6 +572,10 @@ textarea { padding: 8px 12px; resize: vertical; }
   .serial-config-title { display: flex; grid-column: 1 / -1; grid-row: auto; align-items: center; justify-content: space-between; height: 28px; }
   .serial-config-title span { display: inline; }
   .serial-config-bar .field-label { grid-row: auto; font-size: 10px; }
+  .baud-field-group { display: grid; grid-column: 1 / -1; grid-template-columns: minmax(0, 1fr) auto; align-items: end; gap: 8px; }
+  .baud-field-group > .field-label { grid-row: auto; }
+  .custom-baud-option { width: auto; min-width: 106px; }
+  .custom-baud-option span { display: inline; position: static; width: auto; height: auto; overflow: visible; clip: auto; white-space: nowrap; }
   .serial-config-bar .flow-field { display: grid; grid-column: 1 / -1; }
   .serial-config-bar select { height: 34px; padding: 0 8px; font-size: 11px; }
   .listening-state { display: none; }

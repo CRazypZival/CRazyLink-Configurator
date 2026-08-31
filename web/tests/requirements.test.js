@@ -8,12 +8,14 @@ const html = fs.readFileSync(path.join(webRoot, "index.html"), "utf8");
 const app = fs.readFileSync(path.join(webRoot, "app.js"), "utf8");
 const css = fs.readFileSync(path.join(webRoot, "app.css"), "utf8");
 
-test("flash target selector includes STM32F1, AT32, and GD32", () => {
-  assert.match(html, /option value="stm32f103c8"/);
-  assert.match(html, /option value="at32"/);
-  assert.match(html, /option value="gd32"/);
+test("flash target selector includes plain STM32, AT32, and GD32 labels", () => {
+  assert.match(html, /option value="stm32f103c8">STM32<\/option>/);
+  assert.match(html, /option value="at32">AT32<\/option>/);
+  assert.match(html, /option value="gd32">GD32<\/option>/);
+  assert.doesNotMatch(html, /STM32F1\s*·/);
   assert.match(app, /label: "AT32"/);
   assert.match(app, /label: "GD32"/);
+  assert.match(app, /label: "STM32"/);
   assert.match(app, /请使用 CMSIS-DAP \/ OpenOCD 烧录/);
 });
 
@@ -36,6 +38,15 @@ test("serial send format controls are mutually exclusive radios", () => {
   assert.match(app, /label\.setAttribute\("aria-checked", String\(selected\)\)/);
 });
 
+test("serial configuration supports a validated custom baud rate", () => {
+  assert.match(html, /id="customBaudCheck" type="checkbox"/);
+  assert.match(html, /id="customBaudInput" type="number" min="1200" max="921600"/);
+  assert.match(app, /function selectedBaudRate\(\)/);
+  assert.match(app, /波特率必须是 1200 到 921600 之间的整数/);
+  assert.match(app, /const baudRate = selectedBaudRate\(\)/);
+  assert.match(app, /baudRate, dataBits/);
+});
+
 test("upgrade flow has connection prompts and exclusive disclosure styling", () => {
   assert.match(html, /id="upgradeConnectionPromptCard"/);
   assert.match(html, /id="unsupportedDevicePromptCard"/);
@@ -45,7 +56,11 @@ test("upgrade flow has connection prompts and exclusive disclosure styling", () 
   assert.match(app, /setDisclosure\("#upgradeCardBody", "#upgradeCardDisclosure", false\)/);
   assert.match(app, /view\.dataset\.variant = variant/);
   assert.match(app, /if \(previousVariant !== variant\)/);
+  assert.match(app, /selectUpgradeAutomatically/);
+  assert.match(app, /detectAuthorized\(\)/);
+  assert.match(app, /RELEASES_PAGE/);
   assert.match(css, /\.upgrade-config-card\[data-expanded="false"\]/);
   assert.match(css, /\.runtime-mode-card\[data-expanded="true"\]/);
+  assert.match(css, /\.runtime-mode-card\[data-expanded="true"\] \.runtime-mode-disclosure \{[^}]*padding: 16px 16px 12px/);
   assert.match(css, /\.upgrade-prompt-card \{[^}]*min-height: 32px/);
 });

@@ -1,7 +1,7 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
 
-const { EspSerialFlasher, describeSerialPort, validatePackage } = require("../js/esptool.js");
+const { EspSerialFlasher, describeSerialPort, isLikelyEsp32Port, validatePackage } = require("../js/esptool.js");
 
 function firmware(role = "TX") {
   return {
@@ -30,6 +30,28 @@ test("serial flasher rejects overlapping or out-of-range CRL segments", () => {
 test("describes FTDI and native ESP32-S3 serial ports", () => {
   assert.equal(describeSerialPort({ getInfo: () => ({ usbVendorId: 0x0403, usbProductId: 0x6015 }) }), "FTDI UART0 · 0403:6015");
   assert.equal(describeSerialPort({ getInfo: () => ({ usbVendorId: 0x303a, usbProductId: 0x1001 }) }), "ESP32-S3 USB Download Mode · 303A:1001");
+});
+
+test("auto-detects an authorized ESP32-S3 port by USB enumeration", async () => {
+  const good = { getInfo: () => ({ usbVendorId: 0x303a, usbProductId: 0x1001 }) };
+  const wrong = { getInfo: () => ({ usbVendorId: 0x10c4, usbProductId: 0xea60 }) };
+  const calls = [];
+  class Transport {
+    constructor(port) { calls.push(port); }
+    async disconnect() {}
+  }
+  class ESPLoader {
+    async main() { return "ESP32-S3"; }
+  }
+  const flasher = new EspSerialFlasher({
+    serial: { getPorts: async () => [wrong, good] },
+    library: { Transport, ESPLoader, md5: () => "md5" },
+  });
+  assert.equal(isLikelyEsp32Port(wrong), false);
+  const result = await flasher.detectAuthorized();
+  assert.equal(result.port, good);
+  assert.equal(result.chip, "ESP32-S3");
+  assert.deepEqual(calls, [good]);
 });
 
 test("serial probe confirms an ESP32-S3 and closes its transport", async () => {

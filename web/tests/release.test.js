@@ -27,6 +27,25 @@ test("release list ignores drafts and releases without a manifest", async () => 
   assert.equal(result[0].tag, "v1");
 });
 
+test("an empty GitHub release list is a valid result", async () => {
+  const fetchImpl = async () => ({ ok: true, json: async () => [] });
+  assert.deepEqual(await release.listFirmwareReleases(fetchImpl), []);
+});
+
+test("a broken release manifest does not block valid releases", async () => {
+  const releases = [
+    { tag_name: "v2", draft: false, assets: [{ name: "manifest.json", browser_download_url: "broken" }] },
+    { tag_name: "v1", draft: false, assets: [{ name: "manifest.json", browser_download_url: "valid" }] },
+  ];
+  const fetchImpl = async (url) => {
+    if (url === release.RELEASES_API) return { ok: true, json: async () => releases };
+    if (url === "broken") return { ok: false, status: 404, json: async () => null };
+    return { ok: true, json: async () => ({ packages: [{ role: "CRAZYLINK", file: "crazylink.crl" }] }) };
+  };
+  const result = await release.listFirmwareReleases(fetchImpl);
+  assert.deepEqual(result.map((item) => item.tag), ["v1"]);
+});
+
 test("CRL manifest validation rejects unsafe address and payload layouts", () => {
   const base = {
     flashSize: 0x100,

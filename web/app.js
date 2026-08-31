@@ -5,7 +5,7 @@
   const api = window.CRazyLink || {};
   const ui = window.CRazyLinkUi || {};
   const targets = {
-    stm32f103c8: { label: "STM32F1", flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 0, webFlashSupported: true },
+    stm32f103c8: { label: "STM32", flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 0, webFlashSupported: true },
     at32: { label: "AT32", flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 1, webFlashSupported: false },
     gd32: { label: "GD32", flashBase: 0x08000000, flashSize: 64 * 1024, targetId: 2, webFlashSupported: false },
   };
@@ -156,7 +156,7 @@
     $("#mobileConnectButton").setAttribute("aria-label", connected ? "断开设备" : "连接设备");
     $("#flashButton").disabled = !connected || !targetSupported || state.files.length === 0 || state.flashing;
     $("#flashButton").title = targetSupported
-      ? "通过 CRazyLink 烧录 STM32F1"
+      ? "通过 CRazyLink 烧录 STM32"
       : `${target.label} 请使用 CMSIS-DAP / OpenOCD 烧录`;
     $("#clearFilesButton").disabled = state.files.length === 0 || state.flashing;
     $("#exportFirmwareButton").disabled = state.files.length === 0 || state.flashing;
@@ -294,6 +294,30 @@
 
   function selectedSendFormat() {
     return $("#hexSendCheck")?.checked ? "hex" : "ascii";
+  }
+
+  function selectedBaudRate() {
+    const custom = $("#customBaudCheck")?.checked;
+    const value = Number(custom ? $("#customBaudInput")?.value : $("#baudSelect")?.value);
+    if (!Number.isInteger(value) || value < 1200 || value > 921600) {
+      throw new Error("波特率必须是 1200 到 921600 之间的整数");
+    }
+    return value;
+  }
+
+  function syncBaudControl() {
+    const custom = $("#customBaudCheck")?.checked === true;
+    const group = $(".baud-field-group");
+    const select = $("#baudSelect");
+    const input = $("#customBaudInput");
+    if (group) group.dataset.custom = String(custom);
+    if (select) select.disabled = custom;
+    if (input) input.disabled = !custom;
+  }
+
+  function serialConfigLabel(baudRate) {
+    const parity = { none: "N", odd: "O", even: "E" }[$("#paritySelect").value] || "N";
+    return `${baudRate} / ${$("#dataBitsSelect").value}${parity}${$("#stopBitsSelect").value}`;
   }
 
   function syncSendFormat() {
@@ -594,18 +618,17 @@
       appendTerminalEntry("SYS", "串口已关闭");
     } else {
       try {
-        await state.device.openUart({ baudRate: Number($("#baudSelect").value), dataBits: Number($("#dataBitsSelect").value), parity: $("#paritySelect").value, stopBits: Number($("#stopBitsSelect").value) });
+        const baudRate = selectedBaudRate();
+        await state.device.openUart({ baudRate, dataBits: Number($("#dataBitsSelect").value), parity: $("#paritySelect").value, stopBits: Number($("#stopBitsSelect").value) });
         state.serialOpen = true;
         state.serial.paused = false;
         state.serial.openedAt = Date.now();
-        const parity = { none: "N", odd: "O", even: "E" }[$("#paritySelect").value] || "N";
-        $("#serialPortLabel").textContent = "USB 功能接口 · " + $("#baudSelect").value + " / " +
-          $("#dataBitsSelect").value + parity + $("#stopBitsSelect").value;
+        const configLabel = serialConfigLabel(baudRate);
+        $("#serialPortLabel").textContent = "USB 功能接口 · " + configLabel;
         setSerialStatus("正在监听", "active");
-        appendTerminalEntry("SYS", "串口已打开 · " + $("#baudSelect").value + " / " +
-          $("#dataBitsSelect").value + parity + $("#stopBitsSelect").value);
+        appendTerminalEntry("SYS", "串口已打开 · " + configLabel);
         startSerialRuntime();
-        $("#terminalStatus").textContent = `${$("#baudSelect").value} / ${$("#dataBitsSelect").value}${$("#paritySelect").value[0].toUpperCase()}${$("#stopBitsSelect").value}`;
+        $("#terminalStatus").textContent = configLabel;
         startSerialPolling();
         toast("目标 UART 已打开", "success");
       } catch (error) {
@@ -803,7 +826,10 @@
       state.upgrade.releases = await api.listFirmwareReleases();
       const selects = [$("#upgradeReleaseSelect"), $("#blankReleaseSelect")].filter(Boolean);
       for (const select of selects) {
-        select.replaceChildren(new Option(select.id === "blankReleaseSelect" ? "选择 CRazyLink TAG" : "选择发布 TAG", ""));
+        const emptyLabel = state.upgrade.releases.length
+          ? (select.id === "blankReleaseSelect" ? "选择 CRazyLink TAG" : "选择发布 TAG")
+          : "暂无可用固件发布";
+        select.replaceChildren(new Option(emptyLabel, ""));
         for (const release of state.upgrade.releases) {
           const suffix = release.prerelease ? " · prerelease" : "";
           select.append(new Option(`${release.tag}${suffix}`, release.tag));
@@ -822,10 +848,11 @@
       state.upgrade.releases = [];
       state.upgrade.release = null;
       [$("#upgradeReleaseSelect"), $("#blankReleaseSelect")].filter(Boolean).forEach((select) => {
-        select.replaceChildren(new Option("发布列表加载失败", ""));
+        select.replaceChildren(new Option("发布列表暂不可用", ""));
       });
-      setUpgradeStatus(error.message || "发布列表加载失败", "error");
-      if (notify) toast(error.message || "发布列表加载失败", "error");
+      const message = error.message || "发布列表暂不可用，请稍后重试";
+      setUpgradeStatus(message, "warning");
+      if (notify) toast(message, "error");
     } finally {
       state.upgrade.loadingReleases = false;
       updateUpgradeUi();
@@ -846,6 +873,22 @@
     updateDeviceInfo(connection.info);
     setConnection("connected", "设备已连接");
     setUpgradeStatus("已识别 CRazyLink 设备", "success");
+    updateUpgradeUi();
+  }
+
+  async function adoptUpgradeSerialDevice(selectedPort, detected) {
+    state.upgrade.transport = "serial";
+    state.upgrade.serialPort = selectedPort;
+    state.upgrade.serialProbeState = "ready";
+    state.upgrade.usbDevice = null;
+    state.upgrade.localInfo = null;
+    state.upgrade.role = "CRAZYLINK";
+    state.upgrade.deviceLabel = `${api.describeSerialPort(selectedPort)} · ${detected.chip}`;
+    state.device = null;
+    $("#deviceName").textContent = "ESP32-S3 升级设备";
+    $("#deviceSerial").textContent = state.upgrade.deviceLabel;
+    setConnection("connected", state.upgrade.deviceLabel);
+    setUpgradeStatus("ESP32-S3 Download Mode 已就绪", "success");
     updateUpgradeUi();
   }
 
@@ -871,18 +914,7 @@
       selectedPort = await app.espFlasher.requestPort();
       setUpgradeStatus("正在检测 ESP32-S3 Download Mode", "busy");
       const detected = await app.espFlasher.probe(selectedPort);
-      state.upgrade.transport = "serial";
-      state.upgrade.serialPort = selectedPort;
-      state.upgrade.serialProbeState = "ready";
-      state.upgrade.usbDevice = null;
-      state.upgrade.localInfo = null;
-      state.upgrade.role = "CRAZYLINK";
-      state.upgrade.deviceLabel = `${api.describeSerialPort(selectedPort)} · ${detected.chip}`;
-      $("#deviceName").textContent = "ESP32-S3 升级设备";
-      $("#deviceSerial").textContent = state.upgrade.deviceLabel;
-      setConnection("connected", state.upgrade.deviceLabel);
-      setUpgradeStatus("ESP32-S3 Download Mode 已就绪", "success");
-      updateUpgradeUi();
+      await adoptUpgradeSerialDevice(selectedPort, detected);
     } catch (error) {
       if (selectedPort) {
         state.upgrade.transport = null;
@@ -904,6 +936,65 @@
       }
       setUpgradeStatus(error.message || "串口设备选择失败", "error");
       toast(error.message || "串口设备选择失败", "error");
+    }
+  }
+
+  async function selectUpgradeAutomatically() {
+    if (state.upgrade.flashing) return;
+    if (state.device && state.upgrade.transport === "usb") {
+      setUpgradeStatus("已识别 CRazyLink 设备", "success");
+      updateUpgradeUi();
+      return;
+    }
+    setUpgradeStatus("正在自动识别升级设备", "busy");
+
+    if (app.manager?.supported) {
+      try {
+        const authorized = await app.manager.connectAuthorized();
+        if (authorized) {
+          await adoptUpgradeUsbDevice(authorized);
+          toast("已自动识别 CRazyLink USB", "success");
+          return;
+        }
+      } catch (_) {}
+    }
+
+    if (app.espFlasher?.supported) {
+      try {
+        const authorized = await app.espFlasher.detectAuthorized();
+        if (authorized) {
+          await adoptUpgradeSerialDevice(authorized.port, authorized);
+          toast(`已自动识别 ${api.describeSerialPort(authorized.port)}`, "success");
+          return;
+        }
+      } catch (_) {}
+    }
+
+    try {
+      if (app.manager?.supported) {
+        setUpgradeStatus("等待 CRazyLink USB 授权", "busy");
+        const connection = await app.manager.requestDevice();
+        await adoptUpgradeUsbDevice(connection);
+        toast("CRazyLink USB 已连接", "success");
+        return;
+      }
+    } catch (error) {
+      if (error?.name !== "NotFoundError") {
+        setUpgradeStatus(error.message || "CRazyLink USB 连接失败", "warning");
+      }
+    }
+
+    try {
+      if (!app.espFlasher?.supported) throw new Error("当前浏览器不支持 Web Serial 或 ESP32-S3 烧录组件未加载");
+      setUpgradeStatus("等待串口设备授权", "busy");
+      const selectedPort = await app.espFlasher.requestPort();
+      setUpgradeStatus("正在检测 ESP32-S3 Download Mode", "busy");
+      const detected = await app.espFlasher.probe(selectedPort);
+      await adoptUpgradeSerialDevice(selectedPort, detected);
+      toast(`已自动识别 ${api.describeSerialPort(selectedPort)}`, "success");
+    } catch (error) {
+      setUpgradeStatus(error?.name === "NotFoundError" ? "请插入设备或允许设备权限" : (error.message || "升级设备识别失败"), "warning");
+      updateUpgradeUi();
     }
   }
 
@@ -979,12 +1070,12 @@
     setDisclosure("#upgradeCardBody", "#upgradeCardDisclosure", expanded);
   }
 
-  function chooseConnection() {
+  async function chooseConnection() {
     if (state.view === "upgrade") {
-      $("#upgradeDeviceDialog").showModal();
+      await selectUpgradeAutomatically();
       return;
     }
-    connectDevice();
+    await connectDevice();
   }
 
   function toggleRuntimeMode() {
@@ -1020,6 +1111,11 @@
     $("#serialOpenButton").addEventListener("click", toggleSerial);
     $("#serialCloseHeaderButton").addEventListener("click", () => { if (state.serialOpen) toggleSerial(); });
     $("#serialSendButton").addEventListener("click", sendSerial);
+    $("#customBaudCheck").addEventListener("change", syncBaudControl);
+    $("#customBaudInput").addEventListener("input", () => {
+      const input = $("#customBaudInput");
+      input.setCustomValidity(input.validity.rangeUnderflow || input.validity.rangeOverflow || input.validity.stepMismatch ? "波特率必须是 1200 到 921600 之间的整数" : "");
+    });
     $("#terminalInput").addEventListener("keydown", (event) => { if ((event.metaKey || event.ctrlKey) && event.key === "Enter") sendSerial(); });
     $("#terminalInput").addEventListener("keydown", (event) => {
       if (event.key === "Enter" && !event.shiftKey && !event.metaKey && !event.ctrlKey) {
@@ -1080,9 +1176,9 @@
     $("#blankFlashButton").addEventListener("click", flashUpgrade);
     const refreshReleasesButton = $("#refreshReleasesButton");
     if (refreshReleasesButton) refreshReleasesButton.addEventListener("click", () => loadFirmwareReleases(true));
-    $("#mobileUpgradeDeviceButton").addEventListener("click", () => $("#upgradeDeviceDialog").showModal());
+    $("#mobileUpgradeDeviceButton").addEventListener("click", chooseConnection);
     [$("#releaseSourceButton"), $("#mobileReleaseSourceButton")].filter(Boolean).forEach((button) => button.addEventListener("click", () => {
-      window.open("https://github.com/CRazypZival/CRazyLink-Configurator/releases", "_blank", "noopener,noreferrer");
+      window.open(api.RELEASES_PAGE || "https://github.com/CRazypZival/CRazyLink-Configurator/releases", "_blank", "noopener,noreferrer");
     }));
   }
 
@@ -1098,6 +1194,7 @@
     renderFiles();
     syncSwitchState();
     syncSendFormat();
+    syncBaudControl();
     updateButtons();
     updateUpgradeUi();
     iconRefresh();

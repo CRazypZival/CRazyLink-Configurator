@@ -123,7 +123,7 @@
               <select id="speedSelect"><option value="1000">1 MHz</option><option value="500">500 kHz</option></select>
             </label>
             <label class="field-label target-field" for="targetSelect">MCU 型号
-              <select id="targetSelect"><option value="stm32f103c8">STM32F1 · Web 烧录</option><option value="at32">AT32 · CMSIS-DAP / OpenOCD</option><option value="gd32">GD32 · CMSIS-DAP / OpenOCD</option></select>
+              <select id="targetSelect"><option value="stm32f103c8">STM32</option><option value="at32">AT32</option><option value="gd32">GD32</option></select>
             </label>
             <div class="switch-group">
               <label class="switch-row" data-switch="verify" role="switch" aria-checked="true"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
@@ -155,7 +155,15 @@
         <div class="serial-content">
           <section class="serial-config-bar">
             <div class="serial-config-title"><strong>串口参数</strong><span id="terminalStatus">端口未打开</span></div>
-            <label class="field-label" for="baudSelect">波特率 1200-921600<select id="baudSelect"><option>1200</option><option>9600</option><option>19200</option><option>38400</option><option selected>115200</option><option>230400</option><option>460800</option><option>921600</option><option>100000</option></select></label>
+            <div class="baud-field-group">
+              <label class="field-label" for="baudSelect">波特率 1200-921600
+                <div class="baud-control-row">
+                  <select id="baudSelect"><option>1200</option><option>9600</option><option>19200</option><option>38400</option><option selected>115200</option><option>230400</option><option>460800</option><option>921600</option><option>100000</option></select>
+                  <input id="customBaudInput" type="number" min="1200" max="921600" step="1" value="250000" inputmode="numeric" aria-label="自定义波特率" disabled>
+                </div>
+              </label>
+              <label class="custom-baud-option" for="customBaudCheck" aria-label="自定义波特率"><input id="customBaudCheck" type="checkbox"><span>自定义波特率</span></label>
+            </div>
             <label class="field-label" for="dataBitsSelect">数据位<select id="dataBitsSelect"><option>5</option><option>6</option><option>7</option><option selected>8</option></select></label>
             <label class="field-label" for="stopBitsSelect">停止位<select id="stopBitsSelect"><option value="1">1</option><option value="1.5">1.5</option><option value="2">2</option></select></label>
             <label class="field-label" for="paritySelect">校验位<select id="paritySelect"><option value="none">无</option><option value="odd">奇</option><option value="even">偶</option></select></label>

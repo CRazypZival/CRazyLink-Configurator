@@ -28,6 +28,12 @@
     return `${kind} · ${hexId(vid)}:${hexId(pid)}`;
   }
 
+  function isLikelyEsp32Port(port) {
+    const info = portInfo(port);
+    return info.usbVendorId === 0x0403 || info.usbVendorId === 0x303a ||
+      info.usbVendorId === undefined;
+  }
+
   function validatePackage(openedPackage) {
     if (!openedPackage?.manifest || !Array.isArray(openedPackage.segments) || !openedPackage.segments.length) {
       throw new Error("CRL 固件包没有可烧录分段");
@@ -74,6 +80,20 @@
     async requestPort() {
       if (!this.serial?.requestPort) throw new Error("当前浏览器不支持 Web Serial，请使用最新版 Chrome 或 Edge");
       return this.serial.requestPort();
+    }
+
+    async detectAuthorized(options) {
+      const ports = (await this.getAuthorizedPorts()).filter(isLikelyEsp32Port);
+      for (const port of ports) {
+        try {
+          const detected = await this.probe(port, options);
+          return { port, ...detected };
+        } catch (_) {
+          // An authorized UART can still be running application firmware. Try
+          // the next enumerated port before asking the user to select one.
+        }
+      }
+      return null;
     }
 
     async probe(port, options) {
@@ -144,5 +164,5 @@
     }
   }
 
-  return { DEFAULT_ESP_FLASH_BAUD: DEFAULT_BAUD_RATE, EspSerialFlasher, describeSerialPort, validatePackage };
+  return { DEFAULT_ESP_FLASH_BAUD: DEFAULT_BAUD_RATE, EspSerialFlasher, describeSerialPort, isLikelyEsp32Port, validatePackage };
 });
