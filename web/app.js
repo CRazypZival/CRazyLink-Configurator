@@ -1092,11 +1092,7 @@
       await selectUpgradeSerial();
       return;
     }
-    if (previousTransport === "usb") {
-      await selectUpgradeUsb();
-      return;
-    }
-    await selectUpgradeAutomatically();
+    await connectDevice();
   }
 
   async function chooseConnection() {
