@@ -190,7 +190,10 @@ try {
       const layout = await page.evaluate((activeId) => ({
         documentWidth: document.documentElement.scrollWidth,
         viewportWidth: window.innerWidth,
+        documentHeight: document.documentElement.scrollHeight,
+        viewportHeight: window.innerHeight,
         bodyWidth: document.body.scrollWidth,
+        bodyHeight: document.body.scrollHeight,
         activeView: document.querySelector(".view.is-active")?.id,
         clipped: Array.from(document.querySelectorAll(`#${activeId} *`)).filter((element) => {
           const style = getComputedStyle(element);
@@ -198,6 +201,7 @@ try {
         }).map((element) => element.id || element.className).slice(0, 10),
       }), view.activeId);
       if (layout.documentWidth > layout.viewportWidth || layout.bodyWidth > layout.viewportWidth) failures.push(`${view.name}/${viewport.name}: horizontal overflow`);
+      if (layout.documentHeight > layout.viewportHeight || layout.bodyHeight > layout.viewportHeight) failures.push(`${view.name}/${viewport.name}: page vertical overflow`);
       if (layout.activeView !== view.activeId) failures.push(`${view.name}/${viewport.name}: incorrect active view`);
       if (layout.clipped.length) failures.push(`${view.name}/${viewport.name}: clipped elements ${layout.clipped.join(", ")}`);
       if (consoleErrors.length) failures.push(`${view.name}/${viewport.name}: console errors ${consoleErrors.join(" | ")}`);

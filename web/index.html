@@ -50,11 +50,11 @@
       <div class="mobile-header-actions">
         <div class="standard-mobile-actions">
           <div class="mobile-port-badge"><span class="sidebar-status-dot"></span><span id="mobilePortLabel">未连接</span></div>
-          <button class="icon-button" id="mobileConnectButton" type="button" aria-label="连接设备" title="连接设备"><i data-lucide="usb"></i></button>
+          <button class="icon-button" id="mobileConnectButton" type="button" aria-label="重新连接" title="重新连接"><i data-lucide="refresh-cw"></i></button>
         </div>
         <div class="upgrade-mobile-actions" hidden>
           <button class="upgrade-source-button" id="mobileReleaseSourceButton" type="button"><i data-lucide="github"></i><span>Releases</span></button>
-          <button class="icon-button" id="mobileUpgradeDeviceButton" type="button" aria-label="选择升级接口" title="选择升级接口"><i data-lucide="usb"></i></button>
+          <button class="icon-button" id="mobileUpgradeDeviceButton" type="button" aria-label="重新连接" title="重新连接"><i data-lucide="refresh-cw"></i></button>
         </div>
       </div>
     </header>
@@ -109,40 +109,41 @@
               <div><i data-lucide="circle-check"></i><span id="mergeMessage">等待添加固件</span></div>
               <strong id="mergeSize">—</strong>
             </div>
+            <aside class="flash-settings-panel">
+              <div class="settings-header">
+                <h2>烧录设置</h2>
+                <button class="icon-button icon-button-small" id="refreshDeviceButton" type="button" title="刷新设备状态" aria-label="刷新设备状态"><i data-lucide="settings-2"></i></button>
+              </div>
+              <label class="field-label" for="eraseSelect">擦除方式
+                <select id="eraseSelect"><option value="chip" selected>全片擦除</option><option value="sector">按范围擦除</option><option value="none">不擦除</option></select>
+              </label>
+              <label class="field-label" for="speedSelect">传输速率
+                <select id="speedSelect"><option value="1000">1 MHz</option><option value="500">500 kHz</option></select>
+              </label>
+              <label class="field-label target-field" for="targetSelect">MCU 型号
+                <select id="targetSelect"><option value="stm32f103c8">STM32</option><option value="at32">AT32</option><option value="gd32">GD32</option></select>
+              </label>
+              <div class="switch-group">
+                <label class="switch-row" data-switch="verify" role="switch" aria-checked="true"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+                <label class="switch-row" data-switch="reset" role="switch" aria-checked="true"><span><strong>完成后复位</strong><small>烧录成功后请求系统复位</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
+              </div>
+              <div class="task-summary">
+                <h3>本次任务</h3>
+                <div><span>文件</span><strong id="taskFileSummary">0 个</strong></div>
+                <div><span>地址范围</span><strong id="taskAddressSummary">—</strong></div>
+                <div><span>合并大小</span><strong id="taskSizeSummary">—</strong></div>
+              </div>
+              <label class="task-note" for="jobNote">任务备注<textarea id="jobNote" rows="2" maxlength="30" placeholder="可选"></textarea></label>
+              <div class="flash-action-buttons">
+                <button class="button button-primary start-flash" id="flashButton" type="button" disabled><i data-lucide="play"></i><span>烧录固件</span></button>
+                <button class="button button-secondary export-button" id="exportFirmwareButton" type="button" disabled><i data-lucide="download"></i><span>导出合并 BIN</span></button>
+              </div>
+              <div class="mode-switch" role="group" aria-label="设备模式">
+                <button class="mode-option is-active" type="button" data-mode="0">在线</button>
+                <button class="mode-option" type="button" data-mode="1">离线</button>
+              </div>
+            </aside>
           </div>
-
-          <aside class="flash-settings-panel">
-            <div class="settings-header">
-              <h2>烧录设置</h2>
-              <button class="icon-button icon-button-small" id="refreshDeviceButton" type="button" title="刷新设备状态" aria-label="刷新设备状态"><i data-lucide="refresh-cw"></i></button>
-            </div>
-            <label class="field-label" for="eraseSelect">擦除方式
-              <select id="eraseSelect"><option value="chip" selected>全片擦除</option><option value="sector">按范围擦除</option><option value="none">不擦除</option></select>
-            </label>
-            <label class="field-label" for="speedSelect">传输速率
-              <select id="speedSelect"><option value="1000">1 MHz</option><option value="500">500 kHz</option></select>
-            </label>
-            <label class="field-label target-field" for="targetSelect">MCU 型号
-              <select id="targetSelect"><option value="stm32f103c8">STM32</option><option value="at32">AT32</option><option value="gd32">GD32</option></select>
-            </label>
-            <div class="switch-group">
-              <label class="switch-row" data-switch="verify" role="switch" aria-checked="true"><span><strong>烧录后校验</strong><small>读取并比对写入内容</small></span><input id="verifyCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
-              <label class="switch-row" data-switch="reset" role="switch" aria-checked="true"><span><strong>完成后复位</strong><small>烧录成功后请求系统复位</small></span><input id="resetCheck" type="checkbox" checked><span class="switch" aria-hidden="true"></span></label>
-            </div>
-            <div class="task-summary">
-              <h3>本次任务</h3>
-              <div><span>文件</span><strong id="taskFileSummary">0 个</strong></div>
-              <div><span>地址范围</span><strong id="taskAddressSummary">—</strong></div>
-              <div><span>合并大小</span><strong id="taskSizeSummary">—</strong></div>
-            </div>
-            <label class="task-note" for="jobNote">任务备注<textarea id="jobNote" rows="2" maxlength="30" placeholder="可选"></textarea></label>
-            <button class="button button-primary start-flash" id="flashButton" type="button" disabled><i data-lucide="play"></i><span>烧录固件</span></button>
-            <button class="button button-secondary export-button" id="exportFirmwareButton" type="button" disabled><i data-lucide="download"></i><span>导出合并 BIN</span></button>
-            <div class="mode-switch" role="group" aria-label="设备模式">
-              <button class="mode-option is-active" type="button" data-mode="0">在线</button>
-              <button class="mode-option" type="button" data-mode="1">离线</button>
-            </div>
-          </aside>
         </div>
         <div class="status-line">
           <div><i data-lucide="circle-check"></i><span id="flashStatusText">设备可用，等待烧录</span><span class="status-progress" id="progressLabel">0%</span></div>

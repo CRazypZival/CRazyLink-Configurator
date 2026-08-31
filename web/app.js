@@ -153,10 +153,15 @@
     const upgradeConnected = Boolean(state.upgrade.transport);
     const target = selectedTarget();
     const targetSupported = target.webFlashSupported !== false;
-    $("#connectButton").querySelector("span").textContent = state.view === "upgrade"
-      ? (upgradeConnected ? "断开连接" : "重新连接")
-      : (connected ? "断开设备" : "重新选择");
-    $("#mobileConnectButton").setAttribute("aria-label", connected || upgradeConnected ? "断开设备" : "连接设备");
+    const connectionState = $("#connectionState")?.dataset.state || "disconnected";
+    const reconnectLabel = connectionState === "busy"
+      ? "正在扫描"
+      : connectionState === "error"
+        ? "重试连接"
+        : (connected || upgradeConnected ? "重新选择" : "重新连接");
+    $("#connectButton").querySelector("span").textContent = reconnectLabel;
+    $("#mobileConnectButton").setAttribute("aria-label", reconnectLabel);
+    $("#mobileConnectButton").setAttribute("title", reconnectLabel);
     $("#flashButton").disabled = !connected || !targetSupported || state.files.length === 0 || state.flashing;
     $("#flashButton").title = targetSupported
       ? "通过 CRazyLink 烧录 STM32"
@@ -347,7 +352,6 @@
   async function connectDevice() {
     if (state.device) {
       await disconnectDevice();
-      return;
     }
     if (!api.CrazylinkUsbManager) {
       toast("浏览器不支持 WebUSB，请使用最新版 Chrome 或 Edge", "error");
@@ -1077,7 +1081,6 @@
     if (state.view === "upgrade") {
       if (state.upgrade.transport) {
         await disconnectDevice();
-        return;
       }
       await selectUpgradeAutomatically();
       return;
