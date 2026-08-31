@@ -13,6 +13,7 @@
   const DeviceRole = Object.freeze({ TX: 1, RX: 2, CRAZYLINK: 3 });
   const DeviceMode = Object.freeze({ INDEPENDENT: 0, OFFLINE: 1, REMOTE_HOST: 2, REMOTE_DEVICE: 3 });
   const FlashState = Object.freeze({ IDLE: 0, READY: 1, FLASHING: 2, SUCCESS: 3, ERROR: 4, CANCELLED: 5 });
+  const OTA_BATCH_SIZE = 4;
 
   function withTimeout(promise, timeoutMs, label) {
     let timer;
@@ -148,6 +149,14 @@
       return pending;
     }
 
+    requestBatch(opcode, optionsList) {
+      const settingsList = Array.isArray(optionsList) ? optionsList.map((options) => options || {}) : [];
+      const operation = () => this.performRequestBatch(opcode, settingsList);
+      const pending = this.queue.catch(() => undefined).then(operation);
+      this.queue = pending;
+      return pending;
+    }
+
     async performRequest(opcode, options) {
       if (!this.interface || !this.device.opened) throw new Error("CRazyLink 尚未连接");
       const sequence = this.sequence;
@@ -191,6 +200,68 @@
       }
       if (response.flags & protocol.WebPacketFlag.ERROR) throw decodeError(response);
       return response;
+    }
+
+    async performRequestBatch(opcode, optionsList) {
+      if (!optionsList.length) return [];
+      if (!this.interface || !this.device.opened) throw new Error("CRazyLink 尚未连接");
+      const requests = optionsList.map((options) => {
+        const sequence = this.sequence;
+        this.sequence = (this.sequence % 0xffff) + 1;
+        return {
+          sequence,
+          options,
+          packet: protocol.encodePacket({
+            opcode,
+            flags: options.flags || 0,
+            sequence,
+            offset: options.offset || 0,
+            data: options.data,
+          }),
+        };
+      });
+
+      // Keep the send order deterministic so the device's small receive queue
+      // can be drained and acknowledged in the same order.
+      for (const request of requests) {
+        const outResult = await withTimeout(
+          this.device.transferOut(this.interface.outputEndpoint, request.packet),
+          request.options.timeoutMs || 2500,
+          "发送请求",
+        );
+        if (outResult.status !== "ok" || outResult.bytesWritten !== request.packet.length) {
+          throw new Error("WebUSB 请求未完整发送");
+        }
+      }
+
+      const responses = [];
+      for (const request of requests) {
+        const timeoutMs = request.options.timeoutMs || 2500;
+        const deadline = Date.now() + timeoutMs;
+        let inResult;
+        do {
+          const remaining = deadline - Date.now();
+          if (remaining <= 0) throw new Error("等待设备响应超时");
+          inResult = await withTimeout(
+            this.device.transferIn(this.interface.inputEndpoint, protocol.WEBUSB_PACKET_SIZE),
+            remaining,
+            "等待设备响应",
+          );
+          if (inResult.status !== "ok" || !inResult.data) throw new Error("WebUSB 响应读取失败");
+        } while (inResult.data.byteLength === 0);
+        const response = protocol.decodePacket(new Uint8Array(
+          inResult.data.buffer,
+          inResult.data.byteOffset,
+          inResult.data.byteLength,
+        ));
+        if (response.sequence !== request.sequence || response.opcode !== opcode ||
+            !(response.flags & protocol.WebPacketFlag.RESPONSE)) {
+          throw new Error("WebUSB 响应与请求不匹配");
+        }
+        if (response.flags & protocol.WebPacketFlag.ERROR) throw decodeError(response);
+        responses.push(response);
+      }
+      return responses;
     }
 
     async getDeviceInfo() {
@@ -338,10 +409,20 @@
       view.setUint32(1, bytes.length, true);
       view.setUint32(5, protocol.crc32(bytes), true);
       await this.request(protocol.WebOpcode.OTA_BEGIN, { data: begin, timeoutMs: 30000 });
-      for (let offset = 0; offset < bytes.length; offset += protocol.WEBUSB_DATA_SIZE) {
-        const chunk = bytes.slice(offset, offset + protocol.WEBUSB_DATA_SIZE);
-        await this.request(protocol.WebOpcode.OTA_DATA, { offset, data: chunk, timeoutMs: 5000 });
-        if (onProgress) onProgress(Math.round(((offset + chunk.length) / bytes.length) * 100));
+      for (let offset = 0; offset < bytes.length;) {
+        const batch = [];
+        while (batch.length < OTA_BATCH_SIZE && offset < bytes.length) {
+          const chunk = bytes.slice(offset, offset + protocol.WEBUSB_DATA_SIZE);
+          batch.push({ offset, data: chunk, timeoutMs: 5000 });
+          offset += chunk.length;
+        }
+        await this.requestBatch(protocol.WebOpcode.OTA_DATA, batch);
+        if (onProgress) {
+          for (let index = 0; index < batch.length; index += 1) {
+            const end = batch[index].offset + batch[index].data.length;
+            onProgress(Math.round((end / bytes.length) * 100));
+          }
+        }
       }
       await this.request(protocol.WebOpcode.OTA_COMMIT, { timeoutMs: 15000 });
     }

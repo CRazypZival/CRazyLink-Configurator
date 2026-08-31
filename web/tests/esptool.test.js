@@ -72,7 +72,7 @@ test("serial probe confirms an ESP32-S3 and closes its transport", async () => {
   assert.equal(result.chip, "ESP32-S3 (revision v0.2)");
   assert.deepEqual(calls, [
     ["transport", { name: "port" }],
-    ["loader", 460800],
+    ["loader", 921600],
     ["main", "default_reset"],
     ["disconnect"],
   ]);

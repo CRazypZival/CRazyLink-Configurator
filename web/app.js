@@ -150,10 +150,13 @@
 
   function updateButtons() {
     const connected = Boolean(state.device);
+    const upgradeConnected = Boolean(state.upgrade.transport);
     const target = selectedTarget();
     const targetSupported = target.webFlashSupported !== false;
-    $("#connectButton").querySelector("span").textContent = state.view === "upgrade" ? "重新选择" : (connected ? "断开设备" : "重新选择");
-    $("#mobileConnectButton").setAttribute("aria-label", connected ? "断开设备" : "连接设备");
+    $("#connectButton").querySelector("span").textContent = state.view === "upgrade"
+      ? (upgradeConnected ? "断开连接" : "重新连接")
+      : (connected ? "断开设备" : "重新选择");
+    $("#mobileConnectButton").setAttribute("aria-label", connected || upgradeConnected ? "断开设备" : "连接设备");
     $("#flashButton").disabled = !connected || !targetSupported || state.files.length === 0 || state.flashing;
     $("#flashButton").title = targetSupported
       ? "通过 CRazyLink 烧录 STM32"
@@ -383,14 +386,14 @@
     state.serial.openedAt = 0;
     $("#serialPortLabel").textContent = "USB 功能接口";
     setSerialStatus("未监听");
-    if (state.upgrade.transport === "usb") {
-      state.upgrade.transport = null;
-      state.upgrade.usbDevice = null;
-      state.upgrade.localInfo = null;
-      state.upgrade.role = "CRAZYLINK";
-      state.upgrade.deviceLabel = "";
-      updateUpgradeUi();
-    }
+    state.upgrade.transport = null;
+    state.upgrade.usbDevice = null;
+    state.upgrade.serialPort = null;
+    state.upgrade.serialProbeState = "idle";
+    state.upgrade.localInfo = null;
+    state.upgrade.role = "CRAZYLINK";
+    state.upgrade.deviceLabel = "";
+    updateUpgradeUi();
     updateDeviceInfo(null);
     setConnection("disconnected", "未连接设备");
     updateButtons();
@@ -1072,6 +1075,10 @@
 
   async function chooseConnection() {
     if (state.view === "upgrade") {
+      if (state.upgrade.transport) {
+        await disconnectDevice();
+        return;
+      }
       await selectUpgradeAutomatically();
       return;
     }

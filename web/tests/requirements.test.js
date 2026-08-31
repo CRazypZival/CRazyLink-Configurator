@@ -58,6 +58,10 @@ test("upgrade flow has connection prompts and exclusive disclosure styling", () 
   assert.match(app, /if \(previousVariant !== variant\)/);
   assert.match(app, /selectUpgradeAutomatically/);
   assert.match(app, /detectAuthorized\(\)/);
+  assert.match(app, /const upgradeConnected = Boolean\(state\.upgrade\.transport\)/);
+  assert.match(app, /upgradeConnected \? "断开连接" : "重新连接"/);
+  assert.match(app, /if \(state\.upgrade\.transport\) \{\s*await disconnectDevice\(\)/);
+  assert.match(app, /state\.upgrade\.serialPort = null/);
   assert.match(app, /RELEASES_PAGE/);
   assert.match(css, /\.upgrade-config-card\[data-expanded="false"\]/);
   assert.match(css, /\.runtime-mode-card\[data-expanded="true"\]/);

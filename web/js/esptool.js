@@ -5,7 +5,7 @@
 })(typeof globalThis !== "undefined" ? globalThis : this, function () {
   "use strict";
 
-  const DEFAULT_BAUD_RATE = 460800;
+  const DEFAULT_BAUD_RATE = 921600;
 
   function portInfo(port) {
     if (!port || typeof port.getInfo !== "function") return {};

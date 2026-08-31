@@ -103,14 +103,50 @@ test("USB OTA always targets the unified CRazyLink firmware", async () => {
     requests.push({ opcode, options });
     return {};
   };
+  connection.requestBatch = async (opcode, optionsList) => {
+    requests.push({ opcode, options: optionsList });
+    return optionsList.map(() => ({}));
+  };
   await connection.uploadOta(Uint8Array.from({ length: 48 }, (_, index) => index), () => {});
   assert.deepEqual(requests.map((entry) => entry.opcode), [
     global.CRazyLink.WebOpcode.OTA_BEGIN,
     global.CRazyLink.WebOpcode.OTA_DATA,
-    global.CRazyLink.WebOpcode.OTA_DATA,
     global.CRazyLink.WebOpcode.OTA_COMMIT,
   ]);
   assert.equal(requests[0].options.data[0], 3);
+  assert.equal(requests[1].options.length, 2);
+});
+
+test("batched WebUSB requests send before waiting for ordered responses", async () => {
+  const events = [];
+  const sent = [];
+  const connection = new CrazylinkUsbDevice({
+    opened: true,
+    transferOut: async (_, data) => {
+      events.push("out");
+      sent.push(global.CRazyLink.decodePacket(new Uint8Array(data)));
+      return { status: "ok", bytesWritten: data.byteLength };
+    },
+    transferIn: async () => {
+      events.push("in");
+      const request = sent.shift();
+      const response = global.CRazyLink.encodePacket({
+        opcode: request.opcode,
+        flags: global.CRazyLink.WebPacketFlag.RESPONSE,
+        sequence: request.sequence,
+        offset: request.offset,
+      });
+      return { status: "ok", data: new DataView(response.buffer) };
+    },
+  });
+  connection.interface = { inputEndpoint: 1, outputEndpoint: 1 };
+  const responses = await connection.requestBatch(global.CRazyLink.WebOpcode.OTA_DATA, [
+    { offset: 0, data: Uint8Array.of(1) },
+    { offset: 1, data: Uint8Array.of(2) },
+  ]);
+  assert.deepEqual(events, ["out", "out", "in", "in"]);
+  assert.equal(responses.length, 2);
+  assert.deepEqual(responses.map((response) => response.offset), [0, 1]);
 });
 
 test("USB OTA rejects an unknown local role", async () => {
