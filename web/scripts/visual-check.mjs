@@ -170,6 +170,19 @@ async function verifyUpgradeStates(page, failures) {
   }
 }
 
+async function verifyUpgradeConnectionChoices(page, failures) {
+  await page.locator("#connectButton").click();
+  const choices = await page.evaluate(() => ({
+    open: document.querySelector("#upgradeDeviceDialog")?.open === true,
+    usbVisible: document.querySelector("#upgradeUsbChoice")?.getBoundingClientRect().height > 0,
+    serialVisible: document.querySelector("#upgradeSerialChoice")?.getBoundingClientRect().height > 0,
+  }));
+  if (!choices.open || !choices.usbVisible || !choices.serialVisible) {
+    failures.push("upgrade: connection button does not offer both CRazyLink USB and serial download interfaces");
+  }
+  await page.locator("#closeUpgradeDeviceDialog").click();
+}
+
 await mkdir(outputDirectory, { recursive: true });
 const browser = await chromium.launch({ executablePath: chromePath, headless: true });
 const failures = [];
@@ -212,7 +225,10 @@ try {
       if (view.name === "upgrade" && viewport.name === "desktop-1440" && await page.locator("#upgradeReleaseSelect option").count() !== 2) {
         failures.push("upgrade/desktop-1440: release selector did not load");
       }
-      if (view.name === "upgrade" && viewport.name === "desktop-1440") await verifyUpgradeStates(page, failures);
+      if (view.name === "upgrade" && viewport.name === "desktop-1440") {
+        await verifyUpgradeConnectionChoices(page, failures);
+        await verifyUpgradeStates(page, failures);
+      }
       await page.screenshot({ path: resolve(outputDirectory, `${view.name}-${viewport.name}.png`), fullPage: true });
       console.log(`${view.name}/${viewport.name}: ${layout.viewportWidth}px, no horizontal overflow`);
       await page.close();

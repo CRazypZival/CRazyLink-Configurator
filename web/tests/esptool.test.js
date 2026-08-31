@@ -32,6 +32,21 @@ test("describes FTDI and native ESP32-S3 serial ports", () => {
   assert.equal(describeSerialPort({ getInfo: () => ({ usbVendorId: 0x303a, usbProductId: 0x1001 }) }), "ESP32-S3 USB Download Mode · 303A:1001");
 });
 
+test("manual selection lists USB-UART and native ESP USB serial ports without filters", async () => {
+  const selectedPort = { getInfo: () => ({ usbVendorId: 0x1a86, usbProductId: 0x7523 }) };
+  let receivedOptions = "not-called";
+  const flasher = new EspSerialFlasher({
+    serial: {
+      requestPort: async (options) => {
+        receivedOptions = options;
+        return selectedPort;
+      },
+    },
+  });
+  assert.equal(await flasher.requestPort(), selectedPort);
+  assert.equal(receivedOptions, undefined);
+});
+
 test("auto-detects an authorized ESP32-S3 port by USB enumeration", async () => {
   const good = { getInfo: () => ({ usbVendorId: 0x303a, usbProductId: 0x1001 }) };
   const wrong = { getInfo: () => ({ usbVendorId: 0x10c4, usbProductId: 0xea60 }) };

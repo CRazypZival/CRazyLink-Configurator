@@ -1079,20 +1079,9 @@
 
   async function chooseUpgradeConnection() {
     if (state.upgrade.flashing) return;
-
-    // A manual reconnect must open the matching browser picker so an already
-    // authorized second device can be selected instead of silently reusing
-    // the first device returned by getDevices().
-    const previousTransport = state.upgrade.transport
-      || (state.device ? "usb" : null)
-      || (state.upgrade.serialPort ? "serial" : null);
-    if (previousTransport || state.device) await disconnectDevice();
-
-    if (previousTransport === "serial") {
-      await selectUpgradeSerial();
-      return;
-    }
-    await connectDevice();
+    if (state.upgrade.transport || state.device || state.upgrade.serialPort) await disconnectDevice();
+    const dialog = $("#upgradeDeviceDialog");
+    if (!dialog.open) dialog.showModal();
   }
 
   async function chooseConnection() {

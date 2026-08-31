@@ -50,6 +50,9 @@ test("serial configuration supports a validated custom baud rate", () => {
 test("upgrade flow has connection prompts and exclusive disclosure styling", () => {
   assert.match(html, /id="upgradeConnectionPromptCard"/);
   assert.match(html, /id="unsupportedDevicePromptCard"/);
+  assert.match(html, /id="upgradeUsbChoice"/);
+  assert.match(html, /id="upgradeSerialChoice"/);
+  assert.match(html, /UART0 \/ USB Download Mode/);
   assert.match(html, /id="upgradeCardBody"/);
   assert.match(html, /class="runtime-mode-hint"/);
   assert.match(app, /setDisclosure\("#runtimeModePanel", "#runtimeModeDisclosure", false\)/);
@@ -64,9 +67,10 @@ test("upgrade flow has connection prompts and exclusive disclosure styling", () 
   assert.doesNotMatch(app, /upgradeConnected \? "断开连接"/);
   assert.doesNotMatch(app, /connected \? "断开设备"/);
   assert.match(app, /async function chooseUpgradeConnection\(\)/);
-  assert.match(app, /previousTransport === "serial"/);
-  assert.match(app, /await selectUpgradeSerial\(\)/);
-  assert.match(app, /if \(previousTransport === "serial"\)[\s\S]*await selectUpgradeSerial\(\)[\s\S]*await connectDevice\(\)/);
+  assert.match(app, /state\.upgrade\.transport \|\| state\.device \|\| state\.upgrade\.serialPort/);
+  assert.match(app, /if \(!dialog\.open\) dialog\.showModal\(\)/);
+  assert.match(app, /app\.manager\.requestDevice\(\)/);
+  assert.match(app, /app\.espFlasher\.requestPort\(\)/);
   assert.doesNotMatch(app, /async function chooseUpgradeConnection\(\)[\s\S]*?await selectUpgradeAutomatically\(\)/);
   assert.match(app, /if \(state\.view === "upgrade"\) \{\s*await chooseUpgradeConnection\(\)/);
   assert.doesNotMatch(app, /if \(state\.upgrade\.transport\) \{\s*await disconnectDevice\(\)\s*\}\s*await selectUpgradeAutomatically\(\)/);
