@@ -14,8 +14,8 @@
   const UNIVERSAL_ROLE = "CRAZYLINK";
   const TRUSTED_RELEASE_KEY = Object.freeze({
     kty: "EC",
-    x: "pIMxYXpPU5r-feoFCx6N7ktpTJjhUMTPBF6CSLotuWg",
-    y: "xl_adNI9fK0hDl-JfsFsiu8CIf3ZnW5iPkMAJ-Zp3Bg",
+    x: "6zBJhirHwJMymFr2K9V6FPwuRS5CuIYL_eR-lcrkVXc",
+    y: "-hAJy8ITo7KJndp59djtoXFMckaIGmsTknhrF97w2DY",
     crv: "P-256",
   });
 
