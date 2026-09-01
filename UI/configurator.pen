@@ -858,553 +858,599 @@
                           "fontWeight": "600"
                         }
                       ]
-                    }
-                  ]
-                },
-                {
-                  "type": "frame",
-                  "id": "WWJ1W",
-                  "name": "Flash Settings Panel",
-                  "width": 336,
-                  "height": 691,
-                  "fill": "$color-surface",
-                  "cornerRadius": "$radius-md",
-                  "stroke": "$color-rule",
-                  "strokeWidth": 1,
-                  "layout": "vertical",
-                  "gap": 20,
-                  "padding": 20,
-                  "children": [
-                    {
-                      "type": "frame",
-                      "id": "rrFxV",
-                      "name": "Flash Settings Header",
-                      "width": "fill_container",
-                      "justifyContent": "space_between",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "AbRHW",
-                          "name": "Flash Settings Title",
-                          "fill": "$color-ink",
-                          "content": "烧录设置",
-                          "fontFamily": "$font-body",
-                          "fontSize": 16,
-                          "fontWeight": "700"
-                        },
-                        {
-                          "type": "icon",
-                          "id": "cZVl7",
-                          "name": "Flash Settings Icon",
-                          "width": 17,
-                          "height": 17,
-                          "icon": "settings-2",
-                          "library": "lucide",
-                          "fill": "$color-muted"
-                        }
-                      ]
                     },
                     {
                       "type": "frame",
-                      "id": "kXRVk",
-                      "name": "Erase Mode",
+                      "id": "WWJ1W",
+                      "name": "Flash Settings Strip",
                       "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 8,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "Azg2L",
-                          "name": "Erase Mode Label",
-                          "fill": "$color-muted",
-                          "content": "擦除方式",
-                          "fontFamily": "$font-body",
-                          "fontSize": 11,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "CDmIV",
-                          "name": "Erase Mode Field",
-                          "width": "fill_container",
-                          "height": 40,
-                          "fill": "$color-paper",
-                          "cornerRadius": "$radius-sm",
-                          "stroke": "$color-rule",
-                          "strokeWidth": 1,
-                          "padding": [
-                            0,
-                            12
-                          ],
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "m3lxm",
-                              "name": "Erase Mode Value",
-                              "fill": "$color-ink",
-                              "content": "全片擦除",
-                              "fontFamily": "$font-body",
-                              "fontSize": 12,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "icon",
-                              "id": "r4srT",
-                              "name": "Erase Mode Chevron",
-                              "width": 15,
-                              "height": 15,
-                              "icon": "chevron-down",
-                              "library": "lucide",
-                              "fill": "$color-muted"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "WMYJm",
-                      "name": "MCU Model Selector",
-                      "width": 296,
-                      "height": 64,
-                      "layout": "vertical",
-                      "gap": 7,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "GErQg",
-                          "name": "MCU Model Label",
-                          "fill": "$color-muted",
-                          "content": "MCU 型号",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "E5gImV",
-                          "name": "MCU Model Field",
-                          "width": "fill_container",
-                          "height": 40,
-                          "fill": "$color-paper",
-                          "cornerRadius": "$radius-sm",
-                          "stroke": "$color-rule",
-                          "strokeWidth": 1,
-                          "padding": [
-                            0,
-                            12
-                          ],
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "rY2eT",
-                              "name": "MCU Model Value",
-                              "fill": "$color-ink",
-                              "content": "STM32",
-                              "fontFamily": "$font-body",
-                              "fontSize": 13,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "icon",
-                              "id": "JCcCN",
-                              "name": "MCU Model Chevron",
-                              "width": 15,
-                              "height": 15,
-                              "icon": "chevron-down",
-                              "library": "lucide",
-                              "fill": "$color-muted"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "C5NyOq",
-                      "name": "Flash Baud",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 8,
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "omJOd",
-                          "name": "Flash Baud Label",
-                          "fill": "$color-muted",
-                          "content": "传输速率",
-                          "fontFamily": "$font-body",
-                          "fontSize": 11,
-                          "fontWeight": "600"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "tBjiB",
-                          "name": "Flash Baud Field",
-                          "width": "fill_container",
-                          "height": 40,
-                          "fill": "$color-paper",
-                          "cornerRadius": "$radius-sm",
-                          "stroke": "$color-rule",
-                          "strokeWidth": 1,
-                          "padding": [
-                            0,
-                            12
-                          ],
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "yhAjN",
-                              "name": "Flash Baud Value",
-                              "fill": "$color-ink",
-                              "content": "921600 baud",
-                              "fontFamily": "$font-body",
-                              "fontSize": 12,
-                              "fontWeight": "600"
-                            },
-                            {
-                              "type": "icon",
-                              "id": "iITER",
-                              "name": "Flash Baud Chevron",
-                              "width": 15,
-                              "height": 15,
-                              "icon": "chevron-down",
-                              "library": "lucide",
-                              "fill": "$color-muted"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "BwUtw",
-                      "name": "Flash Option Switches",
-                      "width": "fill_container",
-                      "layout": "vertical",
-                      "gap": 16,
-                      "padding": [
-                        4,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "frame",
-                          "id": "dmdXP",
-                          "name": "Verify After Flash",
-                          "width": "fill_container",
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "frame",
-                              "id": "VuZRr",
-                              "name": "Verify After Flash Copy",
-                              "layout": "vertical",
-                              "gap": 4,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "dLM1C",
-                                  "name": "Verify After Flash Label",
-                                  "fill": "$color-ink",
-                                  "content": "烧录后校验",
-                                  "fontFamily": "$font-body",
-                                  "fontSize": 12,
-                                  "fontWeight": "650"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "uMMai",
-                                  "name": "Verify After Flash Helper",
-                                  "fill": "$color-muted",
-                                  "content": "读取并比对写入内容",
-                                  "fontFamily": "$font-body",
-                                  "fontSize": 10,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "Clhhw",
-                              "name": "Verify After Flash Toggle",
-                              "width": 36,
-                              "height": 20,
-                              "fill": "$color-accent",
-                              "cornerRadius": 10,
-                              "padding": 4,
-                              "justifyContent": "end",
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "ellipse",
-                                  "id": "HBkqA",
-                                  "name": "Verify After Flash Thumb",
-                                  "fill": "$color-surface",
-                                  "width": 16,
-                                  "height": 16
-                                }
-                              ]
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "po7x5",
-                          "name": "Reset After Flash",
-                          "width": "fill_container",
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "frame",
-                              "id": "GdEmt",
-                              "name": "Reset After Flash Copy",
-                              "layout": "vertical",
-                              "gap": 4,
-                              "children": [
-                                {
-                                  "type": "text",
-                                  "id": "ZwDTh",
-                                  "name": "Reset After Flash Label",
-                                  "fill": "$color-ink",
-                                  "content": "完成后复位",
-                                  "fontFamily": "$font-body",
-                                  "fontSize": 12,
-                                  "fontWeight": "650"
-                                },
-                                {
-                                  "type": "text",
-                                  "id": "M6zFY",
-                                  "name": "Reset After Flash Helper",
-                                  "fill": "$color-muted",
-                                  "content": "烧录成功后重启目标板",
-                                  "fontFamily": "$font-body",
-                                  "fontSize": 10,
-                                  "fontWeight": "normal"
-                                }
-                              ]
-                            },
-                            {
-                              "type": "frame",
-                              "id": "x9mIWc",
-                              "name": "Reset After Flash Toggle",
-                              "width": 36,
-                              "height": 20,
-                              "fill": "$color-accent",
-                              "cornerRadius": 10,
-                              "padding": 4,
-                              "justifyContent": "end",
-                              "alignItems": "center",
-                              "children": [
-                                {
-                                  "type": "ellipse",
-                                  "id": "z8Adi",
-                                  "name": "Reset After Flash Thumb",
-                                  "fill": "$color-surface",
-                                  "width": 16,
-                                  "height": 16
-                                }
-                              ]
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "F7RoX",
-                      "name": "Flash Task Summary",
-                      "width": "fill_container",
-                      "stroke": "$color-rule",
-                      "strokeWidth": {
-                        "top": 1
-                      },
-                      "layout": "vertical",
-                      "gap": 12,
-                      "padding": [
-                        16,
-                        0,
-                        0,
-                        0
-                      ],
-                      "children": [
-                        {
-                          "type": "text",
-                          "id": "MZ6no",
-                          "name": "Flash Task Summary Title",
-                          "fill": "$color-muted",
-                          "content": "本次任务",
-                          "fontFamily": "$font-body",
-                          "fontSize": 11,
-                          "fontWeight": "700"
-                        },
-                        {
-                          "type": "frame",
-                          "id": "ywX5W",
-                          "name": "Summary 文件",
-                          "width": "fill_container",
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "B9ko4",
-                              "name": "Summary 文件 Label",
-                              "fill": "$color-muted",
-                              "content": "文件",
-                              "fontFamily": "$font-body",
-                              "fontSize": 11,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "T8yTb",
-                              "name": "Summary 文件 Value",
-                              "fill": "$color-ink",
-                              "content": "2 个",
-                              "fontFamily": "$font-body",
-                              "fontSize": 11,
-                              "fontWeight": "600"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "NniOG",
-                          "name": "Summary 地址范围",
-                          "width": "fill_container",
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "Vv9fF",
-                              "name": "Summary 地址范围 Label",
-                              "fill": "$color-muted",
-                              "content": "地址范围",
-                              "fontFamily": "$font-body",
-                              "fontSize": 11,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "bSo7k",
-                              "name": "Summary 地址范围 Value",
-                              "fill": "$color-ink",
-                              "content": "0x08000000 – 0x080A8FFF",
-                              "fontFamily": "$font-mono",
-                              "fontSize": 10,
-                              "fontWeight": "600"
-                            }
-                          ]
-                        },
-                        {
-                          "type": "frame",
-                          "id": "jApys",
-                          "name": "Summary 合并大小",
-                          "width": "fill_container",
-                          "justifyContent": "space_between",
-                          "alignItems": "center",
-                          "children": [
-                            {
-                              "type": "text",
-                              "id": "JA1yF",
-                              "name": "Summary 合并大小 Label",
-                              "fill": "$color-muted",
-                              "content": "合并大小",
-                              "fontFamily": "$font-body",
-                              "fontSize": 11,
-                              "fontWeight": "normal"
-                            },
-                            {
-                              "type": "text",
-                              "id": "V1hK3x",
-                              "name": "Summary 合并大小 Value",
-                              "fill": "$color-ink",
-                              "content": "660 KB",
-                              "fontFamily": "$font-body",
-                              "fontSize": 11,
-                              "fontWeight": "600"
-                            }
-                          ]
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "FvpV4",
-                      "name": "Start Flash Button",
-                      "width": "fill_container",
-                      "height": 46,
-                      "fill": "$color-accent",
-                      "cornerRadius": "$radius-md",
-                      "gap": 8,
-                      "justifyContent": "center",
-                      "alignItems": "center",
-                      "children": [
-                        {
-                          "type": "icon",
-                          "id": "AsaE0",
-                          "name": "Start Flash Icon",
-                          "width": 17,
-                          "height": 17,
-                          "icon": "play",
-                          "library": "lucide",
-                          "fill": "$color-accent-ink"
-                        },
-                        {
-                          "type": "text",
-                          "id": "NDthK",
-                          "name": "Start Flash Label",
-                          "fill": "$color-accent-ink",
-                          "content": "烧录固件",
-                          "fontFamily": "$font-body",
-                          "fontSize": 13,
-                          "fontWeight": "700"
-                        }
-                      ]
-                    },
-                    {
-                      "type": "frame",
-                      "id": "deupp",
-                      "name": "Export Merged Firmware Button",
-                      "width": "fill_container",
-                      "height": 40,
+                      "height": 220,
+                      "fill": "$color-surface",
                       "cornerRadius": "$radius-md",
                       "stroke": "$color-rule",
                       "strokeWidth": 1,
-                      "gap": 8,
-                      "justifyContent": "center",
-                      "alignItems": "center",
+                      "layout": "vertical",
+                      "gap": 12,
+                      "padding": 16,
                       "children": [
                         {
-                          "type": "icon",
-                          "id": "aFMyt",
-                          "name": "Export Merged Firmware Icon",
-                          "width": 15,
-                          "height": 15,
-                          "icon": "download",
-                          "library": "lucide",
-                          "fill": "$color-muted"
+                          "type": "frame",
+                          "id": "gj77l",
+                          "name": "Flash Settings Top Row",
+                          "width": "fill_container",
+                          "height": 112,
+                          "gap": 16,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "rrFxV",
+                              "name": "Flash Settings Header",
+                              "width": 88,
+                              "height": 40,
+                              "layout": "vertical",
+                              "gap": 4,
+                              "justifyContent": "space_between",
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "AbRHW",
+                                  "name": "Flash Settings Title",
+                                  "fill": "$color-ink",
+                                  "content": "烧录设置",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 16,
+                                  "fontWeight": "700"
+                                },
+                                {
+                                  "type": "icon",
+                                  "id": "cZVl7",
+                                  "name": "Flash Settings Icon",
+                                  "width": 17,
+                                  "height": 17,
+                                  "icon": "settings-2",
+                                  "library": "lucide",
+                                  "fill": "$color-muted"
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "kXRVk",
+                              "name": "Erase Mode",
+                              "width": 200,
+                              "height": 68,
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "Azg2L",
+                                  "name": "Erase Mode Label",
+                                  "fill": "$color-muted",
+                                  "content": "擦除方式",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "CDmIV",
+                                  "name": "Erase Mode Field",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "padding": [
+                                    0,
+                                    12
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "m3lxm",
+                                      "name": "Erase Mode Value",
+                                      "fill": "$color-ink",
+                                      "content": "全片擦除",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 12,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "icon",
+                                      "id": "r4srT",
+                                      "name": "Erase Mode Chevron",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "chevron-down",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "WMYJm",
+                              "name": "MCU Model Selector",
+                              "width": 200,
+                              "height": 64,
+                              "layout": "vertical",
+                              "gap": 7,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "GErQg",
+                                  "name": "MCU Model Label",
+                                  "fill": "$color-muted",
+                                  "content": "MCU 型号",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 12,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "E5gImV",
+                                  "name": "MCU Model Field",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "padding": [
+                                    0,
+                                    12
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "rY2eT",
+                                      "name": "MCU Model Value",
+                                      "fill": "$color-ink",
+                                      "content": "STM32",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 13,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "icon",
+                                      "id": "JCcCN",
+                                      "name": "MCU Model Chevron",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "chevron-down",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "C5NyOq",
+                              "name": "Flash Baud",
+                              "width": 200,
+                              "height": 68,
+                              "layout": "vertical",
+                              "gap": 8,
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "omJOd",
+                                  "name": "Flash Baud Label",
+                                  "fill": "$color-muted",
+                                  "content": "传输速率",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "600"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "tBjiB",
+                                  "name": "Flash Baud Field",
+                                  "width": "fill_container",
+                                  "height": 40,
+                                  "fill": "$color-paper",
+                                  "cornerRadius": "$radius-sm",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "padding": [
+                                    0,
+                                    12
+                                  ],
+                                  "justifyContent": "space_between",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "yhAjN",
+                                      "name": "Flash Baud Value",
+                                      "fill": "$color-ink",
+                                      "content": "921600 baud",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 12,
+                                      "fontWeight": "600"
+                                    },
+                                    {
+                                      "type": "icon",
+                                      "id": "iITER",
+                                      "name": "Flash Baud Chevron",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "chevron-down",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "I7BnS",
+                              "name": "Flash Settings Spacer",
+                              "width": "fill_container",
+                              "height": 1
+                            },
+                            {
+                              "type": "frame",
+                              "id": "BwUtw",
+                              "name": "Flash Option Switches",
+                              "width": 280,
+                              "height": 104,
+                              "layout": "vertical",
+                              "gap": 8,
+                              "justifyContent": "center",
+                              "alignItems": "end",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "dmdXP",
+                                  "name": "Verify After Flash",
+                                  "width": 160,
+                                  "height": 46,
+                                  "gap": 24,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "VuZRr",
+                                      "name": "Verify After Flash Copy",
+                                      "width": 100,
+                                      "layout": "vertical",
+                                      "gap": 4,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "dLM1C",
+                                          "name": "Verify After Flash Label",
+                                          "fill": "$color-ink",
+                                          "content": "烧录后校验",
+                                          "fontFamily": "$font-body",
+                                          "fontSize": 12,
+                                          "fontWeight": "650"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "uMMai",
+                                          "name": "Verify After Flash Helper",
+                                          "fill": "$color-muted",
+                                          "content": "读取并比对写入内容",
+                                          "fontFamily": "$font-body",
+                                          "fontSize": 10,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "Clhhw",
+                                      "name": "Verify After Flash Toggle",
+                                      "width": 36,
+                                      "height": 20,
+                                      "fill": "$color-accent",
+                                      "cornerRadius": 10,
+                                      "padding": 4,
+                                      "justifyContent": "end",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "ellipse",
+                                          "id": "HBkqA",
+                                          "name": "Verify After Flash Thumb",
+                                          "fill": "$color-surface",
+                                          "width": 16,
+                                          "height": 16
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "po7x5",
+                                  "name": "Reset After Flash",
+                                  "width": 160,
+                                  "height": 46,
+                                  "gap": 24,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "frame",
+                                      "id": "GdEmt",
+                                      "name": "Reset After Flash Copy",
+                                      "width": 100,
+                                      "layout": "vertical",
+                                      "gap": 4,
+                                      "children": [
+                                        {
+                                          "type": "text",
+                                          "id": "ZwDTh",
+                                          "name": "Reset After Flash Label",
+                                          "fill": "$color-ink",
+                                          "content": "完成后复位",
+                                          "fontFamily": "$font-body",
+                                          "fontSize": 12,
+                                          "fontWeight": "650"
+                                        },
+                                        {
+                                          "type": "text",
+                                          "id": "M6zFY",
+                                          "name": "Reset After Flash Helper",
+                                          "fill": "$color-muted",
+                                          "content": "烧录成功后重启目标板",
+                                          "fontFamily": "$font-body",
+                                          "fontSize": 10,
+                                          "fontWeight": "normal"
+                                        }
+                                      ]
+                                    },
+                                    {
+                                      "type": "frame",
+                                      "id": "x9mIWc",
+                                      "name": "Reset After Flash Toggle",
+                                      "width": 36,
+                                      "height": 20,
+                                      "fill": "$color-accent",
+                                      "cornerRadius": 10,
+                                      "padding": 4,
+                                      "justifyContent": "end",
+                                      "alignItems": "center",
+                                      "children": [
+                                        {
+                                          "type": "ellipse",
+                                          "id": "z8Adi",
+                                          "name": "Reset After Flash Thumb",
+                                          "fill": "$color-surface",
+                                          "width": 16,
+                                          "height": 16
+                                        }
+                                      ]
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
                         },
                         {
-                          "type": "text",
-                          "id": "HdF7d",
-                          "name": "Export Merged Firmware Label",
-                          "fill": "$color-ink",
-                          "content": "导出合并 BIN",
-                          "fontFamily": "$font-body",
-                          "fontSize": 12,
-                          "fontWeight": "650"
+                          "type": "frame",
+                          "id": "FwVeR",
+                          "name": "Flash Settings Bottom Row",
+                          "width": "fill_container",
+                          "height": 58,
+                          "gap": 16,
+                          "alignItems": "center",
+                          "children": [
+                            {
+                              "type": "frame",
+                              "id": "F7RoX",
+                              "name": "Flash Task Summary",
+                              "width": "fill_container",
+                              "height": 58,
+                              "stroke": "$color-rule",
+                              "strokeWidth": {
+                                "top": 1
+                              },
+                              "gap": 12,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "text",
+                                  "id": "MZ6no",
+                                  "name": "Flash Task Summary Title",
+                                  "fill": "$color-muted",
+                                  "content": "本次任务",
+                                  "fontFamily": "$font-body",
+                                  "fontSize": 11,
+                                  "fontWeight": "700"
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "ywX5W",
+                                  "name": "Summary 文件",
+                                  "width": 112,
+                                  "height": 32,
+                                  "gap": 8,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "B9ko4",
+                                      "name": "Summary 文件 Label",
+                                      "fill": "$color-muted",
+                                      "content": "文件",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "T8yTb",
+                                      "name": "Summary 文件 Value",
+                                      "fill": "$color-ink",
+                                      "content": "2 个",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 11,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "NniOG",
+                                  "name": "Summary 地址范围",
+                                  "width": 220,
+                                  "height": 32,
+                                  "gap": 8,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "Vv9fF",
+                                      "name": "Summary 地址范围 Label",
+                                      "fill": "$color-muted",
+                                      "content": "地址范围",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "bSo7k",
+                                      "name": "Summary 地址范围 Value",
+                                      "fill": "$color-ink",
+                                      "content": "0x08000000 – 0x080A8FFF",
+                                      "fontFamily": "$font-mono",
+                                      "fontSize": 10,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "jApys",
+                                  "name": "Summary 合并大小",
+                                  "width": 120,
+                                  "height": 32,
+                                  "gap": 8,
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "text",
+                                      "id": "JA1yF",
+                                      "name": "Summary 合并大小 Label",
+                                      "fill": "$color-muted",
+                                      "content": "合并大小",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 11,
+                                      "fontWeight": "normal"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "V1hK3x",
+                                      "name": "Summary 合并大小 Value",
+                                      "fill": "$color-ink",
+                                      "content": "660 KB",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 11,
+                                      "fontWeight": "600"
+                                    }
+                                  ]
+                                }
+                              ]
+                            },
+                            {
+                              "type": "frame",
+                              "id": "MboHV",
+                              "name": "Flash Action Buttons",
+                              "width": 230,
+                              "height": 58,
+                              "gap": 8,
+                              "alignItems": "center",
+                              "children": [
+                                {
+                                  "type": "frame",
+                                  "id": "FvpV4",
+                                  "name": "Start Flash Button",
+                                  "width": 110,
+                                  "height": 40,
+                                  "fill": "$color-accent",
+                                  "cornerRadius": "$radius-md",
+                                  "gap": 8,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "AsaE0",
+                                      "name": "Start Flash Icon",
+                                      "width": 17,
+                                      "height": 17,
+                                      "icon": "play",
+                                      "library": "lucide",
+                                      "fill": "$color-accent-ink"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "NDthK",
+                                      "name": "Start Flash Label",
+                                      "fill": "$color-accent-ink",
+                                      "content": "烧录固件",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 13,
+                                      "fontWeight": "700"
+                                    }
+                                  ]
+                                },
+                                {
+                                  "type": "frame",
+                                  "id": "deupp",
+                                  "name": "Export Merged Firmware Button",
+                                  "width": 110,
+                                  "height": 40,
+                                  "cornerRadius": "$radius-md",
+                                  "stroke": "$color-rule",
+                                  "strokeWidth": 1,
+                                  "gap": 8,
+                                  "justifyContent": "center",
+                                  "alignItems": "center",
+                                  "children": [
+                                    {
+                                      "type": "icon",
+                                      "id": "aFMyt",
+                                      "name": "Export Merged Firmware Icon",
+                                      "width": 15,
+                                      "height": 15,
+                                      "icon": "download",
+                                      "library": "lucide",
+                                      "fill": "$color-muted"
+                                    },
+                                    {
+                                      "type": "text",
+                                      "id": "HdF7d",
+                                      "name": "Export Merged Firmware Label",
+                                      "fill": "$color-ink",
+                                      "content": "导出合并 BIN",
+                                      "fontFamily": "$font-body",
+                                      "fontSize": 12,
+                                      "fontWeight": "650"
+                                    }
+                                  ]
+                                }
+                              ]
+                            }
+                          ]
                         }
                       ]
                     }
