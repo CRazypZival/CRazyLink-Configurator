@@ -6671,7 +6671,7 @@
                   "id": "C7nVN",
                   "name": "Upgrade Desktop App Version",
                   "fill": "$color-muted-2",
-                  "content": "CRazyLink Configurator 0.1",
+                  "content": "v0.1.1 · c2f04c2",
                   "fontFamily": "$font-mono",
                   "fontSize": 10,
                   "fontWeight": "normal"
@@ -9797,7 +9797,7 @@
                   "id": "Yl7vV",
                   "name": "Upgrade Desktop App Version",
                   "fill": "$color-muted-2",
-                  "content": "CRazyLink Configurator 0.1",
+                  "content": "v0.1.1 · c2f04c2",
                   "fontFamily": "$font-mono",
                   "fontSize": 10,
                   "fontWeight": "normal"

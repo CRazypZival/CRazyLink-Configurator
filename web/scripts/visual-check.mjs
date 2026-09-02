@@ -222,8 +222,8 @@ try {
       if (view.name === "flash" && viewport.name === "desktop-1440") await verifyFlashControls(page, failures);
       if (view.name === "serial" && viewport.name === "tablet-1024") await verifySerialTablet(page, failures);
       if (view.name === "serial" && viewport.name === "desktop-1440") await verifySerialFormat(page, failures);
-      if (view.name === "upgrade" && viewport.name === "desktop-1440" && await page.locator("#upgradeReleaseSelect option").count() !== 2) {
-        failures.push("upgrade/desktop-1440: release selector did not load");
+      if (view.name === "upgrade" && viewport.name === "desktop-1440" && await page.locator("#upgradeReleaseSelect option").count() < 2) {
+        failures.push("upgrade/desktop-1440: release selector did not load any release");
       }
       if (view.name === "upgrade" && viewport.name === "desktop-1440") {
         await verifyUpgradeConnectionChoices(page, failures);

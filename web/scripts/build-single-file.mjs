@@ -4,6 +4,10 @@ import { build } from "esbuild";
 
 const root = resolve(new URL(".", import.meta.url).pathname, "..");
 const read = (name) => readFile(resolve(root, name), "utf8");
+const packageJson = JSON.parse(await read("package.json"));
+const version = `v${String(packageJson.version).replace(/^v/, "")}`;
+const commit = (process.env.CONFIGURATOR_COMMIT || process.env.GITHUB_SHA || "dev").slice(0, 7);
+const appVersion = `${version} · ${commit}`;
 
 const html = await read("index.html");
 const tokens = await read("tokens.css");
@@ -42,6 +46,7 @@ const inline = html
   .replace(/\s*<link rel="manifest"[^>]*>/, "")
   .replace(/\s*<link rel="stylesheet" href="tokens\.css">/, "")
   .replace(/\s*<link rel="stylesheet" href="app\.css">/, () => `<style>\n${tokens}\n${css}\n</style>`)
+  .replace(/(<div class="app-version">)[^<]*(<\/div>)/, `$1${appVersion}$2`)
   .replace(/\s*<script src="https:\/\/unpkg\.com\/lucide@0\.468\.0\/dist\/umd\/lucide\.min\.js"><\/script>/, () => `<script>${lucide}</script>`)
   .replace(/\s*<script src="js\/protocol\.js"><\/script>/, () => `<script>${protocol}</script>`)
   .replace(/\s*<script src="js\/firmware\.js"><\/script>/, () => `<script>${firmware}</script>`)

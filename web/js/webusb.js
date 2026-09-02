@@ -14,7 +14,7 @@
   const DeviceMode = Object.freeze({ INDEPENDENT: 0, OFFLINE: 1, REMOTE_HOST: 2, REMOTE_DEVICE: 3 });
   const FlashState = Object.freeze({ IDLE: 0, READY: 1, FLASHING: 2, SUCCESS: 3, ERROR: 4, CANCELLED: 5 });
   const OTA_BATCH_SIZE = 4;
-  const CLAIM_RETRY_DELAYS_MS = Object.freeze([50, 100, 200, 400, 800]);
+  const USB_STATE_RETRY_DELAYS_MS = Object.freeze([50, 100, 200, 400, 800, 1200]);
 
   function withTimeout(promise, timeoutMs, label) {
     let timer;
@@ -26,21 +26,31 @@
     ]).finally(() => clearTimeout(timer));
   }
 
-  function isInterfaceStateBusy(error) {
-    return /operation that changes interface state is in progress/i.test(error?.message || "");
+  function isUsbStateBusy(error) {
+    return /operation that changes interface state is in progress|device is busy|transfer.*pending/i.test(error?.message || "");
   }
 
-  async function claimInterfaceWithRetry(device, interfaceNumber) {
+  async function retryUsbStateOperation(operation) {
     for (let attempt = 0; ; attempt += 1) {
       try {
-        await device.claimInterface(interfaceNumber);
-        return;
+        return await operation();
       } catch (error) {
-        if (!isInterfaceStateBusy(error) || attempt >= CLAIM_RETRY_DELAYS_MS.length) throw error;
-        await new Promise((resolve) => setTimeout(resolve, CLAIM_RETRY_DELAYS_MS[attempt]));
+        if (!isUsbStateBusy(error) || attempt >= USB_STATE_RETRY_DELAYS_MS.length) throw error;
+        await new Promise((resolve) => setTimeout(resolve, USB_STATE_RETRY_DELAYS_MS[attempt]));
       }
     }
   }
+
+  const claimInterfaceWithRetry = (device, interfaceNumber) =>
+    retryUsbStateOperation(() => device.claimInterface(interfaceNumber));
+  const releaseInterfaceWithRetry = (device, interfaceNumber) =>
+    retryUsbStateOperation(() => device.releaseInterface(interfaceNumber));
+  const closeDeviceWithRetry = (device) => retryUsbStateOperation(() => device.close());
+  const openDeviceWithRetry = (device) => retryUsbStateOperation(() => device.open());
+  const selectConfigurationWithRetry = (device, value) =>
+    retryUsbStateOperation(() => device.selectConfiguration(value));
+  const selectAlternateInterfaceWithRetry = (device, interfaceNumber, alternateSetting) =>
+    retryUsbStateOperation(() => device.selectAlternateInterface(interfaceNumber, alternateSetting));
 
   function findBulkInterface(device) {
     if (!device.configuration) return null;
@@ -107,8 +117,8 @@
     async connect() {
       let claimed = false;
       try {
-        if (!this.device.opened) await this.device.open();
-        if (!this.device.configuration) await this.device.selectConfiguration(1);
+        if (!this.device.opened) await openDeviceWithRetry(this.device);
+        if (!this.device.configuration) await selectConfigurationWithRetry(this.device, 1);
         this.interface = findBulkInterface(this.device);
         if (!this.interface) {
           throw new Error(`未找到 CRazyLink CMSIS-DAP v2 Bulk 接口（${describeBulkInterfaces(this.device)}）`);
@@ -116,7 +126,8 @@
         await claimInterfaceWithRetry(this.device, this.interface.interfaceNumber);
         claimed = true;
         if (this.interface.alternateSetting) {
-          await this.device.selectAlternateInterface(
+          await selectAlternateInterfaceWithRetry(
+            this.device,
             this.interface.interfaceNumber,
             this.interface.alternateSetting,
           );
@@ -150,10 +161,10 @@
         return this.info;
       } catch (error) {
         if (claimed && this.device.opened && this.interface) {
-          try { await this.device.releaseInterface(this.interface.interfaceNumber); } catch (_) {}
+          try { await releaseInterfaceWithRetry(this.device, this.interface.interfaceNumber); } catch (_) {}
         }
         if (this.device.opened) {
-          try { await this.device.close(); } catch (_) {}
+          try { await closeDeviceWithRetry(this.device); } catch (_) {}
         }
         this.interface = null;
         this.info = null;
@@ -164,9 +175,9 @@
 
     async disconnect() {
       if (this.device.opened && this.interface) {
-        try { await this.device.releaseInterface(this.interface.interfaceNumber); } catch (_) {}
+        try { await releaseInterfaceWithRetry(this.device, this.interface.interfaceNumber); } catch (_) {}
       }
-      if (this.device.opened) await this.device.close();
+      if (this.device.opened) await closeDeviceWithRetry(this.device);
       this.interface = null;
       this.info = null;
       this.localInfo = null;

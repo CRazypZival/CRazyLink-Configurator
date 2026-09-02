@@ -118,6 +118,42 @@ test("connect retries while Windows is changing the USB interface state", async 
   assert.equal(claims, 2);
 });
 
+test("connect retries the full Windows USB open lifecycle", async () => {
+  const usbDevice = {
+    opened: false,
+    configuration: null,
+    serialNumber: "WIN-LIFECYCLE",
+    openCalls: 0,
+    selectCalls: 0,
+    claimCalls: 0,
+    open: async function () {
+      this.openCalls += 1;
+      if (this.openCalls === 1) {
+        throw new DOMException("An operation that changes interface state is in progress", "InvalidStateError");
+      }
+      this.opened = true;
+    },
+    selectConfiguration: async function () {
+      this.selectCalls += 1;
+      this.configuration = device([{
+        interfaceClass: 0xff,
+        interfaceName: "CMSIS-DAP v2",
+        alternateSetting: 0,
+        endpoints: [endpoint("out", 1), endpoint("in", 0x81)],
+      }]).configuration;
+    },
+    claimInterface: async function () { this.claimCalls += 1; },
+  };
+  const connection = new CrazylinkUsbDevice(usbDevice);
+  connection.getLocalDeviceInfo = async () => ({ role: 3, firmwareVersion: "1.1.3", flashSize: 8 * 1024 * 1024, otaSupported: true });
+  connection.getDeviceInfo = async () => { throw new Error("RX offline"); };
+
+  await connection.connect();
+  assert.equal(usbDevice.openCalls, 2);
+  assert.equal(usbDevice.selectCalls, 1);
+  assert.equal(usbDevice.claimCalls, 1);
+});
+
 test("manager reuses one in-progress connection for the same USB device", async () => {
   const usbDevice = device([{
     interfaceClass: 0xff,
