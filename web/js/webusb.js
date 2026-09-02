@@ -14,6 +14,7 @@
   const DeviceMode = Object.freeze({ INDEPENDENT: 0, OFFLINE: 1, REMOTE_HOST: 2, REMOTE_DEVICE: 3 });
   const FlashState = Object.freeze({ IDLE: 0, READY: 1, FLASHING: 2, SUCCESS: 3, ERROR: 4, CANCELLED: 5 });
   const OTA_BATCH_SIZE = 4;
+  const CLAIM_RETRY_DELAYS_MS = Object.freeze([50, 100, 200, 400, 800]);
 
   function withTimeout(promise, timeoutMs, label) {
     let timer;
@@ -23,6 +24,22 @@
         timer = setTimeout(() => reject(new Error(`${label}超时`)), timeoutMs);
       }),
     ]).finally(() => clearTimeout(timer));
+  }
+
+  function isInterfaceStateBusy(error) {
+    return /operation that changes interface state is in progress/i.test(error?.message || "");
+  }
+
+  async function claimInterfaceWithRetry(device, interfaceNumber) {
+    for (let attempt = 0; ; attempt += 1) {
+      try {
+        await device.claimInterface(interfaceNumber);
+        return;
+      } catch (error) {
+        if (!isInterfaceStateBusy(error) || attempt >= CLAIM_RETRY_DELAYS_MS.length) throw error;
+        await new Promise((resolve) => setTimeout(resolve, CLAIM_RETRY_DELAYS_MS[attempt]));
+      }
+    }
   }
 
   function findBulkInterface(device) {
@@ -88,46 +105,61 @@
     }
 
     async connect() {
-      if (!this.device.opened) await this.device.open();
-      if (!this.device.configuration) await this.device.selectConfiguration(1);
-      this.interface = findBulkInterface(this.device);
-      if (!this.interface) {
-        throw new Error(`未找到 CRazyLink CMSIS-DAP v2 Bulk 接口（${describeBulkInterfaces(this.device)}）`);
-      }
-      await this.device.claimInterface(this.interface.interfaceNumber);
-      if (this.interface.alternateSetting) {
-        await this.device.selectAlternateInterface(
-          this.interface.interfaceNumber,
-          this.interface.alternateSetting,
-        );
-      }
-      this.localInfo = await this.getLocalDeviceInfo();
+      let claimed = false;
       try {
-        this.info = await this.getDeviceInfo();
-      } catch (_) {
-        this.info = {
-          role: this.localInfo.role,
-          mode: Number.isInteger(this.localInfo.mode)
-            ? this.localInfo.mode
-            : (this.localInfo.role === DeviceRole.RX ? DeviceMode.REMOTE_DEVICE : DeviceMode.REMOTE_HOST),
-          capabilities: 0,
-          peerConnected: false,
-          jobStored: false,
-          automatic: false,
-          flashing: false,
-          protocolVersion: 1,
-          firmwareVersion: this.localInfo.firmwareVersion,
-          jobSize: 0,
-          jobCrc: 0,
-          jobBase: 0,
-          targetId: 0,
-          progress: 0,
-          flashState: FlashState.IDLE,
-          serialNumber: this.serialNumber,
-        };
+        if (!this.device.opened) await this.device.open();
+        if (!this.device.configuration) await this.device.selectConfiguration(1);
+        this.interface = findBulkInterface(this.device);
+        if (!this.interface) {
+          throw new Error(`未找到 CRazyLink CMSIS-DAP v2 Bulk 接口（${describeBulkInterfaces(this.device)}）`);
+        }
+        await claimInterfaceWithRetry(this.device, this.interface.interfaceNumber);
+        claimed = true;
+        if (this.interface.alternateSetting) {
+          await this.device.selectAlternateInterface(
+            this.interface.interfaceNumber,
+            this.interface.alternateSetting,
+          );
+        }
+        this.localInfo = await this.getLocalDeviceInfo();
+        try {
+          this.info = await this.getDeviceInfo();
+        } catch (_) {
+          this.info = {
+            role: this.localInfo.role,
+            mode: Number.isInteger(this.localInfo.mode)
+              ? this.localInfo.mode
+              : (this.localInfo.role === DeviceRole.RX ? DeviceMode.REMOTE_DEVICE : DeviceMode.REMOTE_HOST),
+            capabilities: 0,
+            peerConnected: false,
+            jobStored: false,
+            automatic: false,
+            flashing: false,
+            protocolVersion: 1,
+            firmwareVersion: this.localInfo.firmwareVersion,
+            jobSize: 0,
+            jobCrc: 0,
+            jobBase: 0,
+            targetId: 0,
+            progress: 0,
+            flashState: FlashState.IDLE,
+            serialNumber: this.serialNumber,
+          };
+        }
+        this.dispatchEvent(new CustomEvent("connected", { detail: this.info }));
+        return this.info;
+      } catch (error) {
+        if (claimed && this.device.opened && this.interface) {
+          try { await this.device.releaseInterface(this.interface.interfaceNumber); } catch (_) {}
+        }
+        if (this.device.opened) {
+          try { await this.device.close(); } catch (_) {}
+        }
+        this.interface = null;
+        this.info = null;
+        this.localInfo = null;
+        throw error;
       }
-      this.dispatchEvent(new CustomEvent("connected", { detail: this.info }));
-      return this.info;
     }
 
     async disconnect() {
@@ -433,6 +465,9 @@
       super();
       this.usb = usb || (typeof navigator !== "undefined" ? navigator.usb : null);
       this.current = null;
+      this.connectionQueue = Promise.resolve();
+      this.pendingDevice = null;
+      this.pendingConnection = null;
       if (this.usb) {
         this.usb.addEventListener("disconnect", (event) => {
           if (this.current && event.device === this.current.device) {
@@ -447,13 +482,40 @@
       return Boolean(this.usb);
     }
 
-    async connectDevice(device) {
-      if (this.current) await this.current.disconnect();
-      const connection = new CrazylinkUsbDevice(device);
-      await connection.connect();
-      this.current = connection;
-      this.dispatchEvent(new CustomEvent("connected", { detail: connection }));
-      return connection;
+    connectDevice(device) {
+      if (this.current?.device === device && this.current.interface && device.opened) {
+        return Promise.resolve(this.current);
+      }
+      if (this.pendingDevice === device && this.pendingConnection) return this.pendingConnection;
+
+      const operation = this.connectionQueue.catch(() => undefined).then(async () => {
+        if (this.current?.device === device && this.current.interface && device.opened) return this.current;
+        if (this.current) {
+          const previous = this.current;
+          this.current = null;
+          await previous.disconnect();
+        }
+        const connection = new CrazylinkUsbDevice(device);
+        await connection.connect();
+        this.current = connection;
+        this.dispatchEvent(new CustomEvent("connected", { detail: connection }));
+        return connection;
+      });
+      this.connectionQueue = operation.catch(() => undefined);
+      this.pendingDevice = device;
+      this.pendingConnection = operation;
+      operation.then(() => {
+        if (this.pendingConnection === operation) {
+          this.pendingDevice = null;
+          this.pendingConnection = null;
+        }
+      }, () => {
+        if (this.pendingConnection === operation) {
+          this.pendingDevice = null;
+          this.pendingConnection = null;
+        }
+      });
+      return operation;
     }
 
     async connectAuthorized() {

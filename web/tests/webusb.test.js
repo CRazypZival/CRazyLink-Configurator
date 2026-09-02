@@ -2,7 +2,7 @@ const test = require("node:test");
 const assert = require("node:assert/strict");
 
 global.CRazyLink = require("../js/protocol.js");
-const { CrazylinkUsbDevice, findBulkInterface, describeBulkInterfaces } = require("../js/webusb.js");
+const { CrazylinkUsbDevice, CrazylinkUsbManager, findBulkInterface, describeBulkInterfaces } = require("../js/webusb.js");
 
 function endpoint(direction, endpointNumber) {
   return { direction, type: "bulk", endpointNumber };
@@ -93,6 +93,69 @@ test("connect remains available for local TX OTA when RX is offline", async () =
   assert.equal(info.role, 3);
   assert.equal(info.peerConnected, false);
   assert.equal(info.firmwareVersion, "1.1.0");
+});
+
+test("connect retries while Windows is changing the USB interface state", async () => {
+  const usbDevice = device([{
+    interfaceClass: 0xff,
+    interfaceName: "CMSIS-DAP v2",
+    alternateSetting: 0,
+    endpoints: [endpoint("out", 1), endpoint("in", 0x81)],
+  }]);
+  let claims = 0;
+  Object.assign(usbDevice, {
+    opened: true,
+    claimInterface: async () => {
+      claims += 1;
+      if (claims === 1) throw new DOMException("An operation that changes interface state is in progress", "InvalidStateError");
+    },
+  });
+  const connection = new CrazylinkUsbDevice(usbDevice);
+  connection.getLocalDeviceInfo = async () => ({ role: 3, firmwareVersion: "1.1.3", flashSize: 8 * 1024 * 1024, otaSupported: true });
+  connection.getDeviceInfo = async () => { throw new Error("RX offline"); };
+
+  await connection.connect();
+  assert.equal(claims, 2);
+});
+
+test("manager reuses one in-progress connection for the same USB device", async () => {
+  const usbDevice = device([{
+    interfaceClass: 0xff,
+    interfaceName: "CMSIS-DAP v2",
+    alternateSetting: 0,
+    endpoints: [endpoint("out", 1), endpoint("in", 0x81)],
+  }]);
+  let claims = 0;
+  let releaseClaim;
+  const claimGate = new Promise((resolve) => { releaseClaim = resolve; });
+  Object.assign(usbDevice, {
+    opened: true,
+    serialNumber: "WIN123",
+    claimInterface: async () => {
+      claims += 1;
+      await claimGate;
+    },
+  });
+  const manager = new CrazylinkUsbManager({ addEventListener: () => {} });
+  const originalConnect = CrazylinkUsbDevice.prototype.connect;
+  CrazylinkUsbDevice.prototype.connect = async function () {
+    await this.device.claimInterface(0);
+    this.interface = { interfaceNumber: 0, inputEndpoint: 1, outputEndpoint: 1 };
+    this.localInfo = { role: 3, firmwareVersion: "1.1.3", flashSize: 8 * 1024 * 1024, otaSupported: true };
+    this.info = { role: 3, firmwareVersion: "1.1.3" };
+    return this.info;
+  };
+
+  try {
+    const first = manager.connectDevice(usbDevice);
+    const second = manager.connectDevice(usbDevice);
+    releaseClaim();
+    const [firstConnection, secondConnection] = await Promise.all([first, second]);
+    assert.equal(firstConnection, secondConnection);
+    assert.equal(claims, 1);
+  } finally {
+    CrazylinkUsbDevice.prototype.connect = originalConnect;
+  }
 });
 
 test("USB OTA always targets the unified CRazyLink firmware", async () => {
