@@ -1,5 +1,12 @@
 [
   {
+    "tag": "v1.1.4",
+    "prerelease": false,
+    "publishedAt": "2026-09-02T08:40:54.095Z",
+    "manifestUrl": "releases/v1.1.4/manifest.json",
+    "packageUrl": "releases/v1.1.4/CRazyLink_v1.1.4.crl"
+  },
+  {
     "tag": "v1.1.3",
     "prerelease": false,
     "publishedAt": "2026-09-02T07:03:31.709Z",
