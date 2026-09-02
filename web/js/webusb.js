@@ -15,6 +15,8 @@
   const FlashState = Object.freeze({ IDLE: 0, READY: 1, FLASHING: 2, SUCCESS: 3, ERROR: 4, CANCELLED: 5 });
   const OTA_BATCH_SIZE = 4;
   const USB_STATE_RETRY_DELAYS_MS = Object.freeze([50, 100, 200, 400, 800, 1200]);
+  const USB_TRANSFER_RETRY_DELAYS_MS = Object.freeze([20, 50, 100, 200, 400, 800]);
+  const USB_CONNECT_TIMEOUT_MS = 15000;
 
   function withTimeout(promise, timeoutMs, label) {
     let timer;
@@ -37,6 +39,52 @@
       } catch (error) {
         if (!isUsbStateBusy(error) || attempt >= USB_STATE_RETRY_DELAYS_MS.length) throw error;
         await new Promise((resolve) => setTimeout(resolve, USB_STATE_RETRY_DELAYS_MS[attempt]));
+      }
+    }
+  }
+
+  function isTransientTransferError(error) {
+    return /stall|babble|transfer.*(pending|error)|device.*busy|networkerror/i.test(error?.message || "");
+  }
+
+  function transferStatusError(direction, endpoint, status) {
+    const error = new Error(`WebUSB ${direction}端点 ${endpoint} 传输失败（状态: ${status || "unknown"}）`);
+    error.status = status || "unknown";
+    return error;
+  }
+
+  async function recoverTransfer(device, direction, endpoint, deadline, attempt) {
+    const remaining = deadline - Date.now();
+    if (remaining <= 0) throw new Error("等待设备响应超时");
+    const delay = USB_TRANSFER_RETRY_DELAYS_MS[Math.min(attempt, USB_TRANSFER_RETRY_DELAYS_MS.length - 1)];
+    if (direction === "in" && typeof device.clearHalt === "function") {
+      try { await withTimeout(device.clearHalt("in", endpoint), Math.min(1000, remaining), "清除 USB 端点错误"); } catch (_) {}
+    }
+    await new Promise((resolve) => setTimeout(resolve, Math.min(delay, Math.max(0, deadline - Date.now()))));
+  }
+
+  async function transferInWithRecovery(device, endpoint, deadline) {
+    let attempts = 0;
+    while (true) {
+      const remaining = deadline - Date.now();
+      if (remaining <= 0) throw new Error("等待设备响应超时");
+      try {
+        const result = await withTimeout(
+          device.transferIn(endpoint, protocol.WEBUSB_PACKET_SIZE),
+          remaining,
+          "等待设备响应",
+        );
+        if (result?.status === "ok" && result.data) return result;
+        if (!result || !["stall", "babble"].includes(result.status) ||
+            attempts >= USB_TRANSFER_RETRY_DELAYS_MS.length) {
+          throw transferStatusError("IN", endpoint, result?.status);
+        }
+        await recoverTransfer(device, "in", endpoint, deadline, attempts);
+        attempts += 1;
+      } catch (error) {
+        if (!isTransientTransferError(error) || attempts >= USB_TRANSFER_RETRY_DELAYS_MS.length) throw error;
+        await recoverTransfer(device, "in", endpoint, deadline, attempts);
+        attempts += 1;
       }
     }
   }
@@ -221,28 +269,26 @@
       }
       const timeoutMs = options.timeoutMs || 2500;
       const deadline = Date.now() + timeoutMs;
-      let inResult;
-      do {
+      let lastMismatch = false;
+      while (Date.now() < deadline) {
         const remaining = deadline - Date.now();
         if (remaining <= 0) throw new Error("等待设备响应超时");
-        inResult = await withTimeout(
-          this.device.transferIn(this.interface.inputEndpoint, protocol.WEBUSB_PACKET_SIZE),
-          remaining,
-          "等待设备响应",
-        );
-        if (inResult.status !== "ok" || !inResult.data) throw new Error("WebUSB 响应读取失败");
-      } while (inResult.data.byteLength === 0);
-      const response = protocol.decodePacket(new Uint8Array(
-        inResult.data.buffer,
-        inResult.data.byteOffset,
-        inResult.data.byteLength,
-      ));
-      if (response.sequence !== sequence || response.opcode !== opcode ||
-          !(response.flags & protocol.WebPacketFlag.RESPONSE)) {
-        throw new Error("WebUSB 响应与请求不匹配");
+        const inResult = await transferInWithRecovery(this.device, this.interface.inputEndpoint, deadline);
+        if (inResult.data.byteLength === 0) continue;
+        const response = protocol.decodePacket(new Uint8Array(
+          inResult.data.buffer,
+          inResult.data.byteOffset,
+          inResult.data.byteLength,
+        ));
+        if (response.sequence !== sequence || response.opcode !== opcode ||
+            !(response.flags & protocol.WebPacketFlag.RESPONSE)) {
+          lastMismatch = true;
+          continue;
+        }
+        if (response.flags & protocol.WebPacketFlag.ERROR) throw decodeError(response);
+        return response;
       }
-      if (response.flags & protocol.WebPacketFlag.ERROR) throw decodeError(response);
-      return response;
+      throw new Error(lastMismatch ? "WebUSB 响应与请求不匹配" : "等待设备响应超时");
     }
 
     async performRequestBatch(opcode, optionsList) {
@@ -281,26 +327,27 @@
       for (const request of requests) {
         const timeoutMs = request.options.timeoutMs || 2500;
         const deadline = Date.now() + timeoutMs;
-        let inResult;
-        do {
+        let response = null;
+        let lastMismatch = false;
+        while (Date.now() < deadline) {
           const remaining = deadline - Date.now();
           if (remaining <= 0) throw new Error("等待设备响应超时");
-          inResult = await withTimeout(
-            this.device.transferIn(this.interface.inputEndpoint, protocol.WEBUSB_PACKET_SIZE),
-            remaining,
-            "等待设备响应",
-          );
-          if (inResult.status !== "ok" || !inResult.data) throw new Error("WebUSB 响应读取失败");
-        } while (inResult.data.byteLength === 0);
-        const response = protocol.decodePacket(new Uint8Array(
-          inResult.data.buffer,
-          inResult.data.byteOffset,
-          inResult.data.byteLength,
-        ));
-        if (response.sequence !== request.sequence || response.opcode !== opcode ||
-            !(response.flags & protocol.WebPacketFlag.RESPONSE)) {
-          throw new Error("WebUSB 响应与请求不匹配");
+          const inResult = await transferInWithRecovery(this.device, this.interface.inputEndpoint, deadline);
+          if (inResult.data.byteLength === 0) continue;
+          response = protocol.decodePacket(new Uint8Array(
+            inResult.data.buffer,
+            inResult.data.byteOffset,
+            inResult.data.byteLength,
+          ));
+          if (response.sequence !== request.sequence || response.opcode !== opcode ||
+              !(response.flags & protocol.WebPacketFlag.RESPONSE)) {
+            lastMismatch = true;
+            response = null;
+            continue;
+          }
+          break;
         }
+        if (!response) throw new Error(lastMismatch ? "WebUSB 响应与请求不匹配" : "等待设备响应超时");
         if (response.flags & protocol.WebPacketFlag.ERROR) throw decodeError(response);
         responses.push(response);
       }
@@ -472,9 +519,12 @@
   }
 
   class CrazylinkUsbManager extends EventTarget {
-    constructor(usb) {
+    constructor(usb, options) {
+      const settings = options || {};
       super();
       this.usb = usb || (typeof navigator !== "undefined" ? navigator.usb : null);
+      this.connectTimeoutMs = settings.connectTimeoutMs || USB_CONNECT_TIMEOUT_MS;
+      this.requestDeviceTimeoutMs = settings.requestDeviceTimeoutMs || USB_CONNECT_TIMEOUT_MS * 2;
       this.current = null;
       this.connectionQueue = Promise.resolve();
       this.pendingDevice = null;
@@ -507,7 +557,12 @@
           await previous.disconnect();
         }
         const connection = new CrazylinkUsbDevice(device);
-        await connection.connect();
+        try {
+          await withTimeout(connection.connect(), this.connectTimeoutMs, "连接设备");
+        } catch (error) {
+          try { await connection.disconnect(); } catch (_) {}
+          throw error;
+        }
         this.current = connection;
         this.dispatchEvent(new CustomEvent("connected", { detail: connection }));
         return connection;
@@ -538,7 +593,11 @@
 
     async requestDevice() {
       if (!this.usb) throw new Error("当前浏览器不支持 WebUSB，请使用最新版 Chrome 或 Edge");
-      const device = await this.usb.requestDevice({ filters: [{ vendorId: VID, productId: PID }] });
+      const device = await withTimeout(
+        this.usb.requestDevice({ filters: [{ vendorId: VID, productId: PID }] }),
+        this.requestDeviceTimeoutMs,
+        "等待设备授权",
+      );
       return this.connectDevice(device);
     }
   }

@@ -902,11 +902,13 @@
   async function selectUpgradeUsb() {
     $("#upgradeDeviceDialog").close();
     try {
+      setConnection("busy", "等待设备授权…");
       setUpgradeStatus("等待 CRazyLink USB 授权", "busy");
       const connection = state.device || await app.manager.requestDevice();
       await adoptUpgradeUsbDevice(connection);
       toast("CRazyLink USB 已连接", "success");
     } catch (error) {
+      setConnection("error", error.message || "设备连接失败");
       setUpgradeStatus(error.message || "CRazyLink USB 连接失败", "error");
       toast(error.message || "CRazyLink USB 连接失败", "error");
     }
@@ -917,6 +919,7 @@
     let selectedPort = null;
     try {
       if (!app.espFlasher?.supported) throw new Error("当前浏览器不支持 Web Serial 或 ESP32-S3 烧录组件未加载");
+      setConnection("busy", "等待设备授权…");
       setUpgradeStatus("等待串口设备授权", "busy");
       selectedPort = await app.espFlasher.requestPort();
       setUpgradeStatus("正在检测 ESP32-S3 Download Mode", "busy");
@@ -941,6 +944,7 @@
         toast(unsupported ? "仅支持 CRazyLink 或 ESP32-S3 开发板" : "Download Mode 未检测到 · 请先进入下载模式", "error");
         return;
       }
+      setConnection("error", error.message || "串口设备选择失败");
       setUpgradeStatus(error.message || "串口设备选择失败", "error");
       toast(error.message || "串口设备选择失败", "error");
     }
@@ -949,10 +953,12 @@
   async function selectUpgradeAutomatically() {
     if (state.upgrade.flashing) return;
     if (state.device && state.upgrade.transport === "usb") {
+      setConnection("connected", "设备已连接");
       setUpgradeStatus("已识别 CRazyLink 设备", "success");
       updateUpgradeUi();
       return;
     }
+    setConnection("busy", "等待设备授权…");
     setUpgradeStatus("正在自动识别升级设备", "busy");
 
     if (app.manager?.supported) {
@@ -979,6 +985,7 @@
 
     try {
       if (app.manager?.supported) {
+        setConnection("busy", "等待设备授权…");
         setUpgradeStatus("等待 CRazyLink USB 授权", "busy");
         const connection = await app.manager.requestDevice();
         await adoptUpgradeUsbDevice(connection);
@@ -993,6 +1000,7 @@
 
     try {
       if (!app.espFlasher?.supported) throw new Error("当前浏览器不支持 Web Serial 或 ESP32-S3 烧录组件未加载");
+      setConnection("busy", "等待设备授权…");
       setUpgradeStatus("等待串口设备授权", "busy");
       const selectedPort = await app.espFlasher.requestPort();
       setUpgradeStatus("正在检测 ESP32-S3 Download Mode", "busy");
@@ -1000,6 +1008,7 @@
       await adoptUpgradeSerialDevice(selectedPort, detected);
       toast(`已自动识别 ${api.describeSerialPort(selectedPort)}`, "success");
     } catch (error) {
+      setConnection("error", error?.name === "NotFoundError" ? "未选择设备" : (error.message || "设备识别失败"));
       setUpgradeStatus(error?.name === "NotFoundError" ? "请插入设备或允许设备权限" : (error.message || "升级设备识别失败"), "warning");
       updateUpgradeUi();
     }

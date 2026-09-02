@@ -276,6 +276,48 @@ test("request ignores TinyUSB zero-length packets", async () => {
   assert.deepEqual([...packet.data], [1, 1, 1, 0, 8, 1]);
 });
 
+test("request recovers a stalled WebUSB IN endpoint", async () => {
+  const response = global.CRazyLink.encodePacket({
+    opcode: global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO,
+    flags: global.CRazyLink.WebPacketFlag.RESPONSE,
+    sequence: 1,
+    data: Uint8Array.of(3, 1, 1, 4, 16, 1),
+  });
+  let reads = 0;
+  const clearHaltCalls = [];
+  const connection = new CrazylinkUsbDevice({
+    opened: true,
+    transferOut: async (_, data) => ({ status: "ok", bytesWritten: data.byteLength }),
+    transferIn: async () => {
+      reads += 1;
+      if (reads === 1) return { status: "stall", data: null };
+      return { status: "ok", data: new DataView(response.buffer) };
+    },
+    clearHalt: async (direction, endpoint) => { clearHaltCalls.push({ direction, endpoint }); },
+  });
+  connection.interface = { inputEndpoint: 0x81, outputEndpoint: 1 };
+  const packet = await connection.request(global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO);
+  assert.equal(packet.data[0], 3);
+  assert.deepEqual(clearHaltCalls, [{ direction: "in", endpoint: 0x81 }]);
+  assert.equal(reads, 2);
+});
+
+test("manager times out a stuck Windows connection", async () => {
+  const usbDevice = { serialNumber: "STUCK" };
+  const manager = new CrazylinkUsbManager({
+    addEventListener: () => {},
+    getDevices: async () => [],
+  }, { connectTimeoutMs: 20 });
+  const originalConnect = CrazylinkUsbDevice.prototype.connect;
+  CrazylinkUsbDevice.prototype.connect = () => new Promise(() => {});
+  try {
+    await assert.rejects(() => manager.connectDevice(usbDevice), /连接设备超时/);
+    assert.equal(manager.pendingConnection, null);
+  } finally {
+    CrazylinkUsbDevice.prototype.connect = originalConnect;
+  }
+});
+
 test("flash reset option is encoded for the RX job", async () => {
   const connection = new CrazylinkUsbDevice({});
   const requests = [];
