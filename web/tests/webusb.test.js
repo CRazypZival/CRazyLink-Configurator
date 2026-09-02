@@ -302,6 +302,30 @@ test("request recovers a stalled WebUSB IN endpoint", async () => {
   assert.equal(reads, 2);
 });
 
+test("request retries a transient Windows interface-state error", async () => {
+  const response = global.CRazyLink.encodePacket({
+    opcode: global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO,
+    flags: global.CRazyLink.WebPacketFlag.RESPONSE,
+    sequence: 1,
+    data: Uint8Array.of(3, 1, 1, 4, 16, 1),
+  });
+  let reads = 0;
+  const connection = new CrazylinkUsbDevice({
+    opened: true,
+    transferOut: async (_, data) => ({ status: "ok", bytesWritten: data.byteLength }),
+    transferIn: async () => {
+      reads += 1;
+      if (reads === 1) throw new DOMException("An operation that changes interface state is in progress", "InvalidStateError");
+      return { status: "ok", data: new DataView(response.buffer) };
+    },
+    clearHalt: async () => {},
+  });
+  connection.interface = { inputEndpoint: 1, outputEndpoint: 1 };
+  const packet = await connection.request(global.CRazyLink.WebOpcode.LOCAL_DEVICE_INFO);
+  assert.equal(packet.data[0], 3);
+  assert.equal(reads, 2);
+});
+
 test("manager times out a stuck Windows connection", async () => {
   const usbDevice = { serialNumber: "STUCK" };
   const manager = new CrazylinkUsbManager({

@@ -44,7 +44,7 @@
   }
 
   function isTransientTransferError(error) {
-    return /stall|babble|transfer.*(pending|error)|device.*busy|networkerror/i.test(error?.message || "");
+    return /stall|babble|transfer.*(pending|error)|device.*busy|networkerror|operation that changes interface state/i.test(error?.message || "");
   }
 
   function transferStatusError(direction, endpoint, status) {
