@@ -14,6 +14,7 @@
     files: [],
     device: null,
     info: null,
+    connecting: false,
     flashing: false,
     serialOpen: false,
     pollTimer: null,
@@ -160,6 +161,8 @@
         ? "重试连接"
         : (connected || upgradeConnected ? "重新选择" : "重新连接");
     $("#connectButton").querySelector("span").textContent = reconnectLabel;
+    $("#connectButton").disabled = state.connecting || state.flashing || state.upgrade.flashing;
+    $("#mobileConnectButton").disabled = state.connecting || state.flashing || state.upgrade.flashing;
     $("#mobileConnectButton").setAttribute("aria-label", reconnectLabel);
     $("#mobileConnectButton").setAttribute("title", reconnectLabel);
     $("#flashButton").disabled = !connected || !targetSupported || state.files.length === 0 || state.flashing;
@@ -350,38 +353,73 @@
   }
 
   async function connectDevice() {
-    if (state.device) {
-      await disconnectDevice();
-    }
+    if (state.connecting) return;
     if (!api.CrazylinkUsbManager) {
       toast("浏览器不支持 WebUSB，请使用最新版 Chrome 或 Edge", "error");
       return;
     }
+    state.connecting = true;
+    updateButtons();
+    const manager = app.manager;
+    const previousConnection = state.device;
+    let selectedDevice;
     try {
       setConnection("busy", "等待设备授权…");
-      const manager = app.manager;
-      const device = await manager.requestDevice();
-      state.device = device;
-      updateDeviceInfo(device.info || await device.getDeviceInfo());
-      await adoptUpgradeUsbDevice(device);
+      selectedDevice = await manager.selectDevice();
+    } catch (error) {
+      const cancelled = error?.name === "NotFoundError";
+      if (previousConnection) {
+        setConnection("connected", "设备已连接");
+      } else {
+        setConnection(cancelled ? "disconnected" : "error", cancelled ? "未连接设备" : (error.message || "设备授权失败"));
+      }
+      if (!cancelled) toast(error.message || "设备授权失败", "error");
+      state.connecting = false;
+      updateButtons();
+      return;
+    }
+
+    let connection = null;
+    try {
+      if (previousConnection && !api.sameUsbDevice(previousConnection.device, selectedDevice)) {
+        setConnection("busy", "正在关闭原设备…");
+        await disconnectDevice();
+      }
+      setConnection("busy", "正在连接 CRazyLink…");
+      connection = await manager.connectDevice(selectedDevice);
+      state.device = connection;
+      updateDeviceInfo(connection.info || await connection.getDeviceInfo());
+      await adoptUpgradeUsbDevice(connection);
       setConnection("connected", "设备已连接");
       logFlash("已连接 CRazyLink 功能接口。", "success");
       toast("设备连接成功", "success");
     } catch (error) {
+      if (connection) await releaseUsbConnection(connection);
       state.device = null;
       updateDeviceInfo(null);
       setConnection("error", error.message || "设备连接失败");
       toast(error.message || "设备连接失败", "error");
+    } finally {
+      state.connecting = false;
     }
     updateButtons();
+  }
+
+  async function releaseUsbConnection(connection) {
+    if (!connection) return;
+    try {
+      if (app.manager?.disconnectDevice) await app.manager.disconnectDevice(connection);
+      else await connection.disconnect();
+    } catch (_) {}
   }
 
   async function disconnectDevice() {
     stopSerialPolling();
     stopSerialRuntime();
-    if (state.device) {
-      try { if (state.serialOpen) await state.device.closeUart(); } catch (_) {}
-      try { await state.device.disconnect(); } catch (_) {}
+    const connection = state.device || state.upgrade.usbDevice;
+    if (connection) {
+      try { if (state.serialOpen) await connection.closeUart(); } catch (_) {}
+      await releaseUsbConnection(connection);
     }
     state.device = null;
     state.info = null;
@@ -900,21 +938,51 @@
   }
 
   async function selectUpgradeUsb() {
+    if (state.connecting) return;
+    state.connecting = true;
+    updateButtons();
     $("#upgradeDeviceDialog").close();
+    let connection = null;
     try {
       setConnection("busy", "等待设备授权…");
       setUpgradeStatus("等待 CRazyLink USB 授权", "busy");
-      const connection = state.device || await app.manager.requestDevice();
+      connection = state.device;
+      if (!connection) {
+        const selectedDevice = await app.manager.selectDevice();
+        setConnection("busy", "正在连接 CRazyLink…");
+        setUpgradeStatus("正在打开 CRazyLink USB 功能接口", "busy");
+        connection = await app.manager.connectDevice(selectedDevice);
+      }
       await adoptUpgradeUsbDevice(connection);
       toast("CRazyLink USB 已连接", "success");
     } catch (error) {
+      // Adoption can fail after the interface is claimed (for example when an
+      // older firmware has no OTA support). Release that connection before a
+      // retry so Chrome/Windows does not retain a stale interface claim.
+      if (connection) await releaseUsbConnection(connection);
+      state.device = null;
+      state.info = null;
+      state.upgrade.transport = null;
+      state.upgrade.usbDevice = null;
+      state.upgrade.localInfo = null;
+      state.upgrade.serialPort = null;
+      state.upgrade.serialProbeState = "idle";
+      state.upgrade.deviceLabel = "";
+      updateDeviceInfo(null);
       setConnection("error", error.message || "设备连接失败");
       setUpgradeStatus(error.message || "CRazyLink USB 连接失败", "error");
       toast(error.message || "CRazyLink USB 连接失败", "error");
+      updateUpgradeUi();
+    } finally {
+      state.connecting = false;
+      updateButtons();
     }
   }
 
   async function selectUpgradeSerial() {
+    if (state.connecting || state.upgrade.flashing) return;
+    state.connecting = true;
+    updateButtons();
     $("#upgradeDeviceDialog").close();
     let selectedPort = null;
     try {
@@ -947,6 +1015,9 @@
       setConnection("error", error.message || "串口设备选择失败");
       setUpgradeStatus(error.message || "串口设备选择失败", "error");
       toast(error.message || "串口设备选择失败", "error");
+    } finally {
+      state.connecting = false;
+      updateButtons();
     }
   }
 
@@ -1087,7 +1158,7 @@
   }
 
   async function chooseUpgradeConnection() {
-    if (state.upgrade.flashing) return;
+    if (state.connecting || state.upgrade.flashing) return;
     if (state.upgrade.transport || state.device || state.upgrade.serialPort) await disconnectDevice();
     const dialog = $("#upgradeDeviceDialog");
     if (!dialog.open) dialog.showModal();
@@ -1236,16 +1307,6 @@
         }
         if (state.device) disconnectDevice();
       });
-      try {
-        const authorized = await app.manager.connectAuthorized();
-        if (authorized) {
-          state.device = authorized;
-          updateDeviceInfo(authorized.info || await authorized.getDeviceInfo());
-          setConnection("connected", "设备已连接");
-          await adoptUpgradeUsbDevice(authorized);
-          updateButtons();
-        }
-      } catch (error) { setConnection("error", "设备授权已失效"); }
     }
   }
 

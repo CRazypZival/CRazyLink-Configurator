@@ -81,3 +81,22 @@ test("upgrade flow has connection prompts and exclusive disclosure styling", () 
   assert.match(css, /\.runtime-mode-card\[data-expanded="true"\] \.runtime-mode-disclosure \{[^}]*padding: 16px 16px 12px/);
   assert.match(css, /\.upgrade-prompt-card \{[^}]*min-height: 32px/);
 });
+
+test("WebUSB authorization and connection have one explicit lifecycle", () => {
+  assert.match(app, /selectedDevice = await (?:app\.)?manager\.selectDevice\(\)/);
+  assert.match(app, /setConnection\("busy", "正在连接 CRazyLink…"\)/);
+  assert.match(app, /connection = await manager\.connectDevice\(selectedDevice\)/);
+  assert.match(app, /if \(state\.connecting\) return/);
+  assert.match(app, /if \(connection\) await releaseUsbConnection\(connection\)/);
+  assert.match(app, /async function selectUpgradeSerial\(\)[\s\S]*?state\.connecting = true/);
+  const bootSource = app.slice(app.indexOf("async function boot()"), app.indexOf("window.CRazyLinkApp"));
+  assert.doesNotMatch(bootSource, /connectAuthorized\(\)/);
+});
+
+test("Configurator version is consistent across source metadata and sidebar", () => {
+  const packageJson = JSON.parse(fs.readFileSync(path.join(webRoot, "package.json"), "utf8"));
+  const packageLock = JSON.parse(fs.readFileSync(path.join(webRoot, "package-lock.json"), "utf8"));
+  assert.equal(packageLock.version, packageJson.version);
+  assert.equal(packageLock.packages[""].version, packageJson.version);
+  assert.match(html, new RegExp(`class="app-version">v${packageJson.version} \\u00b7`));
+});

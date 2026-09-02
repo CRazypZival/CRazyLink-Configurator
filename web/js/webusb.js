@@ -17,13 +17,35 @@
   const USB_STATE_RETRY_DELAYS_MS = Object.freeze([50, 100, 200, 400, 800, 1200]);
   const USB_TRANSFER_RETRY_DELAYS_MS = Object.freeze([20, 50, 100, 200, 400, 800]);
   const USB_CONNECT_TIMEOUT_MS = 15000;
+  const USB_TIMEOUT_CODE = "USB_OPERATION_TIMEOUT";
+  const USB_DISCONNECTED_CODE = "USB_DEVICE_DISCONNECTED";
+  const WEB_ERROR_LINK = 8;
+
+  function operationError(message, code) {
+    const error = new Error(message);
+    error.code = code;
+    return error;
+  }
+
+  function timeoutError(label) {
+    const value = typeof label === "function" ? label() : label;
+    return operationError(`${value}超时`, USB_TIMEOUT_CODE);
+  }
+
+  function disconnectedError() {
+    return operationError("CRazyLink USB 已断开", USB_DISCONNECTED_CODE);
+  }
+
+  function isTimeoutError(error) {
+    return error?.code === USB_TIMEOUT_CODE;
+  }
 
   function withTimeout(promise, timeoutMs, label) {
     let timer;
     return Promise.race([
       promise,
       new Promise((_, reject) => {
-        timer = setTimeout(() => reject(new Error(`${label}超时`)), timeoutMs);
+        timer = setTimeout(() => reject(timeoutError(label)), timeoutMs);
       }),
     ]).finally(() => clearTimeout(timer));
   }
@@ -58,7 +80,7 @@
     if (remaining <= 0) throw new Error("等待设备响应超时");
     const delay = USB_TRANSFER_RETRY_DELAYS_MS[Math.min(attempt, USB_TRANSFER_RETRY_DELAYS_MS.length - 1)];
     if (direction === "in" && typeof device.clearHalt === "function") {
-      try { await withTimeout(device.clearHalt("in", endpoint), Math.min(1000, remaining), "清除 USB 端点错误"); } catch (_) {}
+      try { await device.clearHalt("in", endpoint); } catch (_) {}
     }
     await new Promise((resolve) => setTimeout(resolve, Math.min(delay, Math.max(0, deadline - Date.now()))));
   }
@@ -69,11 +91,7 @@
       const remaining = deadline - Date.now();
       if (remaining <= 0) throw new Error("等待设备响应超时");
       try {
-        const result = await withTimeout(
-          device.transferIn(endpoint, protocol.WEBUSB_PACKET_SIZE),
-          remaining,
-          "等待设备响应",
-        );
+        const result = await device.transferIn(endpoint, protocol.WEBUSB_PACKET_SIZE);
         if (result?.status === "ok" && result.data) return result;
         if (!result || !["stall", "babble"].includes(result.status) ||
             attempts >= USB_TRANSFER_RETRY_DELAYS_MS.length) {
@@ -139,12 +157,23 @@
     return interfaces.length ? interfaces.join("; ") : "未发现 Bulk 端点";
   }
 
+  function sameUsbDevice(left, right) {
+    if (left === right) return true;
+    if (!left || !right || !left.serialNumber || !right.serialNumber) return false;
+    return left.vendorId === right.vendorId && left.productId === right.productId &&
+      left.serialNumber === right.serialNumber;
+  }
+
   function decodeError(packet) {
     const code = packet.data[0] || 1;
     const message = packet.data.length > 1 ? textDecoder.decode(packet.data.slice(1)) : "设备拒绝了请求";
     const error = new Error(message || `设备错误 ${code}`);
     error.code = code;
     return error;
+  }
+
+  function isPeerLinkError(error) {
+    return Number(error?.code) === WEB_ERROR_LINK;
   }
 
   class CrazylinkUsbDevice extends EventTarget {
@@ -156,34 +185,175 @@
       this.queue = Promise.resolve();
       this.info = null;
       this.localInfo = null;
+      this.cancelled = false;
+      this.cancelReason = null;
+      this.connectStage = "idle";
+      this.operationStage = "idle";
+      this.closing = false;
+      this.disconnected = false;
+      this.quarantined = false;
+      this.disconnectPromise = null;
+      this.resolveDetached = null;
+      this.detached = new Promise((resolve) => { this.resolveDetached = resolve; });
     }
 
     get serialNumber() {
       return this.device.serialNumber || "CRAZYLINK";
     }
 
+    cancelConnect(reason) {
+      this.cancelled = true;
+      this.cancelReason = reason || new Error("连接已取消");
+    }
+
+    markDisconnected(reason) {
+      if (this.disconnected) return;
+      const error = reason || disconnectedError();
+      this.disconnected = true;
+      this.closing = true;
+      this.cancelConnect(error);
+      this.interface = null;
+      this.info = null;
+      this.localInfo = null;
+      if (this.resolveDetached) {
+        this.resolveDetached(error);
+        this.resolveDetached = null;
+      }
+    }
+
+    assertConnectActive() {
+      if (this.cancelled) throw this.cancelReason || new Error("连接已取消");
+    }
+
+    async awaitConnectOperation(operation) {
+      const usbOperation = Promise.resolve().then(operation);
+      const detached = this.detached.then((error) => Promise.reject(error));
+      return Promise.race([usbOperation, detached]);
+    }
+
+    async waitForIoOrDetach() {
+      await Promise.race([
+        this.queue.catch(() => undefined),
+        this.detached,
+      ]);
+    }
+
+    async cleanupUsb(claimed) {
+      this.closing = true;
+      await this.waitForIoOrDetach();
+      if (!this.disconnected) {
+        if (claimed && this.device.opened && this.interface) {
+          try { await releaseInterfaceWithRetry(this.device, this.interface.interfaceNumber); } catch (_) {}
+        }
+        if (this.device.opened) {
+          try { await closeDeviceWithRetry(this.device); } catch (_) {}
+        }
+      }
+      this.interface = null;
+      this.info = null;
+      this.localInfo = null;
+      this.connectStage = "idle";
+      this.operationStage = "idle";
+    }
+
+    enqueueOperation(operation, timeoutMs, label) {
+      if (this.disconnected) return Promise.reject(disconnectedError());
+      if (this.closing) return Promise.reject(new Error("CRazyLink 正在断开连接"));
+      if (this.quarantined) {
+        return Promise.reject(new Error("上一次 WebUSB 传输仍在等待浏览器收敛，请重新插拔设备"));
+      }
+
+      let publicSettled = false;
+      let timedOut = false;
+      let resolvePublic;
+      let rejectPublic;
+      const publicResult = new Promise((resolve, reject) => {
+        resolvePublic = resolve;
+        rejectPublic = reject;
+      });
+      const previous = this.queue.catch(() => undefined);
+      const settlement = previous.then(async () => {
+        let timer;
+        try {
+          if (this.disconnected) throw disconnectedError();
+          if (this.closing) throw new Error("CRazyLink 正在断开连接");
+          timer = setTimeout(() => {
+            timedOut = true;
+            this.quarantined = true;
+            if (!publicSettled) {
+              publicSettled = true;
+              rejectPublic(timeoutError(label));
+            }
+          }, timeoutMs);
+          const value = await operation();
+          if (!publicSettled) {
+            publicSettled = true;
+            resolvePublic(value);
+          }
+          return value;
+        } catch (error) {
+          if (!publicSettled) {
+            publicSettled = true;
+            rejectPublic(error);
+          }
+          throw error;
+        } finally {
+          clearTimeout(timer);
+          if (timedOut) this.quarantined = false;
+          this.operationStage = "idle";
+        }
+      });
+      this.queue = settlement.catch(() => undefined);
+      const detachedResult = this.detached.then((error) => Promise.reject(error));
+      return Promise.race([publicResult, detachedResult]);
+    }
+
     async connect() {
       let claimed = false;
+      this.cancelled = false;
+      this.cancelReason = null;
+      this.closing = false;
       try {
-        if (!this.device.opened) await openDeviceWithRetry(this.device);
-        if (!this.device.configuration) await selectConfigurationWithRetry(this.device, 1);
+        this.connectStage = "打开 USB 设备";
+        if (!this.device.opened) {
+          await this.awaitConnectOperation(() => openDeviceWithRetry(this.device));
+        }
+        this.assertConnectActive();
+        this.connectStage = "选择 USB 配置";
+        if (!this.device.configuration) {
+          await this.awaitConnectOperation(() => selectConfigurationWithRetry(this.device, 1));
+        }
+        this.assertConnectActive();
+        this.connectStage = "查找 CMSIS-DAP 接口";
         this.interface = findBulkInterface(this.device);
         if (!this.interface) {
           throw new Error(`未找到 CRazyLink CMSIS-DAP v2 Bulk 接口（${describeBulkInterfaces(this.device)}）`);
         }
-        await claimInterfaceWithRetry(this.device, this.interface.interfaceNumber);
+        this.connectStage = "打开 CMSIS-DAP 接口";
+        await this.awaitConnectOperation(
+          () => claimInterfaceWithRetry(this.device, this.interface.interfaceNumber),
+        );
         claimed = true;
+        this.assertConnectActive();
         if (this.interface.alternateSetting) {
-          await selectAlternateInterfaceWithRetry(
-            this.device,
-            this.interface.interfaceNumber,
-            this.interface.alternateSetting,
+          this.connectStage = "选择 CMSIS-DAP 接口模式";
+          await this.awaitConnectOperation(
+            () => selectAlternateInterfaceWithRetry(
+              this.device,
+              this.interface.interfaceNumber,
+              this.interface.alternateSetting,
+            ),
           );
+          this.assertConnectActive();
         }
+        this.connectStage = "读取本机设备信息";
         this.localInfo = await this.getLocalDeviceInfo();
+        this.assertConnectActive();
+        this.connectStage = "读取运行状态";
         try {
           this.info = await this.getDeviceInfo();
-        } catch (_) {
+        } catch (error) {
+          if (!isPeerLinkError(error)) throw error;
           this.info = {
             role: this.localInfo.role,
             mode: Number.isInteger(this.localInfo.mode)
@@ -205,51 +375,56 @@
             serialNumber: this.serialNumber,
           };
         }
+        this.assertConnectActive();
+        this.connectStage = "connected";
         this.dispatchEvent(new CustomEvent("connected", { detail: this.info }));
         return this.info;
       } catch (error) {
-        if (claimed && this.device.opened && this.interface) {
-          try { await releaseInterfaceWithRetry(this.device, this.interface.interfaceNumber); } catch (_) {}
-        }
-        if (this.device.opened) {
-          try { await closeDeviceWithRetry(this.device); } catch (_) {}
-        }
-        this.interface = null;
-        this.info = null;
-        this.localInfo = null;
+        await this.cleanupUsb(claimed);
         throw error;
       }
     }
 
     async disconnect() {
-      if (this.device.opened && this.interface) {
-        try { await releaseInterfaceWithRetry(this.device, this.interface.interfaceNumber); } catch (_) {}
+      if (this.disconnectPromise) return this.disconnectPromise;
+      this.cancelConnect(new Error("连接已取消"));
+      const claimed = Boolean(this.interface);
+      this.disconnectPromise = (async () => {
+        await this.cleanupUsb(claimed);
+        this.dispatchEvent(new Event("disconnected"));
+      })();
+      try {
+        await this.disconnectPromise;
+      } finally {
+        this.disconnectPromise = null;
       }
-      if (this.device.opened) await closeDeviceWithRetry(this.device);
-      this.interface = null;
-      this.info = null;
-      this.localInfo = null;
-      this.dispatchEvent(new Event("disconnected"));
     }
 
     request(opcode, options) {
       const settings = options || {};
-      const operation = () => this.performRequest(opcode, settings);
-      const pending = this.queue.catch(() => undefined).then(operation);
-      this.queue = pending;
-      return pending;
+      return this.enqueueOperation(
+        () => this.performRequest(opcode, settings),
+        settings.timeoutMs || 2500,
+        () => this.operationStage === "idle" ? "WebUSB 请求" : this.operationStage,
+      );
     }
 
     requestBatch(opcode, optionsList) {
       const settingsList = Array.isArray(optionsList) ? optionsList.map((options) => options || {}) : [];
-      const operation = () => this.performRequestBatch(opcode, settingsList);
-      const pending = this.queue.catch(() => undefined).then(operation);
-      this.queue = pending;
-      return pending;
+      const timeoutMs = settingsList.reduce(
+        (maximum, settings) => Math.max(maximum, settings.timeoutMs || 2500),
+        2500,
+      );
+      return this.enqueueOperation(
+        () => this.performRequestBatch(opcode, settingsList),
+        timeoutMs,
+        () => this.operationStage === "idle" ? "WebUSB 批量请求" : this.operationStage,
+      );
     }
 
     async performRequest(opcode, options) {
       if (!this.interface || !this.device.opened) throw new Error("CRazyLink 尚未连接");
+      const usbInterface = this.interface;
       const sequence = this.sequence;
       this.sequence = (this.sequence % 0xffff) + 1;
       const request = protocol.encodePacket({
@@ -259,11 +434,8 @@
         offset: options.offset || 0,
         data: options.data,
       });
-      const outResult = await withTimeout(
-        this.device.transferOut(this.interface.outputEndpoint, request),
-        options.timeoutMs || 2500,
-        "发送请求",
-      );
+      this.operationStage = "发送 WebUSB 请求";
+      const outResult = await this.device.transferOut(usbInterface.outputEndpoint, request);
       if (outResult.status !== "ok" || outResult.bytesWritten !== request.length) {
         throw new Error("WebUSB 请求未完整发送");
       }
@@ -273,7 +445,8 @@
       while (Date.now() < deadline) {
         const remaining = deadline - Date.now();
         if (remaining <= 0) throw new Error("等待设备响应超时");
-        const inResult = await transferInWithRecovery(this.device, this.interface.inputEndpoint, deadline);
+        this.operationStage = "等待 WebUSB 响应";
+        const inResult = await transferInWithRecovery(this.device, usbInterface.inputEndpoint, deadline);
         if (inResult.data.byteLength === 0) continue;
         const response = protocol.decodePacket(new Uint8Array(
           inResult.data.buffer,
@@ -294,6 +467,7 @@
     async performRequestBatch(opcode, optionsList) {
       if (!optionsList.length) return [];
       if (!this.interface || !this.device.opened) throw new Error("CRazyLink 尚未连接");
+      const usbInterface = this.interface;
       const requests = optionsList.map((options) => {
         const sequence = this.sequence;
         this.sequence = (this.sequence % 0xffff) + 1;
@@ -313,11 +487,8 @@
       // Keep the send order deterministic so the device's small receive queue
       // can be drained and acknowledged in the same order.
       for (const request of requests) {
-        const outResult = await withTimeout(
-          this.device.transferOut(this.interface.outputEndpoint, request.packet),
-          request.options.timeoutMs || 2500,
-          "发送请求",
-        );
+        this.operationStage = "发送 WebUSB 批量请求";
+        const outResult = await this.device.transferOut(usbInterface.outputEndpoint, request.packet);
         if (outResult.status !== "ok" || outResult.bytesWritten !== request.packet.length) {
           throw new Error("WebUSB 请求未完整发送");
         }
@@ -332,7 +503,8 @@
         while (Date.now() < deadline) {
           const remaining = deadline - Date.now();
           if (remaining <= 0) throw new Error("等待设备响应超时");
-          const inResult = await transferInWithRecovery(this.device, this.interface.inputEndpoint, deadline);
+          this.operationStage = "等待 WebUSB 批量响应";
+          const inResult = await transferInWithRecovery(this.device, usbInterface.inputEndpoint, deadline);
           if (inResult.data.byteLength === 0) continue;
           response = protocol.decodePacket(new Uint8Array(
             inResult.data.buffer,
@@ -524,18 +696,13 @@
       super();
       this.usb = usb || (typeof navigator !== "undefined" ? navigator.usb : null);
       this.connectTimeoutMs = settings.connectTimeoutMs || USB_CONNECT_TIMEOUT_MS;
-      this.requestDeviceTimeoutMs = settings.requestDeviceTimeoutMs || USB_CONNECT_TIMEOUT_MS * 2;
       this.current = null;
       this.connectionQueue = Promise.resolve();
       this.pendingDevice = null;
       this.pendingConnection = null;
+      this.attempts = new Set();
       if (this.usb) {
-        this.usb.addEventListener("disconnect", (event) => {
-          if (this.current && event.device === this.current.device) {
-            this.current = null;
-            this.dispatchEvent(new Event("disconnected"));
-          }
-        });
+        this.usb.addEventListener("disconnect", (event) => this.handleUsbDisconnect(event.device));
       }
     }
 
@@ -543,31 +710,94 @@
       return Boolean(this.usb);
     }
 
+    cancelAttempt(attempt, error, physicallyDisconnected) {
+      if (!attempt.cancelled) {
+        attempt.cancelled = true;
+        attempt.reason = error;
+      }
+      if (attempt.connection) {
+        if (physicallyDisconnected) attempt.connection.markDisconnected(error);
+        else attempt.connection.cancelConnect(error);
+      }
+      if (!attempt.disconnectSignalled) {
+        attempt.disconnectSignalled = true;
+        attempt.rejectDisconnect(error);
+      }
+    }
+
+    handleUsbDisconnect(device) {
+      const error = disconnectedError();
+      let affected = false;
+      if (this.current && sameUsbDevice(device, this.current.device)) {
+        this.current.markDisconnected(error);
+        this.current = null;
+        affected = true;
+      }
+      for (const attempt of this.attempts) {
+        if (sameUsbDevice(device, attempt.device)) {
+          this.cancelAttempt(attempt, error, true);
+          affected = true;
+        }
+      }
+      if (affected) this.dispatchEvent(new Event("disconnected"));
+    }
+
     connectDevice(device) {
-      if (this.current?.device === device && this.current.interface && device.opened) {
+      if (sameUsbDevice(this.current?.device, device) && this.current.interface && this.current.device.opened) {
         return Promise.resolve(this.current);
       }
-      if (this.pendingDevice === device && this.pendingConnection) return this.pendingConnection;
+      if (sameUsbDevice(this.pendingDevice, device) && this.pendingConnection) return this.pendingConnection;
 
-      const operation = this.connectionQueue.catch(() => undefined).then(async () => {
-        if (this.current?.device === device && this.current.interface && device.opened) return this.current;
+      const attempt = {
+        device,
+        connection: null,
+        cancelled: false,
+        reason: null,
+        disconnectSignalled: false,
+        rejectDisconnect: null,
+      };
+      const disconnected = new Promise((_, reject) => { attempt.rejectDisconnect = reject; });
+      this.attempts.add(attempt);
+
+      const lifecycle = this.connectionQueue.catch(() => undefined).then(async () => {
+        if (attempt.cancelled) throw attempt.reason || new Error("连接已取消");
+        if (sameUsbDevice(this.current?.device, device) && this.current.interface && this.current.device.opened) {
+          return this.current;
+        }
         if (this.current) {
           const previous = this.current;
           this.current = null;
           await previous.disconnect();
+          if (attempt.cancelled) throw attempt.reason || new Error("连接已取消");
         }
         const connection = new CrazylinkUsbDevice(device);
-        try {
-          await withTimeout(connection.connect(), this.connectTimeoutMs, "连接设备");
-        } catch (error) {
-          try { await connection.disconnect(); } catch (_) {}
-          throw error;
+        attempt.connection = connection;
+        if (attempt.cancelled) {
+          connection.cancelConnect(attempt.reason);
+          throw attempt.reason || new Error("连接已取消");
+        }
+        await connection.connect();
+        if (attempt.cancelled) {
+          connection.cancelConnect(attempt.reason);
+          await connection.disconnect();
+          throw attempt.reason || new Error("连接已取消");
         }
         this.current = connection;
         this.dispatchEvent(new CustomEvent("connected", { detail: connection }));
         return connection;
       });
-      this.connectionQueue = operation.catch(() => undefined);
+      this.connectionQueue = lifecycle.catch(() => undefined);
+
+      const timedConnection = withTimeout(lifecycle, this.connectTimeoutMs, "连接设备");
+      const operation = Promise.race([timedConnection, disconnected]).catch((error) => {
+        if (isTimeoutError(error)) {
+          const stage = attempt.connection?.connectStage || "等待上一设备操作完成";
+          const detailed = operationError(`连接设备超时（${stage}）`, USB_TIMEOUT_CODE);
+          this.cancelAttempt(attempt, detailed, false);
+          throw detailed;
+        }
+        throw error;
+      });
       this.pendingDevice = device;
       this.pendingConnection = operation;
       operation.then(() => {
@@ -581,7 +811,20 @@
           this.pendingConnection = null;
         }
       });
+      void lifecycle.then(
+        () => this.attempts.delete(attempt),
+        () => this.attempts.delete(attempt),
+      );
       return operation;
+    }
+
+    async disconnectDevice(connection) {
+      const target = connection || this.current;
+      if (!target) return;
+      if (this.current === target || sameUsbDevice(this.current?.device, target.device)) {
+        this.current = null;
+      }
+      await target.disconnect();
     }
 
     async connectAuthorized() {
@@ -591,16 +834,15 @@
       return device ? this.connectDevice(device) : null;
     }
 
-    async requestDevice() {
+    async selectDevice() {
       if (!this.usb) throw new Error("当前浏览器不支持 WebUSB，请使用最新版 Chrome 或 Edge");
-      const device = await withTimeout(
-        this.usb.requestDevice({ filters: [{ vendorId: VID, productId: PID }] }),
-        this.requestDeviceTimeoutMs,
-        "等待设备授权",
-      );
-      return this.connectDevice(device);
+      return this.usb.requestDevice({ filters: [{ vendorId: VID, productId: PID }] });
+    }
+
+    async requestDevice() {
+      return this.connectDevice(await this.selectDevice());
     }
   }
 
-  return { CrazylinkUsbDevice, CrazylinkUsbManager, DeviceRole, DeviceMode, FlashState, findBulkInterface, describeBulkInterfaces };
+  return { CrazylinkUsbDevice, CrazylinkUsbManager, DeviceRole, DeviceMode, FlashState, findBulkInterface, describeBulkInterfaces, sameUsbDevice };
 });
