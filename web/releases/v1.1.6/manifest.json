@@ -1,0 +1,22 @@
+{
+  "schemaVersion": 1,
+  "product": "CRazyLink",
+  "tag": "v1.1.6",
+  "sourceCommit": "fe21ab99aff61d6eb8d4055b414dc8c619c53c38",
+  "publishedAt": "2026-09-03T02:16:04.119Z",
+  "signature": {
+    "algorithm": "ECDSA-P256-SHA256",
+    "keyFingerprint": "70af485424064d9cc975912d4adba0a04587bc44652909339dee39966d8d63a2"
+  },
+  "packages": [
+    {
+      "role": "CRAZYLINK",
+      "file": "CRazyLink_v1.1.6.crl",
+      "size": 1092574,
+      "sha256": "554edcf4821bcae75329d3bdf28a805c00f6c7349b35e176a0a6cafcccfb0806",
+      "version": "v1.1.6",
+      "chip": "ESP32-S3",
+      "flashSize": 16777216
+    }
+  ]
+}
