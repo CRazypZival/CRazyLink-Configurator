@@ -811,14 +811,6 @@
     const subtitle = $("#pageSubtitle");
     subtitle.textContent = "";
     subtitle.hidden = true;
-    const upgradeNav = $(".nav-item[data-view=\"upgrade\"]");
-    const flashNav = $(".nav-item[data-view=\"flash\"]");
-    if (upgradeNav && flashNav) {
-      upgradeNav.classList.toggle("is-active", !blankMode);
-      flashNav.classList.toggle("is-active", blankMode);
-      upgradeNav.toggleAttribute("aria-current", !blankMode);
-      flashNav.toggleAttribute("aria-current", blankMode);
-    }
   }
 
   function setUpgradeStatus(text, kind, progress) {

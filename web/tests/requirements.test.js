@@ -59,6 +59,9 @@ test("upgrade flow has connection prompts and exclusive disclosure styling", () 
   assert.match(app, /setDisclosure\("#upgradeCardBody", "#upgradeCardDisclosure", false\)/);
   assert.match(app, /view\.dataset\.variant = variant/);
   assert.match(app, /if \(previousVariant !== variant\)/);
+  assert.match(html, /data-view-panel="upgrade"[\s\S]*?id="blankFlashCard"/);
+  assert.doesNotMatch(app, /flashNav\.classList\.toggle\("is-active", blankMode\)/);
+  assert.doesNotMatch(app, /upgradeNav\.classList\.toggle\("is-active", !blankMode\)/);
   assert.match(app, /selectUpgradeAutomatically/);
   assert.match(app, /detectAuthorized\(\)/);
   assert.match(app, /const upgradeConnected = Boolean\(state\.upgrade\.transport\)/);
